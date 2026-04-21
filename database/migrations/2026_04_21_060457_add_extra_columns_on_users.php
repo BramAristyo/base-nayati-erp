@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('approver_title')->nullable()->comment('temporary for PO purposes')->after('approver_name');
             $table->string('branch_code', 2)->after('approver_title');
             $table->string('position', 50)->after('branch_code');
-            $table->boolean('is_active')->default(true)->after('posisition');
+            $table->boolean('is_active')->default(true)->after('position');
         });
     }
 
