@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
 import Button from 'primevue/button';
-import Card from 'primevue/card';
 import Checkbox from 'primevue/checkbox';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
@@ -20,45 +19,76 @@ const submit = () => {
 </script>
 
 <template>
-    <div class="min-h-screen flex items-center justify-center"
-        style="background-image: url('https://picsum.photos/seed/inox/1920/1080'); background-size: cover; background-position: center;">
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+    <div class="min-h-screen flex w-full bg-surface-50">
+        <!-- Left Side: Background Image (Hidden on smaller screens) -->
+        <div class="hidden lg:flex relative w-1/2 bg-surface-900 overflow-hidden text-white">
+            <img src="https://picsum.photos/seed/inox/1920/1080" alt="Background"
+                class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
 
-        <Card class="relative z-10 w-full max-w-sm shadow-2xl">
-            <template #header>
-                <div class="flex flex-col items-center gap-1 pt-6 px-6">
-                    <img src="/images/logo_ima.png" alt="Logo" class="h-12 w-auto mb-2" />
-                    <span class="text-surface-900 text-xl font-semibold">Welcome to the IMA ERP</span>
-                    <span class="text-surface-500 text-sm">Sign in to your account</span>
+            <div class="relative z-10 flex flex-col justify-end p-12 w-full h-full">
+                <div class="max-w-xl">
+                    <h1 class="text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+                        Transform your workflow with IMA ERP.
+                    </h1>
+                    <p class="text-lg text-surface-200">
+                        A seamless, fast, and modern enterprise solution built for your daily operations.
+                    </p>
                 </div>
-            </template>
+            </div>
+        </div>
 
-            <template #content>
-                <form @submit.prevent="submit" class="flex flex-col gap-4">
-                    <div class="flex flex-col gap-1">
-                        <label for="email" class="text-sm font-medium text-surface-700">Email Address</label>
-                        <InputText id="email" v-model="form.email" type="email" placeholder="Email address" size="small"
-                            class="w-full" :invalid="!!form.errors.email" autocomplete="email" />
-                        <small v-if="form.errors.email" class="text-red-500">{{ form.errors.email }}</small>
+        <!-- Right Side: Login Form -->
+        <div class="flex-1 flex items-center justify-center p-6 lg:p-12">
+            <div
+                class="w-full max-w-md flex flex-col pt-8 pb-12 px-6 sm:px-10 bg-surface-0 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-surface-100">
+
+                <!-- Logo & Header -->
+                <div class="flex flex-col items-center sm:items-start gap-2 mb-10">
+                    <img src="/images/logo_ima.png" alt="IMA Logo" class="h-10 w-auto mb-4" />
+                    <h2 class="text-3xl font-bold text-surface-900 tracking-tight">Welcome back</h2>
+                    <p class="text-surface-500 font-medium">Please enter your details to sign in.</p>
+                </div>
+
+                <!-- Form -->
+                <form @submit.prevent="submit" class="flex flex-col gap-6">
+                    <!-- Email Field -->
+                    <div class="flex flex-col gap-2">
+                        <label for="email" class="text-sm font-semibold text-surface-900">Email</label>
+                        <InputText id="email" v-model="form.email" type="email" placeholder="Enter your email"
+                            class="w-full px-4 py-3 rounded-xl border-surface-200 hover:border-primary-400 focus:ring-primary-500"
+                            :invalid="!!form.errors.email" autocomplete="email" />
+                        <small v-if="form.errors.email" class="text-red-500 font-medium">{{ form.errors.email }}</small>
                     </div>
 
-                    <div class="flex flex-col gap-1">
-                        <label for="password" class="text-sm font-medium text-surface-700">Password</label>
-                        <Password id="password" v-model="form.password" placeholder="Password" size="small"
-                            :toggleMask="true" :feedback="false" :invalid="!!form.errors.password" input-class="w-full!"
-                            autocomplete="current-password" />
-                        <small v-if="form.errors.password" class="text-red-500">{{ form.errors.password }}</small>
+                    <!-- Password Field -->
+                    <div class="flex flex-col gap-2">
+                        <label for="password" class="text-sm font-semibold text-surface-900">Password</label>
+                        <Password id="password" v-model="form.password" placeholder="••••••••" :toggleMask="true"
+                            :feedback="false" :invalid="!!form.errors.password"
+                            input-class="w-full px-4 py-3 rounded-xl border-surface-200 hover:border-primary-400 focus:ring-primary-500"
+                            class="w-full" autocomplete="current-password" />
+                        <small v-if="form.errors.password" class="text-red-500 font-medium">{{ form.errors.password
+                        }}</small>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <Checkbox id="remember" v-model="form.remember" :binary="true" />
-                        <label for="remember" class="text-sm text-surface-700">Remember me</label>
+                    <div class="flex items-center justify-between mt-1">
+                        <div class="flex items-center gap-3">
+                            <Checkbox id="remember" v-model="form.remember" :binary="true" class="rounded-md" />
+                            <label for="remember"
+                                class="text-sm font-medium text-surface-700 cursor-pointer select-none">
+                                Remember for 30 days
+                            </label>
+                        </div>
                     </div>
 
-                    <Button type="submit" label="Sign In" icon="pi pi-sign-in" size="small" class="w-full mt-1"
+                    <!-- Submit Button -->
+                    <Button type="submit" label="Sign In"
+                        class="w-full py-4 mt-2 rounded-xl text-base font-semibold tracking-wide transition-all duration-200 shadow-md hover:shadow-lg"
                         :loading="form.processing" />
                 </form>
-            </template>
-        </Card>
+
+            </div>
+        </div>
     </div>
 </template>

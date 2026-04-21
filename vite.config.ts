@@ -11,7 +11,7 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.ts'],
             refresh: true,
         }),
-        inertia({ ssr: { enabled: false } }),
+        inertia(),
         tailwindcss(),
         vue({
             template: {
