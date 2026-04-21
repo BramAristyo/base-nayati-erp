@@ -7,6 +7,12 @@ Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::middleware('auth')->get('/dashboard', function () {
+    return response()->json([
+        'message' => 'Dashboard'
+    ]);
+})->name('dashboard');
+
 Route::middleware('auth')->prefix('api')->name('api.')->group(function (){
     Route::get('/me', [AuthController::class, 'me'])->name('me');
 });
