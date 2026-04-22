@@ -39,7 +39,19 @@ const isRouteActive = (routeName?: string) => {
         return false;
     }
 
-    return route().current(routeName);
+    // Check for exact match or if the current route is a sub-route (e.g., utility.users.*)
+    const current = route().current();
+    if (!current) return false;
+
+    if (current === routeName) return true;
+
+    // Handle resource-like matching (utility.users.paginate -> utility.users.*)
+    if (routeName.endsWith('.paginate')) {
+        const base = routeName.replace('.paginate', '');
+        return current.startsWith(base);
+    }
+
+    return current.startsWith(routeName);
 };
 
 const syncExpandedState = () => {
