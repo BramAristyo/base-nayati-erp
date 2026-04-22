@@ -9,6 +9,7 @@ import Tooltip from 'primevue/tooltip';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
+import ConfirmationService from 'primevue/confirmationservice';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const pinia = createPinia();
@@ -111,6 +112,7 @@ createInertiaApp({
                     }
                 }
             })
+            .use(ConfirmationService)
             .use(ToastService)
             .directive('tooltip', Tooltip)
             .use(pinia)

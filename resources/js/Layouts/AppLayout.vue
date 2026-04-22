@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Avatar from 'primevue/avatar';
 import Button from 'primevue/button';
+import ConfirmDialog from 'primevue/confirmdialog';
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 import { ref, onMounted, watch } from 'vue';
@@ -67,5 +68,6 @@ watch(() => page.props.flash, (flash: any) => {
                 <slot />
             </main>
         </div>
+        <ConfirmDialog />
     </div>
 </template>

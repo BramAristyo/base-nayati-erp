@@ -13,6 +13,7 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
 import { ref, watch } from 'vue';
+import { route } from 'ziggy-js';
 
 const props = defineProps<{
     users: PaginatedUsers;
