@@ -101,7 +101,7 @@ watch(search, () => {
                     <Column field="name" header="NAME" sortable></Column>
                     <Column field="email" header="IDENTITY" sortable></Column>
 
-                    <Column field="position" header="POSITION">
+                    <Column field="position" header="POSITION" sortable>
                         <template #body="slotProps">
                             <PositionBadge :position="slotProps.data.position" />
                         </template>

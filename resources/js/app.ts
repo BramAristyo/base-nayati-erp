@@ -82,8 +82,8 @@ createInertiaApp({
                 },
                 pt: {
                     column: {
-                        headercell: { class: 'text-xs! font-bold! uppercase!' },
-                        bodycell: { class: 'text-xs!' }
+                        headercell: { class: 'text-[14px]! font-bold! uppercase!' },
+                        bodycell: { class: 'text-[14px]!' }
                     },
                     datatable: {
                         paginator: {
@@ -92,20 +92,20 @@ createInertiaApp({
                     },
                     paginator: {
                         root: { class: 'py-0! gap-1!' },
-                        pcFirstButton: { root: { class: 'w-7! h-7! text-[10px]!' } },
-                        pcPrevButton: { root: { class: 'w-7! h-7! text-[10px]!' } },
-                        pcNextButton: { root: { class: 'w-7! h-7! text-[10px]!' } },
-                        pcLastButton: { root: { class: 'w-7! h-7! text-[10px]!' } },
+                        pcFirstButton: { root: { class: 'w-6! h-6! text-[9px]! rounded-full!' } },
+                        pcPrevButton: { root: { class: 'w-6! h-6! text-[9px]! rounded-full!' } },
+                        pcNextButton: { root: { class: 'w-6! h-6! text-[9px]! rounded-full!' } },
+                        pcLastButton: { root: { class: 'w-6! h-6! text-[9px]! rounded-full!' } },
                         pcPageButton: { 
                             root: ({ context }: any) => ({ 
                                 class: [
-                                    'w-7! h-7! text-[10px]! font-bold!',
-                                    context.active ? 'bg-black! text-white!' : 'text-gray-500! hover:bg-gray-50!'
+                                    'w-6! h-6! text-[9px]! font-bold! rounded-full!',
+                                    context.active ? 'bg-black! text-white!' : 'text-gray-800! hover:bg-gray-100!'
                                 ] 
                             }) 
                         },
                         pcRowPerPageDropdown: {
-                            root: { class: 'h-7! text-[10px]! font-bold! border-gray-100! shadow-none! bg-gray-50/50!' },
+                            root: { class: 'h-6! text-[9px]! font-bold! border-gray-100! shadow-none! bg-gray-50/50! rounded-md!' },
                             label: { class: 'px-2! py-0!' }
                         }
                     }
