@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Utility;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Common\BasicPaginateRequest;
+use App\Models\Utility\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -17,7 +20,7 @@ class UserController extends Controller
                 return redirect()->route('login');
             }
 
-            return inertia('Utility/User/ChangePassword');
+            return inertia('Utility/Auth/ChangePassword');
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());
         }
@@ -62,7 +65,7 @@ class UserController extends Controller
 
     public function showSettingForm(Request $request)
     {
-        return inertia('Utility/User/Setting', [
+        return inertia('Utility/Auth/Setting', [
             'user' => $request->user()
         ]);
     }
@@ -93,5 +96,28 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->back()->with('success', 'Profile updated successfully.');
+    }
+
+    public function paginate(BasicPaginateRequest $request)
+    {
+        try {
+            $users = User::query()
+                ->search($request->search)
+                ->orderBy($request->sort_by, $request->sort_order)
+                ->paginate($request->per_page)
+                ->withQueryString();
+
+            return inertia('Utility/User/Index', [
+                'users' => $users,
+                'filters' => [
+                    'search' => $request->search,
+                    'sortField' => $request->input('sortField', 'name'),
+                    'sortOrder' => (int) $request->input('sortOrder', 1),
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return back()->with('error', 'Error while loading user data.');
+        }
     }
 }

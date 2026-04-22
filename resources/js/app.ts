@@ -80,6 +80,16 @@ createInertiaApp({
                         darkModeSelector: 'none',
                     },
                 },
+                pt: {
+                    column: {
+                        headercell: { class: 'text-xs! font-bold! uppercase!' },
+                        bodycell: { class: 'text-xs!' }
+                    },
+                    datatable: {
+                        table: { class: '' },
+                        thead: { class: '' }
+                    }
+                }
             })
             .use(ToastService)
             .directive('tooltip', Tooltip)

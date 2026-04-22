@@ -44,7 +44,7 @@ const submit = () => {
                         <InputText id="name" v-model="form.name" size="small" class="w-full!"
                             :invalid="!!form.errors.name" />
                         <small v-if="form.errors.name" class="text-[10px] text-red-600 font-bold">{{ form.errors.name
-                            }}</small>
+                        }}</small>
                     </div>
 
                     <div class="flex flex-col gap-1.5">
@@ -53,7 +53,7 @@ const submit = () => {
                         <InputText id="email" v-model="form.email" type="email" size="small" class="w-full!"
                             :invalid="!!form.errors.email" />
                         <small v-if="form.errors.email" class="text-[10px] text-red-600 font-bold">{{ form.errors.email
-                            }}</small>
+                        }}</small>
                     </div>
                 </div>
 

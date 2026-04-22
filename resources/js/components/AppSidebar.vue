@@ -24,27 +24,21 @@ const page = usePage();
 const menus = ref<MenuItem[]>([
     { label: 'Dashboard', icon: 'pi pi-objects-column', route: 'dashboard' },
     {
-        label: 'Logistics',
-        icon: 'pi pi-truck',
-        isOpen: false,
-        items: [
-            { label: 'Warehouse', route: 'dashboard' },
-            { label: 'Inventory', route: 'dashboard' },
-        ]
-    },
-    {
         label: 'System',
         icon: 'pi pi-cog',
         isOpen: false,
         items: [
-            { label: 'User Management', route: 'dashboard' },
+            { label: 'User Management', route: 'utility.users.paginate' },
             { label: 'Permissions', route: 'dashboard' },
         ]
     }
 ]);
 
 const isRouteActive = (routeName?: string) => {
-    if (!routeName) return false;
+    if (!routeName) {
+        return false;
+    }
+
     return route().current(routeName);
 };
 
@@ -52,6 +46,7 @@ const syncExpandedState = () => {
     menus.value.forEach(menu => {
         if (menu.items) {
             const hasActiveChild = menu.items.some(child => isRouteActive(child.route));
+
             if (hasActiveChild) {
                 menu.isOpen = true;
             }
@@ -128,8 +123,7 @@ onMounted(() => {
 
             <div v-if="!props.collapsed" class="mb-5 transition-opacity duration-300">
                 <IconField>
-                    <InputText v-model="searchQuery" placeholder="Search Menu..."
-                        size="small"
+                    <InputText v-model="searchQuery" placeholder="Search Menu..." size="small"
                         class="w-full! py-2! text-sm! bg-white border-gray-300! text-gray-900! rounded-md! focus:ring-1! focus:ring-gray-300! transition-all shadow-sm placeholder:text-gray-400!" />
                 </IconField>
             </div>
@@ -186,7 +180,8 @@ onMounted(() => {
                         isRouteActive('user.settings') ? 'bg-white shadow-sm border-gray-100 text-black font-bold' : '',
                         props.collapsed ? 'justify-center' : ''
                     ]">
-                    <i :class="['pi pi-cog text-base', isRouteActive('user.settings') ? 'text-black' : 'text-gray-600 group-hover:text-black']"></i>
+                    <i
+                        :class="['pi pi-cog text-base', isRouteActive('user.settings') ? 'text-black' : 'text-gray-600 group-hover:text-black']"></i>
                     <span v-if="!props.collapsed" class="text-sm font-semibold tracking-wide">Settings</span>
                 </Link>
                 <Link v-tooltip.right="props.collapsed ? 'Log out' : null" :href="route('logout')" method="post"

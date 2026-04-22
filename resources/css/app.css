@@ -12,3 +12,49 @@
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
 }
+
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+    .p-datatable {
+        overflow: hidden;
+    }
+
+    .p-datatable .p-datatable-thead > tr > th {
+        padding: 0.4rem 0.6rem !important;
+        font-size: 0.8rem !important;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .p-datatable .p-datatable-tbody > tr > td {
+        padding: 0.35rem 0.6rem !important;
+        font-size: 0.8rem !important;
+        white-space: nowrap;
+    }
+
+    .p-datatable .p-paginator {
+        padding: 0.4rem 0.6rem !important;
+        font-size: 0.8rem !important;
+    }
+
+    .p-paginator .p-select .p-select-label {
+        padding: 0 0.5rem !important;
+        font-size: 0.75rem !important;
+    }
+
+    .p-paginator .p-select-overlay .p-select-option {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.5rem !important;
+    }
+
+    .p-datatable .p-datatable-tbody > tr:hover {
+        background-color: var(--color-muted) !important;
+        cursor: pointer;
+    }
+}

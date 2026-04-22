@@ -34,4 +34,12 @@ class User extends Authenticatable
     {
         return (bool) $this->is_password_changed;
     }
+
+    public function scopeSearch($query, $term)
+    {
+        return $query->when($term, function ($q) use ($term) {
+            $q->where('name', 'like', "%{$term}%")
+              ->orWhere('email', 'like', "%{$term}%");
+        });
+    }
 }

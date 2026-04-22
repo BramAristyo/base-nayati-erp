@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useForm, Head, usePage } from '@inertiajs/vue3';
-import { watch } from 'vue';
-import { useToast } from 'primevue/usetoast';
 import Button from 'primevue/button';
 import Password from 'primevue/password';
 import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
+import { watch } from 'vue';
 
 const toast = useToast();
 const page = usePage();
@@ -17,6 +17,7 @@ watch(() => page.props.flash, (flash: any) => {
     if (flash?.success) {
         toast.add({ severity: 'success', summary: 'Success', detail: flash.success, life: 3000 });
     }
+
     if (flash?.error) {
         toast.add({ severity: 'error', summary: 'Error', detail: flash.error, life: 3000 });
     }
