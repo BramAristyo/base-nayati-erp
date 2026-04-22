@@ -1,13 +1,13 @@
-import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
-import PrimeVue from 'primevue/config';
-import Material from '@primeuix/themes/material';
-import { ZiggyVue } from 'ziggy-js';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import type { DefineComponent } from 'vue';
-import { createPinia } from 'pinia';
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
+import Material from '@primeuix/themes/material';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { createPinia } from 'pinia';
+import PrimeVue from 'primevue/config';
+import type { DefineComponent } from 'vue';
+import { createApp, h } from 'vue';
+import { ZiggyVue } from 'ziggy-js';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const pinia = createPinia();

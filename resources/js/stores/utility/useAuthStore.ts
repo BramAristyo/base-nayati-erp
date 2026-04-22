@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import http from '@/lib/http';
-import { route } from 'ziggy-js'
 import type { User } from '@/types/utility/user.types';
 
 export const useAuthStore = defineStore('auth', () => {
@@ -14,9 +13,10 @@ export const useAuthStore = defineStore('auth', () => {
         if (isInitialized.value) return;
 
         try {
-            const response: any = await http.get(route('api.auth.me'));
+            const response: any = await http.get('/api/me');
             
-            if (response.success) {
+            // Fix: Check status instead of success based on Controller.php
+            if (response.status) {
                 user.value = response.data.user;
                 roles.value = response.data.roles;
                 permissions.value = response.data.permissions;
@@ -26,6 +26,7 @@ export const useAuthStore = defineStore('auth', () => {
             user.value = null;
             roles.value = [];
             permissions.value = [];
+            isInitialized.value = true;
         }
     };
 

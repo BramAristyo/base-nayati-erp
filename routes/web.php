@@ -8,9 +8,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->get('/dashboard', function () {
-    return response()->json([
-        'message' => 'Dashboard'
-    ]);
+    return inertia('Utility/Dashboard');
 })->name('dashboard');
 
 Route::middleware('auth')->prefix('api')->name('api.')->group(function (){
