@@ -42,4 +42,12 @@ class User extends Authenticatable
               ->orWhere('email', 'like', "%{$term}%");
         });
     }
+
+    public function warehouses(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Warehouse::class, 'user_warehouse')
+            ->withPivot('is_active')
+            ->withTimestamps();
+    }
+
 }

@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Utility\AuthController;
+use App\Http\Controllers\Utility\RolePermissionController;
 use App\Http\Controllers\Utility\UserController;
+use App\Http\Controllers\Utility\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
@@ -25,10 +27,19 @@ Route::middleware('auth')->prefix('auth')->name('auth.')->group(function (){
     Route::post('/is-password-changed', [AuthController::class, 'isPasswordChanged'])->name('is-password-changed');
 });
 
-Route::middleware('auth')->prefix('api')->name('api.')->group(function (){
-    Route::get('/me', [AuthController::class, 'me'])->name('me');
-});
-
 Route::middleware('auth')->prefix('utility')->name('utility.')->group(function (){
     Route::get('/users', [UserController::class, 'paginate'])->name('users.paginate');
+    Route::get('/users/show/{id}', [UserController::class, 'show'])->name('users.show');
+    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+});
+
+
+// ---------------- API ----------------
+Route::middleware('auth')->prefix('api')->name('api.')->group(function (){
+    Route::get('/me', [AuthController::class, 'me'])->name('me');
+
+    Route::prefix('utility')->name('utility.')->group(function (){
+        Route::get('/warehouses/all', [WarehouseController::class, 'getAll'])->name('warehouses.all');
+        Route::get('/roles/all', [RolePermissionController::class, 'getAll'])->name('roles.all');
+    });
 });

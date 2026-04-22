@@ -120,4 +120,28 @@ class UserController extends Controller
             return back()->with('error', 'Error while loading user data.');
         }
     }
+
+    public function show($id)
+    {
+        try {
+            $user = User::with('roles', 'warehouses')->findOrFail($id);
+            return inertia('Utility/User/Show', [
+                'user' => $user,
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return back()->with('error', 'Error while loading user data.');
+        }
+    }
+
+    public function create()
+    {
+        try {
+            return inertia('Utility/User/Create');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return back()->with('error', 'Error while loading user data.');
+        }
+    }
+
 }
