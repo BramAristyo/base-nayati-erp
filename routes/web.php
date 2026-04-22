@@ -40,6 +40,6 @@ Route::middleware('auth')->prefix('api')->name('api.')->group(function (){
 
     Route::prefix('utility')->name('utility.')->group(function (){
         Route::get('/warehouses/all', [WarehouseController::class, 'getAll'])->name('warehouses.all');
-        Route::get('/roles/all', [RolePermissionController::class, 'getAll'])->name('roles.all');
+        Route::get('/roles/all', [RolePermissionController::class, 'getAllRoles'])->name('roles.all');
     });
 });

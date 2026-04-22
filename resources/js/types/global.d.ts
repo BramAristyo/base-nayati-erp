@@ -1,4 +1,9 @@
 import type { Auth } from '@/types/auth';
+import { route as routeFn } from 'ziggy-js';
+
+declare global {
+    var route: typeof routeFn;
+}
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
