@@ -2,14 +2,18 @@
 import { useForm } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
+import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
+import { ref } from 'vue';
 
 const form = useForm({
     email: '',
     password: '',
     remember: false as boolean,
 });
+
+const showInfo = ref(false);
 
 const submit = () => {
     form.post('/login', {
@@ -22,21 +26,26 @@ const submit = () => {
     <div class="min-h-screen flex w-full bg-surface-50">
         <!-- Left Side: Background Image (Hidden on smaller screens) -->
         <div class="hidden lg:flex relative w-1/2 bg-surface-900 overflow-hidden text-white">
-            <img src="/images/bg.webp" alt="Background"
-                class="absolute inset-0 w-full h-full object-cover  mix-blend-overlay" />
-            <div class="absolute inset-0 bg-linear-to-t from-black/40 to-transparent"></div>
+            <img src="/images/bg.webp" alt="Background" class="absolute inset-0 w-full h-full " />
             <div class="relative z-10 flex flex-col justify-end p-12 w-full h-full">
             </div>
 
             <!-- Bottom Left Text -->
-            <div class="absolute bottom-8 left-12 z-20 text-surface-400 text-sm font-medium">
+            <div class="absolute bottom-8 left-12 z-20 text-surface-200 text-sm font-medium">
                 <p>&copy; 2026 PT. Inox Metal Asia. All rights reserved.</p>
                 <p class="mt-0.5 opacity-80">Created by IT Nayati</p>
             </div>
         </div>
 
         <!-- Right Side: Login Form -->
-        <div class="flex-1 flex items-center justify-center p-6 lg:p-12">
+        <div class="flex-1 flex items-center justify-center p-6 lg:p-12 relative">
+
+            <!-- Info Button -->
+            <div class="absolute top-6 right-6">
+                <Button icon="pi pi-info-circle" rounded text severity="secondary" aria-label="Information"
+                    @click="showInfo = true" />
+            </div>
+
             <div class="w-full max-w-md flex flex-col pt-8 pb-12 px-6 sm:px-10">
 
                 <!-- Logo & Header -->
@@ -52,7 +61,7 @@ const submit = () => {
                     <div class="flex flex-col gap-2">
                         <label for="email" class="text-sm font-semibold text-surface-900">Email</label>
                         <InputText id="email" v-model="form.email" type="email" placeholder="Enter your email"
-                            class="w-full px-4 py-3  bg-surface-100/50 hover:bg-surface-200/50 focus:ring-1 focus:ring-primary-500 transition-all duration-200"
+                            class="w-full px-4 py-3 bg-surface-100/50 hover:bg-surface-200/50 focus:ring-1 focus:ring-primary-500 transition-all duration-200"
                             :invalid="!!form.errors.email" autocomplete="email" size="small" />
                         <small v-if="form.errors.email" class="text-red-500 font-medium">{{ form.errors.email }}</small>
                     </div>
@@ -65,7 +74,7 @@ const submit = () => {
                             input-class="w-full px-4 py-3 rounded-xl border-none bg-surface-100/50 hover:bg-surface-200/50 focus:ring-1 focus:ring-primary-500 transition-all duration-200"
                             class="w-full" autocomplete="current-password" size="small" />
                         <small v-if="form.errors.password" class="text-red-500 font-medium">{{ form.errors.password
-                        }}</small>
+                            }}</small>
                     </div>
 
                     <div class="flex items-center justify-between mt-1">
@@ -81,10 +90,38 @@ const submit = () => {
                     <!-- Submit Button -->
                     <Button type="submit" label="Sign In"
                         class="w-full py-4 mt-2 rounded-xl text-base font-semibold tracking-wide transition-all duration-200 shadow-md hover:shadow-lg"
-                        :loading="form.processing" />
+                        :loading="form.processing" size="small" />
                 </form>
 
             </div>
         </div>
+
+        <!-- Info Dialog -->
+        <Dialog v-model:visible="showInfo" modal header="User Guide" :style="{ width: '30rem' }"
+            :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+            <div class="text-surface-600 flex flex-col gap-4 mb-6 text-sm leading-relaxed">
+                <p>
+                    <strong>Welcome to the ns-inox web version!</strong>
+                </p>
+                <ul class="list-disc pl-5 flex flex-col gap-2">
+                    <li>
+                        For your email, use your old username in all lowercase followed by <strong>@ns.inox</strong>.
+                        For example, if your old username was <em>JOHN</em>, your new email is
+                        <strong>john@ns.inox</strong>.
+                        The default password is <strong>password</strong>.
+                    </li>
+                    <li>
+                        Please note that this web application is currently under development up to the
+                        <strong>Purchasing Module</strong>.
+                    </li>
+                </ul>
+                <p>
+                    If you encounter any issues, please call the IT Nayati Team immediately. Thank you.
+                </p>
+            </div>
+            <div class="flex justify-end gap-2">
+                <Button type="button" label="Close" severity="secondary" @click="showInfo = false" size="small" />
+            </div>
+        </Dialog>
     </div>
 </template>
