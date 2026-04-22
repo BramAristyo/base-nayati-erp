@@ -1,19 +1,18 @@
 <script setup lang="ts">
+import AppLayout from '@/Layouts/AppLayout.vue';
+import ActiveBadge from '@/components/common/badges/ActiveBadge.vue';
+import PositionBadge from '@/components/common/badges/PositionBadge.vue';
+import type { PaginatedUsers } from '@/types/utility/user.types';
+import type { PaginateFilter } from '@/types/common/paginate.types';
 import { Head, router } from '@inertiajs/vue3';
 import { useDebounceFn } from '@vueuse/core';
 import Button from 'primevue/button';
 import Column from 'primevue/column';
-import DataTable from 'primevue/datatable';
-import type { DataTablePageEvent, DataTableSortEvent } from 'primevue/datatable';
+import DataTable, { type DataTablePageEvent, type DataTableSortEvent } from 'primevue/datatable';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
 import { ref, watch } from 'vue';
-import ActiveBadge from '@/components/common/badges/ActiveBadge.vue';
-import PositionBadge from '@/components/common/badges/PositionBadge.vue';
-import AppLayout from '@/Layouts/AppLayout.vue';
-import type { PaginateFilter } from '@/types/common/paginate.types';
-import type { PaginatedUsers } from '@/types/utility/user.types';
 
 const props = defineProps<{
     users: PaginatedUsers;
@@ -83,13 +82,14 @@ watch(search, () => {
                         <InputText v-model="search" placeholder="Quick Search..." size="small"
                             class="w-64! bg-white border-gray-200! text-gray-900! rounded-md! focus:ring-1! focus:ring-gray-300! transition-all shadow-sm placeholder:text-gray-400!" />
                     </IconField>
-                    <Button icon="pi pi-plus" label="New User" size="small"
+                    <Button icon="pi pi-plus" label="Create" size="small"
                         class="bg-black! border-none! text-white! font-bold! uppercase! tracking-widest! rounded-md! px-4! shadow-md!" />
                 </div>
             </div>
 
-            <div class="overflow-hidden">
-                <DataTable :value="users.data" lazy paginator :rows="users.per_page" :totalRecords="users.total"
+            <div class="overflow-hidden ">
+                <DataTable :value="users.data" lazy paginator :rows="users.per_page"
+                    :rowsPerPageOptions="[10, 25, 50, 100]" :totalRecords="users.total"
                     :first="(users.current_page - 1) * users.per_page" @page="onPage" @sort="onSort" removableSort
                     :sortField="filters?.sortField || 'name'" :sortOrder="filters?.sortOrder || 1" size="small"
                     stripedRows showGridlines responsiveLayout="scroll">
@@ -98,19 +98,20 @@ watch(search, () => {
                             search.</div>
                     </template>
 
-                    <Column field="name" header="NAME" sortable class="font-bold! text-gray-950!"></Column>
+                    <Column field="name" header="NAME" sortable></Column>
                     <Column field="email" header="IDENTITY" sortable></Column>
 
-                    <Column field="position" header="POSITION" sortable>
+                    <Column field="position" header="POSITION">
                         <template #body="slotProps">
                             <PositionBadge :position="slotProps.data.position" />
                         </template>
                     </Column>
 
-                    <Column field="approver_name" header="APPROVER" sortable></Column>
-                    <Column field="approver_title" header="TITLE" sortable></Column>
+                    <Column field="approver_name" header="APPROVER"></Column>
+                    <Column field="approver_title" header="APPROVER TITLE"></Column>
 
-                    <Column field="branch_code" header="BRANCH"></Column>
+                    <Column field="branch_code" header="BRANCH">
+                    </Column>
 
                     <Column field="is_active" header="STATUS">
                         <template #body="slotProps">

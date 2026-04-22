@@ -86,8 +86,28 @@ createInertiaApp({
                         bodycell: { class: 'text-xs!' }
                     },
                     datatable: {
-                        table: { class: '' },
-                        thead: { class: '' }
+                        paginator: {
+                            root: { class: 'py-1! border-t! border-gray-100! bg-white!' }
+                        }
+                    },
+                    paginator: {
+                        root: { class: 'py-0! gap-1!' },
+                        pcFirstButton: { root: { class: 'w-7! h-7! text-[10px]!' } },
+                        pcPrevButton: { root: { class: 'w-7! h-7! text-[10px]!' } },
+                        pcNextButton: { root: { class: 'w-7! h-7! text-[10px]!' } },
+                        pcLastButton: { root: { class: 'w-7! h-7! text-[10px]!' } },
+                        pcPageButton: { 
+                            root: ({ context }: any) => ({ 
+                                class: [
+                                    'w-7! h-7! text-[10px]! font-bold!',
+                                    context.active ? 'bg-black! text-white!' : 'text-gray-500! hover:bg-gray-50!'
+                                ] 
+                            }) 
+                        },
+                        pcRowPerPageDropdown: {
+                            root: { class: 'h-7! text-[10px]! font-bold! border-gray-100! shadow-none! bg-gray-50/50!' },
+                            label: { class: 'px-2! py-0!' }
+                        }
                     }
                 }
             })

@@ -17,7 +17,7 @@ class BasicPaginateRequest extends FormRequest
         $parsedOrder = $sortOrderRaw == 1 ? 'asc' : 'desc';
 
         $this->merge([
-            'per_page'   => $this->input('per_page', 25),
+            'per_page'   => (int) $this->input('per_page', 25),
             'sort_by'    => $this->input('sortField', 'created_at'),
             'sort_order' => $parsedOrder,
         ]);
@@ -25,6 +25,12 @@ class BasicPaginateRequest extends FormRequest
 
     public function rules(): array
     {
-        return [];
+        return [
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'search' => ['nullable', 'string'],
+            'sortField' => ['nullable', 'string'],
+            'sortOrder' => ['nullable', 'integer'],
+        ];
     }
 }
