@@ -19,10 +19,10 @@ onMounted(() => {
 
 <template>
     <div class="flex h-screen bg-white text-gray-950 overflow-hidden font-sans">
-        <AppSidebar :collapsed="isSidebarCollapsed" />
+        <AppSidebar v-model:collapsed="isSidebarCollapsed" />
 
         <div class="flex-1 flex flex-col min-w-0 bg-white">
-            <header class="h-20 border-b border-gray-200 bg-white flex items-center justify-between px-6 shrink-0 z-40">
+            <header class="h-18 border-b border-gray-200 bg-white flex items-center justify-between px-6 shrink-0 z-40">
                 <div class="flex items-center gap-4">
                     <Button icon="pi pi-bars" text plain
                         class="p-0! w-8! !h-8 rounded-md! hover:!bg-gray-50 !text-gray-600" @click="toggleSidebar" />
@@ -47,7 +47,7 @@ onMounted(() => {
             </header>
 
             <main class="flex-1 overflow-y-auto">
-                <div class="p-4 lg:p-4">
+                <div class="p-2 lg:p-2">
                     <slot />
                 </div>
             </main>
