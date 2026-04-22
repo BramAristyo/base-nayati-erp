@@ -63,8 +63,8 @@ const Noir = definePreset(Aura, {
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     resolve: (name) => resolvePageComponent(
-        `./Pages/${name}.vue`,
-        import.meta.glob<DefineComponent>('./Pages/**/*.vue')
+        `./pages/${name}.vue`,
+        import.meta.glob<DefineComponent>('./pages/**/*.vue')
     ),
     progress: {
         color: '#4B5563',

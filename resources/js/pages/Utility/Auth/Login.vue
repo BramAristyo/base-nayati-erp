@@ -24,8 +24,7 @@ const submit = () => {
         <div class="hidden lg:flex relative w-1/2 bg-surface-900 overflow-hidden text-white">
             <img src="https://picsum.photos/seed/inox/1920/1080" alt="Background"
                 class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-
+            <div class="absolute inset-0 bg-linear-to-t from-black/80 to-transparent"></div>
             <div class="relative z-10 flex flex-col justify-end p-12 w-full h-full">
                 <div class="max-w-xl">
                     <h1 class="text-4xl lg:text-5xl font-bold mb-4 leading-tight">
@@ -69,7 +68,7 @@ const submit = () => {
                             input-class="w-full px-4 py-3 rounded-xl border-surface-200 hover:border-primary-400 focus:ring-primary-500"
                             class="w-full" autocomplete="current-password" />
                         <small v-if="form.errors.password" class="text-red-500 font-medium">{{ form.errors.password
-                        }}</small>
+                            }}</small>
                     </div>
 
                     <div class="flex items-center justify-between mt-1">
