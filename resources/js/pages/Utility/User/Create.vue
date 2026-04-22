@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
 import UserForm from '@/components/Users/UserForm.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import Button from 'primevue/button';
+import type { StoreUserRequest } from '@/types/utility/user.types';
+import { Head, useForm } from '@inertiajs/vue3';
 
 const form = useForm<StoreUserRequest>({
     name: '',
@@ -22,17 +22,13 @@ const submit = () => {
 </script>
 
 <template>
-
     <Head title="Create User" />
 
     <AppLayout>
-        <div class="max-w-4xl mx-auto">
-            <div class="flex items-center justify-between mb-8">
-                <div>
-                    <h1 class="text-2xl font-bold text-black uppercase tracking-tight">Create New User</h1>
-                    <p class="text-xs text-gray-500 font-medium italic">Register a new system user and assign
-                        permissions.</p>
-                </div>
+        <div class="space-y-10">
+            <div class="flex flex-col gap-1">
+                <h1 class="text-xl font-bold text-black uppercase tracking-tight">Create New User</h1>
+                <p class="text-xs text-gray-500 font-medium italic">Register a new system user and assign permissions.</p>
             </div>
 
             <UserForm :form="form" @submit="submit" />

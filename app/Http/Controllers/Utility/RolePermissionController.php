@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Utility;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\BasicPaginateRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -75,6 +76,55 @@ class RolePermissionController extends Controller
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return back()->with('error', 'Error while loading roles.');
+        }
+    }
+
+    public function show($id)
+    {
+        try {
+            $role = Role::query()
+                ->with('permissions')
+                ->findOrFail($id);
+
+            return inertia('Utility/RolePermission/Show', [
+                'role' => $role
+            ]);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return back()->with('error', 'Error while loading role.');
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'permissions' => 'required|array',
+            ]);
+
+            $role = Role::findOrFail($id);
+            $role->update($validated);
+
+            $role->syncPermissions($validated['permissions']);
+
+            return redirect()->route('utility.roles.paginate')->with('success', 'Role updated successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return back()->with('error', 'Failed to update role.');
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $role = Role::findOrFail($id);
+            $role->delete();
+
+            return redirect()->route('utility.roles.paginate')->with('success', 'Role deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return back()->with('error', 'Failed to delete role.');
         }
     }
 }

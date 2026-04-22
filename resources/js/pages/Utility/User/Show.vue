@@ -2,8 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import UserForm from '@/components/Users/UserForm.vue';
 import type { ShowUser, UpdateUserRequest } from '@/types/utility/user.types';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import Button from 'primevue/button';
+import { Head, useForm } from '@inertiajs/vue3';
 
 const props = defineProps<{
     user: ShowUser;
@@ -30,17 +29,13 @@ const submit = () => {
 </script>
 
 <template>
-
     <Head :title="`User: ${user.name}`" />
 
     <AppLayout>
-        <div class="max-w-4xl mx-auto">
-            <div class="flex items-center justify-between mb-8">
-                <div>
-                    <h1 class="text-2xl font-bold text-black uppercase tracking-tight">Edit User</h1>
-                    <p class="text-xs text-gray-500 font-medium italic">Update user credentials, permissions, and
-                        account status.</p>
-                </div>
+        <div class="space-y-10">
+            <div class="flex flex-col gap-1">
+                <h1 class="text-xl font-bold text-black uppercase tracking-tight">Edit User</h1>
+                <p class="text-xs text-gray-500 font-medium italic">Update user credentials, permissions, and account status.</p>
             </div>
 
             <UserForm :form="form" :is-edit="true" @submit="submit" />

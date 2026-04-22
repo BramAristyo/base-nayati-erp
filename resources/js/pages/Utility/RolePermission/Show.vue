@@ -4,8 +4,8 @@ import { Head } from '@inertiajs/vue3';
 </script>
 
 <template>
-    <Head title="Create Role" />
+    <Head title="Role Details" />
     <AppLayout>
-        <div>Create Role Page</div>
+        <div>Role Details Page</div>
     </AppLayout>
 </template>

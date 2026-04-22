@@ -33,6 +33,13 @@ Route::middleware('auth')->prefix('utility')->name('utility.')->group(function (
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::get('/users/show/{id}', [UserController::class, 'show'])->name('users.show');
     Route::post('/users/update/{id}', [UserController::class, 'update'])->name('users.update');
+
+    Route::get('/roles', [RolePermissionController::class, 'paginate'])->name('roles.paginate');
+    Route::get('/roles/create', [RolePermissionController::class, 'create'])->name('roles.create');
+    Route::post('/roles', [RolePermissionController::class, 'store'])->name('roles.store');
+    Route::get('/roles/show/{id}', [RolePermissionController::class, 'show'])->name('roles.show');
+    Route::post('/roles/update/{id}', [RolePermissionController::class, 'update'])->name('roles.update');
+    Route::delete('/roles/delete/{id}', [RolePermissionController::class, 'delete'])->name('roles.delete');
 });
 
 
