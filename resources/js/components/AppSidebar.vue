@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import IconField from 'primevue/iconfield';
-import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 
 const props = defineProps<{
     collapsed: boolean
@@ -20,13 +19,14 @@ interface MenuItem {
 }
 
 const searchQuery = ref('');
+const page = usePage();
 
 const menus = ref<MenuItem[]>([
     { label: 'Dashboard', icon: 'pi pi-objects-column', route: 'dashboard' },
     {
         label: 'Logistics',
         icon: 'pi pi-truck',
-        isOpen: true,
+        isOpen: false,
         items: [
             { label: 'Warehouse', route: 'dashboard' },
             { label: 'Inventory', route: 'dashboard' },
@@ -42,6 +42,22 @@ const menus = ref<MenuItem[]>([
         ]
     }
 ]);
+
+const isRouteActive = (routeName?: string) => {
+    if (!routeName) return false;
+    return route().current(routeName);
+};
+
+const syncExpandedState = () => {
+    menus.value.forEach(menu => {
+        if (menu.items) {
+            const hasActiveChild = menu.items.some(child => isRouteActive(child.route));
+            if (hasActiveChild) {
+                menu.isOpen = true;
+            }
+        }
+    });
+};
 
 const toggleSubMenu = (clickedMenu: MenuItem) => {
     if (props.collapsed) {
@@ -84,19 +100,19 @@ const filteredMenus = computed(() => {
     }, []);
 });
 
-const isRouteActive = (routeName?: string) => {
-    if (!routeName) {
-        return false;
-    }
+watch(() => page.url, () => {
+    syncExpandedState();
+}, { immediate: true });
 
-    return usePage().url.startsWith(route(routeName));
-};
+onMounted(() => {
+    syncExpandedState();
+});
 </script>
 
 <template>
     <aside
         class="border-r border-gray-200 bg-gray-50/80 flex flex-col h-screen sticky top-0 shrink-0 transition-all duration-300 ease-in-out z-50"
-        :class="[props.collapsed ? 'w-20' : 'w-72']">
+        :class="[props.collapsed ? 'w-16' : 'w-64']">
         <div class="p-4 flex flex-col h-full overflow-hidden">
             <div class="flex items-center gap-3 mb-5 h-10 overflow-hidden whitespace-nowrap px-1"
                 :class="[props.collapsed ? 'justify-center' : '']">
@@ -113,6 +129,7 @@ const isRouteActive = (routeName?: string) => {
             <div v-if="!props.collapsed" class="mb-5 transition-opacity duration-300">
                 <IconField>
                     <InputText v-model="searchQuery" placeholder="Search Menu..."
+                        size="small"
                         class="w-full! py-2! text-sm! bg-white border-gray-300! text-gray-900! rounded-md! focus:ring-1! focus:ring-gray-300! transition-all shadow-sm placeholder:text-gray-400!" />
                 </IconField>
             </div>
