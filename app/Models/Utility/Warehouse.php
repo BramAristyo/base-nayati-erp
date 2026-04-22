@@ -9,6 +9,8 @@ use App\Models\Utility\User;
 #[Fillable(['name', 'code', 'branch_code', 'is_active'])]
 class Warehouse extends Model
 {
+    protected $appends = ['display_name'];
+
     public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_warehouse')

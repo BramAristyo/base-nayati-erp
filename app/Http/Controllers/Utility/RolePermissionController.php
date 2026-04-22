@@ -14,8 +14,8 @@ class RolePermissionController extends Controller
             $roles = Role::all();
 
             return $this->successResponse(
-                'Roles fetched successfully',
                 $roles,
+                'Roles fetched successfully',
                 200
             );
         } catch (\Exception $e) {

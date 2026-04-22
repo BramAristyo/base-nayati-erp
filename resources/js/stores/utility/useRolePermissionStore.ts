@@ -12,7 +12,8 @@ export const useRolePermissionStore = defineStore('rolePermission', () => {
     const isFetchingRoles = ref<boolean>(false);
     const isFetchingPermissions = ref<boolean>(false);
 
-    const fetchAllRoles = async () => {
+    const fetchAllRoles = async (force: boolean = false) => {
+        if (!force && roles.value.length > 0) return;
         isFetchingRoles.value = true;
         try {
             const response: any = await http.get(route('api.utility.roles.all'));

@@ -10,7 +10,8 @@ export const useWarehouseStore = defineStore('warehouse', () => {
     const warehouses = ref<Warehouse[]>([]);
     const isFetching = ref<boolean>(false);
 
-    const fetchAll = async () => {
+    const fetchAll = async (force: boolean = false) => {
+        if (!force && warehouses.value.length > 0) return;
         isFetching.value = true;
         try {
             const response: any = await http.get(route('api.utility.warehouses.all'));

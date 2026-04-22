@@ -7,4 +7,9 @@ export interface Warehouse {
     display_name?: string;
     created_at?: string;
     updated_at?: string;
+    pivot?: {
+        user_id: number;
+        warehouse_id: number;
+        is_active: number;
+    };
 }

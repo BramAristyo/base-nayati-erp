@@ -121,10 +121,57 @@ class UserController extends Controller
         }
     }
 
+    public function create()
+    {
+        try {
+            return inertia('Utility/User/Create');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return back()->with('error', 'Error while loading user data.');
+        }
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'approver_name' => 'string|max:255',
+            'approver_title' => 'string|max:255',
+            'branch_code' => 'required|string|max:5',
+            'position' => 'required|string|max:255',
+            'is_active' => 'required|boolean',
+            'roles' => 'required|array',
+            'warehouses' => 'array',
+        ]);
+
+        try {
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'approver_name' => $validated['approver_name'],
+                'approver_title' => $validated['approver_title'],
+                'branch_code' => $validated['branch_code'],
+                'position' => $validated['position'],
+                'is_active' => $validated['is_active'],
+                'password' => Hash::make('password'), // Default password
+                'is_password_changed' => false,
+            ]);
+
+            $user->syncRoles($validated['roles']);
+            $user->warehouses()->sync($validated['warehouses']);
+
+            return redirect()->route('utility.users.paginate')->with('success', 'User created successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return back()->with('error', 'Failed to create user.')->withInput();
+        }
+    }
+
     public function show($id)
     {
         try {
-            $user = User::with('roles', 'warehouses')->findOrFail($id);
+            $user = User::with(['roles', 'warehouses'])->findOrFail($id);
             return inertia('Utility/User/Show', [
                 'user' => $user,
             ]);
@@ -134,13 +181,44 @@ class UserController extends Controller
         }
     }
 
-    public function create()
+    public function update(Request $request, $id)
     {
+        $user = User::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'approver_name' => 'string|max:255',
+            'approver_title' => 'string|max:255',
+            'branch_code' => 'required|string|max:50',
+            'position' => 'required|string|max:255',
+            'is_active' => 'required|boolean',
+            'roles' => 'required|array',
+            'warehouses' => 'array',
+        ]);
+
         try {
-            return inertia('Utility/User/Create');
+            $user->update([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'approver_name' => $validated['approver_name'],
+                'approver_title' => $validated['approver_title'],
+                'branch_code' => $validated['branch_code'],
+                'position' => $validated['position'],
+                'is_active' => $validated['is_active'],
+            ]);
+
+            if ($request->filled('password')) {
+                $user->update(['password' => Hash::make($request->password)]);
+            }
+
+            $user->syncRoles($validated['roles']);
+            $user->warehouses()->sync($validated['warehouses']);
+
+            return redirect()->route('utility.users.paginate')->with('success', 'User updated successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-            return back()->with('error', 'Error while loading user data.');
+            return back()->with('error', 'Failed to update user.');
         }
     }
 

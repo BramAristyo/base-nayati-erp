@@ -1,4 +1,6 @@
 import type { PaginatedResponse } from '../common/paginate.types';
+import type { Warehouse } from './warehouse.types';
+import type { Role, Permission } from './role-permissions.types';
 
 export interface User {
     id: number;
@@ -13,6 +15,32 @@ export interface User {
     created_at: string;
     updated_at: string;
     is_password_changed: number;
+    roles?: Role[];
+    permissions?: Permission[];
+    warehouses?: Warehouse[];
+}
+
+export interface ShowUser extends User {
+    roles: Role[];
+    warehouses: Warehouse[];
+}
+
+export interface StoreUserRequest {
+    name: string;
+    email: string;
+    approver_name: string;
+    approver_title: string;
+    branch_code: string;
+    position: string;
+    roles: string[]; // Role names
+    warehouses: number[]; // Warehouse IDs
+    is_active: number;
+}
+
+export interface UpdateUserRequest extends Partial<StoreUserRequest> {
+    id: number;
+    password?: string;
+    password_confirmation?: string;
 }
 
 export type PaginatedUsers = PaginatedResponse<User>;

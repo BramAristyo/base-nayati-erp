@@ -29,8 +29,10 @@ Route::middleware('auth')->prefix('auth')->name('auth.')->group(function (){
 
 Route::middleware('auth')->prefix('utility')->name('utility.')->group(function (){
     Route::get('/users', [UserController::class, 'paginate'])->name('users.paginate');
-    Route::get('/users/show/{id}', [UserController::class, 'show'])->name('users.show');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::get('/users/show/{id}', [UserController::class, 'show'])->name('users.show');
+    Route::post('/users/update/{id}', [UserController::class, 'update'])->name('users.update');
 });
 
 

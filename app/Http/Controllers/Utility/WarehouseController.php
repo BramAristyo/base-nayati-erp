@@ -15,8 +15,8 @@ class WarehouseController extends Controller
             $warehouses = Warehouse::active()->get();
 
             return $this->successResponse(
-                'Warehouses fetched successfully',
                 $warehouses,
+                'Warehouses fetched successfully',
                 200
             );
         } catch (Exception $e) {
