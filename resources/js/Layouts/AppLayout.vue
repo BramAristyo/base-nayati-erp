@@ -37,62 +37,35 @@ watch(() => page.props.flash, (flash: any) => {
         <AppSidebar v-model:collapsed="isSidebarCollapsed" />
 
         <div class="flex-1 flex flex-col min-w-0 bg-white">
-            <header class="h-18 border-b border-gray-200 bg-white flex items-center justify-between px-6 shrink-0 z-40">
+            <header
+                class="h-14 border-b border-gray-100 bg-white/80! backdrop-blur-md! flex items-center justify-between px-6 shrink-0 z-40 sticky top-0">
                 <div class="flex items-center gap-4">
                     <Button icon="pi pi-bars" text plain
-                        class="p-0! w-8! h-8! rounded-md! hover:bg-gray-50! text-gray-600!" @click="toggleSidebar" />
+                        class="p-0! w-8! h-8! rounded-md! hover:bg-gray-100! text-gray-500!" @click="toggleSidebar" />
                     <div class="h-4 w-px bg-gray-200 hidden sm:block"></div>
-                    <h1 class="text-[10px] font-bold text-gray-800 uppercase tracking-[0.2em] hidden sm:block">Inox
+                    <h1 class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] hidden sm:block">Inox
                         Management System</h1>
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <div class="flex-col text-right hidden sm:flex">
-                        <span class="text-sm font-bold text-black ">
+                <div
+                    class="flex items-center gap-3 px-2 py-1 hover:bg-gray-50! rounded-lg! transition-colors! cursor-pointer!">
+                    <div class="flex flex-col text-right hidden sm:flex">
+                        <span class="text-sm font-bold text-gray-900 leading-tight">
                             {{ authStore.user?.name ?? 'Inox User' }}
                         </span>
-                        <span class="text-sm text-gray-600 font-medium  max-w-[180px]">
+                        <span class="text-[11px] text-gray-500 font-medium tracking-tight">
                             {{ authStore.user?.email ?? 'admin@inox.co.id' }}
                         </span>
                     </div>
                     <Avatar :label="authStore.user?.name ? authStore.user.name.charAt(0).toUpperCase() : 'U'"
                         shape="circle"
-                        class="bg-gray-100! text-gray-950! text-[10px]! font-bold! w-10! h-10! border border-gray-200 shadow-sm" />
+                        class="bg-gray-100! text-gray-900! text-xs! font-bold! w-9! h-9! border border-gray-200 shadow-sm!" />
                 </div>
             </header>
 
-            <main class="flex-1 overflow-y-auto">
-                <div class="p-2 lg:p-2">
-                    <slot />
-                </div>
+            <main class="flex-1 overflow-y-auto p-6 lg:p-10">
+                <slot />
             </main>
         </div>
     </div>
 </template>
-
-<style>
-/* body {
-    @apply antialiased bg-white text-gray-950;
-} */
-
-::selection {
-    background-color: #e5e7eb;
-    color: #000000;
-}
-
-::-webkit-scrollbar {
-    width: 5px;
-}
-
-/* ::-webkit-scrollbar-track {
-    @apply bg-transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400;
-} */
-</style>

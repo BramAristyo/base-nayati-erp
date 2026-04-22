@@ -52,8 +52,8 @@ const submit = () => {
                     <div class="flex flex-col gap-2">
                         <label for="email" class="text-sm font-semibold text-surface-900">Email</label>
                         <InputText id="email" v-model="form.email" type="email" placeholder="Enter your email"
-                            class="w-full px-4 py-3 rounded-xl border-none bg-surface-100/50 hover:bg-surface-200/50 focus:ring-1 focus:ring-primary-500 transition-all duration-200"
-                            :invalid="!!form.errors.email" autocomplete="email" />
+                            class="w-full px-4 py-3  bg-surface-100/50 hover:bg-surface-200/50 focus:ring-1 focus:ring-primary-500 transition-all duration-200"
+                            :invalid="!!form.errors.email" autocomplete="email" size="small" />
                         <small v-if="form.errors.email" class="text-red-500 font-medium">{{ form.errors.email }}</small>
                     </div>
 
@@ -63,9 +63,9 @@ const submit = () => {
                         <Password id="password" v-model="form.password" placeholder="••••••••" :toggleMask="true"
                             :feedback="false" :invalid="!!form.errors.password"
                             input-class="w-full px-4 py-3 rounded-xl border-none bg-surface-100/50 hover:bg-surface-200/50 focus:ring-1 focus:ring-primary-500 transition-all duration-200"
-                            class="w-full" autocomplete="current-password" />
+                            class="w-full" autocomplete="current-password" size="small" />
                         <small v-if="form.errors.password" class="text-red-500 font-medium">{{ form.errors.password
-                            }}</small>
+                        }}</small>
                     </div>
 
                     <div class="flex items-center justify-between mt-1">

@@ -14,6 +14,9 @@ Route::middleware(['auth', 'check_password_changed'])->get('/dashboard', functio
 Route::middleware('auth')->group(function () {
     Route::get('/change-password', [\App\Http\Controllers\Utility\UserController::class, 'showChangePasswordForm'])->name('user.change-password');
     Route::post('/change-password', [\App\Http\Controllers\Utility\UserController::class, 'changePassword'])->name('user.change-password.post');
+    
+    Route::get('/settings', [\App\Http\Controllers\Utility\UserController::class, 'showSettingForm'])->name('user.settings');
+    Route::post('/settings', [\App\Http\Controllers\Utility\UserController::class, 'updateSetting'])->name('user.settings.post');
 });
 
 Route::middleware('auth')->prefix('auth')->name('auth.')->group(function (){

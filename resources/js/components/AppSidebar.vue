@@ -163,10 +163,13 @@ const isRouteActive = (routeName?: string) => {
             </nav>
 
             <div class="pt-4 border-t border-gray-200 mt-auto space-y-0.5">
-                <Link v-tooltip.right="props.collapsed ? 'Settings' : null" href="#"
+                <Link v-tooltip.right="props.collapsed ? 'Settings' : null" :href="route('user.settings')"
                     class="flex items-center gap-3 px-2.5 py-2 rounded-md transition-all group text-gray-800 hover:text-black hover:bg-gray-100/50"
-                    :class="[props.collapsed ? 'justify-center' : '']">
-                    <i class="pi pi-cog text-base text-gray-600 group-hover:text-black"></i>
+                    :class="[
+                        isRouteActive('user.settings') ? 'bg-white shadow-sm border-gray-100 text-black font-bold' : '',
+                        props.collapsed ? 'justify-center' : ''
+                    ]">
+                    <i :class="['pi pi-cog text-base', isRouteActive('user.settings') ? 'text-black' : 'text-gray-600 group-hover:text-black']"></i>
                     <span v-if="!props.collapsed" class="text-sm font-semibold tracking-wide">Settings</span>
                 </Link>
                 <Link v-tooltip.right="props.collapsed ? 'Log out' : null" :href="route('logout')" method="post"
