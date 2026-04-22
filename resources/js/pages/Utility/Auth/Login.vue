@@ -22,7 +22,7 @@ const submit = () => {
     <div class="min-h-screen flex w-full bg-surface-50">
         <!-- Left Side: Background Image (Hidden on smaller screens) -->
         <div class="hidden lg:flex relative w-1/2 bg-surface-900 overflow-hidden text-white">
-            <img src="/images/bg.jpg" alt="Background"
+            <img src="/images/bg.webp" alt="Background"
                 class="absolute inset-0 w-full h-full object-cover  mix-blend-overlay" />
             <div class="absolute inset-0 bg-linear-to-t from-black/40 to-transparent"></div>
             <div class="relative z-10 flex flex-col justify-end p-12 w-full h-full">
@@ -65,7 +65,7 @@ const submit = () => {
                             input-class="w-full px-4 py-3 rounded-xl border-none bg-surface-100/50 hover:bg-surface-200/50 focus:ring-1 focus:ring-primary-500 transition-all duration-200"
                             class="w-full" autocomplete="current-password" />
                         <small v-if="form.errors.password" class="text-red-500 font-medium">{{ form.errors.password
-                        }}</small>
+                            }}</small>
                     </div>
 
                     <div class="flex items-center justify-between mt-1">

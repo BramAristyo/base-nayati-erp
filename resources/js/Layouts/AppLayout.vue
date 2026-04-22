@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useAuthStore } from '@/stores/utility/useAuthStore';
-import AppSidebar from '@/components/AppSidebar.vue';
 import Avatar from 'primevue/avatar';
 import Button from 'primevue/button';
+import { ref, onMounted } from 'vue';
+import AppSidebar from '@/components/AppSidebar.vue';
+import { useAuthStore } from '@/stores/utility/useAuthStore';
 
 const authStore = useAuthStore();
 const isSidebarCollapsed = ref(false);
@@ -22,10 +22,10 @@ onMounted(() => {
         <AppSidebar :collapsed="isSidebarCollapsed" />
 
         <div class="flex-1 flex flex-col min-w-0 bg-white">
-            <header class="h-14 border-b border-gray-200 bg-white flex items-center justify-between px-6 shrink-0 z-40">
+            <header class="h-20 border-b border-gray-200 bg-white flex items-center justify-between px-6 shrink-0 z-40">
                 <div class="flex items-center gap-4">
                     <Button icon="pi pi-bars" text plain
-                        class="!p-0 !w-8 !h-8 !rounded-md hover:!bg-gray-50 !text-gray-600" @click="toggleSidebar" />
+                        class="p-0! w-8! !h-8 rounded-md! hover:!bg-gray-50 !text-gray-600" @click="toggleSidebar" />
                     <div class="h-4 w-[1px] bg-gray-200 hidden sm:block"></div>
                     <h1 class="text-[10px] font-bold text-gray-800 uppercase tracking-[0.2em] hidden sm:block">Inox
                         Management System</h1>
@@ -33,16 +33,16 @@ onMounted(() => {
 
                 <div class="flex items-center gap-4">
                     <div class="flex flex-col text-right hidden sm:flex">
-                        <span class="text-xs font-bold text-black ">
+                        <span class="text-sm font-bold text-black ">
                             {{ authStore.user?.name ?? 'Inox User' }}
                         </span>
-                        <span class="text-[10px] text-gray-600 font-medium  max-w-[180px]">
+                        <span class="text-sm text-gray-600 font-medium  max-w-[180px]">
                             {{ authStore.user?.email ?? 'admin@inox.co.id' }}
                         </span>
                     </div>
                     <Avatar :label="authStore.user?.name ? authStore.user.name.charAt(0).toUpperCase() : 'U'"
                         shape="circle"
-                        class="!bg-gray-100 !text-gray-950 !text-[10px] !font-bold !w-8 !h-8 border border-gray-200 shadow-sm" />
+                        class="!bg-gray-100 !text-gray-950 !text-[10px] !font-bold !w-10 !h-10 border border-gray-200 shadow-sm" />
                 </div>
             </header>
 
