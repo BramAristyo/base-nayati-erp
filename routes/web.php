@@ -7,9 +7,19 @@ Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::middleware('auth')->get('/dashboard', function () {
+Route::middleware(['auth', 'check_password_changed'])->get('/dashboard', function () {
     return inertia('Utility/Dashboard');
 })->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/change-password', [\App\Http\Controllers\Utility\UserController::class, 'showChangePasswordForm'])->name('user.change-password');
+    Route::post('/change-password', [\App\Http\Controllers\Utility\UserController::class, 'changePassword'])->name('user.change-password.post');
+});
+
+Route::middleware('auth')->prefix('auth')->name('auth.')->group(function (){
+    Route::post('/change-password', [AuthController::class, 'changePassword'])->name('change-password');
+    Route::post('/is-password-changed', [AuthController::class, 'isPasswordChanged'])->name('is-password-changed');
+});
 
 Route::middleware('auth')->prefix('api')->name('api.')->group(function (){
     Route::get('/me', [AuthController::class, 'me'])->name('me');

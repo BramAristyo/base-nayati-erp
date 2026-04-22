@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email','approver_name', 'approver_title', 'branch_code', 'position', 'is_active', 'password'])]
+#[Fillable(['name', 'email','approver_name', 'approver_title', 'branch_code', 'position', 'is_active', 'password', 'is_password_changed'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -28,5 +28,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isPasswordChanged(): bool
+    {
+        return (bool) $this->is_password_changed;
     }
 }

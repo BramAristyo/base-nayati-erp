@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import Avatar from 'primevue/avatar';
 import Button from 'primevue/button';
-import { ref, onMounted } from 'vue';
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
+import { ref, onMounted, watch } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import AppSidebar from '@/components/AppSidebar.vue';
 import { useAuthStore } from '@/stores/utility/useAuthStore';
 
 const authStore = useAuthStore();
+const toast = useToast();
+const page = usePage();
 const isSidebarCollapsed = ref(false);
 
 const toggleSidebar = () => {
@@ -15,10 +20,20 @@ const toggleSidebar = () => {
 onMounted(() => {
     authStore.fetchUser();
 });
+
+watch(() => page.props.flash, (flash: any) => {
+    if (flash?.success) {
+        toast.add({ severity: 'success', summary: 'Success', detail: flash.success, life: 3000 });
+    }
+    if (flash?.error) {
+        toast.add({ severity: 'error', summary: 'Error', detail: flash.error, life: 3000 });
+    }
+}, { deep: true, immediate: true });
 </script>
 
 <template>
     <div class="flex h-screen bg-white text-gray-950 overflow-hidden font-sans">
+        <Toast />
         <AppSidebar v-model:collapsed="isSidebarCollapsed" />
 
         <div class="flex-1 flex flex-col min-w-0 bg-white">

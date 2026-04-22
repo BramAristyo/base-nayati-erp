@@ -112,9 +112,8 @@ const isRouteActive = (routeName?: string) => {
 
             <div v-if="!props.collapsed" class="mb-5 transition-opacity duration-300">
                 <IconField>
-                    <InputIcon class="pi pi-search text-gray-600!" style="font-size: 11px" />
-                    <InputText v-model="searchQuery" placeholder="Search..."
-                        class="w-full! py-2! pl-8! text-sm! bg-white border-gray-300! text-gray-900! rounded-md! focus:ring-1! focus:ring-gray-300! transition-all shadow-sm placeholder:text-gray-400!" />
+                    <InputText v-model="searchQuery" placeholder="Search Menu..."
+                        class="w-full! py-2! text-sm! bg-white border-gray-300! text-gray-900! rounded-md! focus:ring-1! focus:ring-gray-300! transition-all shadow-sm placeholder:text-gray-400!" />
                 </IconField>
             </div>
 

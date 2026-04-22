@@ -1,10 +1,10 @@
 import { createInertiaApp } from '@inertiajs/vue3';
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
-import Material from '@primeuix/themes/material';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createPinia } from 'pinia';
 import PrimeVue from 'primevue/config';
+import ToastService from 'primevue/toastservice';
 import Tooltip from 'primevue/tooltip';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
@@ -81,6 +81,7 @@ createInertiaApp({
                     },
                 },
             })
+            .use(ToastService)
             .directive('tooltip', Tooltip)
             .use(pinia)
             .use(ZiggyVue)
