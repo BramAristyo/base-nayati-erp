@@ -44,21 +44,18 @@ const menus = ref<MenuItem[]>([
 ]);
 
 const toggleSubMenu = (clickedMenu: MenuItem) => {
-    // Jika sidebar sedang mengecil, buka sidebar terlebih dahulu
     if (props.collapsed) {
         emit('update:collapsed', false);
     }
 
     const currentState = clickedMenu.isOpen;
 
-    // Logika Exclusive Open: Tutup semua menu terlebih dahulu
     menus.value.forEach(menu => {
         if (menu.items) {
             menu.isOpen = false;
         }
     });
 
-    // Toggle menu yang diklik
     clickedMenu.isOpen = !currentState;
 };
 
@@ -78,7 +75,7 @@ const filteredMenus = computed(() => {
         if (matchesLabel || (filteredChildren && filteredChildren.length > 0)) {
             acc.push({
                 ...menu,
-                isOpen: true, // Buka otomatis saat mencari
+                isOpen: true,
                 items: matchesLabel ? menu.items : filteredChildren
             });
         }
@@ -101,11 +98,10 @@ const isRouteActive = (routeName?: string) => {
         class="border-r border-gray-200 bg-gray-50/80 flex flex-col h-screen sticky top-0 shrink-0 transition-all duration-300 ease-in-out z-50"
         :class="[props.collapsed ? 'w-20' : 'w-72']">
         <div class="p-4 flex flex-col h-full overflow-hidden">
-            <!-- Brand Area -->
             <div class="flex items-center gap-3 mb-5 h-10 overflow-hidden whitespace-nowrap px-1"
                 :class="[props.collapsed ? 'justify-center' : '']">
                 <img src="/images/logo_ima.png" alt="Inox Logo"
-                    class="w-auto object-contain flex-shrink-0 transition-all duration-300"
+                    class="w-auto object-contain shrink-0 transition-all duration-300"
                     :class="[props.collapsed ? 'h-9' : 'h-7']" />
                 <div v-if="!props.collapsed" class="flex flex-col min-w-0 transition-opacity duration-300">
                     <span class="font-bold text-black leading-none text-sm tracking-tight">Inox ERP</span>
@@ -114,19 +110,16 @@ const isRouteActive = (routeName?: string) => {
                 </div>
             </div>
 
-            <!-- Search Area -->
             <div v-if="!props.collapsed" class="mb-5 transition-opacity duration-300">
                 <IconField>
-                    <InputIcon class="pi pi-search !text-gray-600" style="font-size: 11px" />
+                    <InputIcon class="pi pi-search text-gray-600!" style="font-size: 11px" />
                     <InputText v-model="searchQuery" placeholder="Search..."
-                        class="!w-full !py-2 !pl-8 !text-sm !bg-white !border-gray-300 !text-gray-900 !rounded-md focus:!ring-1 focus:!ring-gray-300 transition-all shadow-sm placeholder:!text-gray-400" />
+                        class="w-full! py-2! pl-8! text-sm! bg-white border-gray-300! text-gray-900! rounded-md! focus:ring-1! focus:ring-gray-300! transition-all shadow-sm placeholder:text-gray-400!" />
                 </IconField>
             </div>
 
-            <!-- Navigation Menu -->
             <nav class="flex-1 space-y-0.5 overflow-y-auto no-scrollbar">
                 <div v-for="menu in filteredMenus" :key="menu.label" class="space-y-0.5">
-                    <!-- Parent Link (Tanpa Anak) -->
                     <template v-if="!menu.items">
                         <Link v-tooltip.right="props.collapsed ? menu.label : null"
                             :href="menu.route ? route(menu.route) : '#'"
@@ -142,7 +135,6 @@ const isRouteActive = (routeName?: string) => {
                         </Link>
                     </template>
 
-                    <!-- Parent Button (Dengan Anak) -->
                     <template v-else>
                         <button v-tooltip.right="props.collapsed ? menu.label : null" @click="toggleSubMenu(menu)"
                             class="w-full flex items-center gap-3 px-2.5 py-2 rounded-md transition-all group text-gray-800 hover:text-black hover:bg-gray-100/50"
@@ -158,7 +150,6 @@ const isRouteActive = (routeName?: string) => {
                                 :class="{ 'rotate-180': menu.isOpen }"></i>
                         </button>
 
-                        <!-- Child Links -->
                         <div v-show="!props.collapsed && menu.isOpen"
                             class="ml-4 border-l border-gray-200 pl-3 space-y-0.5 my-0.5">
                             <Link v-for="child in menu.items" :key="child.label"
@@ -172,7 +163,6 @@ const isRouteActive = (routeName?: string) => {
                 </div>
             </nav>
 
-            <!-- Bottom Actions -->
             <div class="pt-4 border-t border-gray-200 mt-auto space-y-0.5">
                 <Link v-tooltip.right="props.collapsed ? 'Settings' : null" href="#"
                     class="flex items-center gap-3 px-2.5 py-2 rounded-md transition-all group text-gray-800 hover:text-black hover:bg-gray-100/50"

@@ -25,14 +25,14 @@ onMounted(() => {
             <header class="h-18 border-b border-gray-200 bg-white flex items-center justify-between px-6 shrink-0 z-40">
                 <div class="flex items-center gap-4">
                     <Button icon="pi pi-bars" text plain
-                        class="p-0! w-8! !h-8 rounded-md! hover:!bg-gray-50 !text-gray-600" @click="toggleSidebar" />
-                    <div class="h-4 w-[1px] bg-gray-200 hidden sm:block"></div>
+                        class="p-0! w-8! h-8! rounded-md! hover:bg-gray-50! text-gray-600!" @click="toggleSidebar" />
+                    <div class="h-4 w-px bg-gray-200 hidden sm:block"></div>
                     <h1 class="text-[10px] font-bold text-gray-800 uppercase tracking-[0.2em] hidden sm:block">Inox
                         Management System</h1>
                 </div>
 
                 <div class="flex items-center gap-4">
-                    <div class="flex flex-col text-right hidden sm:flex">
+                    <div class="flex-col text-right hidden sm:flex">
                         <span class="text-sm font-bold text-black ">
                             {{ authStore.user?.name ?? 'Inox User' }}
                         </span>
@@ -42,7 +42,7 @@ onMounted(() => {
                     </div>
                     <Avatar :label="authStore.user?.name ? authStore.user.name.charAt(0).toUpperCase() : 'U'"
                         shape="circle"
-                        class="!bg-gray-100 !text-gray-950 !text-[10px] !font-bold !w-10 !h-10 border border-gray-200 shadow-sm" />
+                        class="bg-gray-100! text-gray-950! text-[10px]! font-bold! w-10! h-10! border border-gray-200 shadow-sm" />
                 </div>
             </header>
 
@@ -56,11 +56,9 @@ onMounted(() => {
 </template>
 
 <style>
-@reference "tailwindcss";
-
-body {
+/* body {
     @apply antialiased bg-white text-gray-950;
-}
+} */
 
 ::selection {
     background-color: #e5e7eb;
@@ -71,7 +69,7 @@ body {
     width: 5px;
 }
 
-::-webkit-scrollbar-track {
+/* ::-webkit-scrollbar-track {
     @apply bg-transparent;
 }
 
@@ -81,5 +79,5 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-400;
-}
+} */
 </style>
