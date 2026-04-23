@@ -38,6 +38,7 @@ const menus = ref<MenuItem[]>([
         items: [
             { label: 'User Management', route: 'utility.users.paginate', permission: 'utility.user.view' },
             { label: 'Role & Permissions', route: 'utility.roles.paginate', permission: 'utility.role.view' },
+            { label: 'Monitoring', route: 'utility.audit-trails.paginate', permission: 'utility.audit-trail.view' },
         ]
     }
 ]);
@@ -199,7 +200,7 @@ onMounted(() => {
                                 <i :class="[menu.icon, 'text-base text-gray-600 group-hover:text-black']"></i>
                                 <span v-if="!collapsed" class="text-sm font-semibold tracking-wide whitespace-nowrap">{{
                                     menu.label
-                                    }}</span>
+                                }}</span>
                             </div>
                             <i v-if="!collapsed"
                                 class="pi pi-chevron-down text-[10px] text-gray-600 transition-transform duration-200"
