@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Cache;
-use Spatie\Permission\Models\Permission;
+use App\Models\Utility\Permission;
 
 class PermissionSeeder extends Seeder
 {
@@ -14,55 +14,30 @@ class PermissionSeeder extends Seeder
 
         $permissions = [
             // ── MASTER ────────────────────────────────────────
-            'master.menu',
-
             'master.department.view',
-            'master.department.create',
-            'master.department.edit',
-            'master.department.delete',
-
             'master.branch.view',
             'master.currency.view',
             'master.customer.view',
             'master.delivery-term.view',
-
             'master.employee.view',
-            'master.employee.create',
-            'master.employee.edit',
-            'master.employee.delete',
-
             'master.supplier.view',
-            'master.supplier.create',
-            'master.supplier.edit',
-            'master.supplier.delete',
-
             'master.product.view',
-            'master.product.create',
-            'master.product.edit',
-            'master.product.delete',
-
-            'master.product.variant.view',
-            'master.product.variant.create',
-            'master.product.variant.edit',
-            'master.product.variant.delete',
 
             // ── PURCHASING — REQUEST ───────────────────────────
-            'purchasing.menu',
-
-            'purchasing.request.view',
-            'purchasing.request.create',
-            'purchasing.request.edit',
-            'purchasing.request.delete',
-            'purchasing.request.print',
-            'purchasing.request.export',
+            'purchasing.purchase-request.view',
+            'purchasing.purchase-request.create',
+            'purchasing.purchase-request.edit',
+            'purchasing.purchase-request.delete',
+            'purchasing.purchase-request.print',
+            'purchasing.purchase-request.export',
 
             // ── PURCHASING — ORDER ─────────────────────────────
-            'purchasing.order.view',
-            'purchasing.order.create',
-            'purchasing.order.edit',
-            'purchasing.order.delete',
-            'purchasing.order.print',
-            'purchasing.order.export',
+            'purchasing.purchase-order.view',
+            'purchasing.purchase-order.create',
+            'purchasing.purchase-order.edit',
+            'purchasing.purchase-order.delete',
+            'purchasing.purchase-order.print',
+            'purchasing.purchase-order.export',
 
             // ── PURCHASING — RECEIVING ─────────────────────────
             'purchasing.receiving.view',
@@ -74,13 +49,19 @@ class PermissionSeeder extends Seeder
             'purchasing.receiving.export',
 
             // ── PURCHASING — APPROVAL ──────────────────────────
-            'purchasing.approval.view',
-            'purchasing.approval.purchase-request',
-            'purchasing.approval.purchase-order',
-            'purchasing.approval.receiving',
+            'approval.purchase-request.view',
+            'approval.purchase-request.approve',
+            'approval.purchase-request.reject',
+
+            'approval.purchase-order.view',
+            'approval.purchase-order.approve',
+            'approval.purchase-order.reject',
+
+            'approval.receiving.view',
+            'approval.receiving.approve',
+            'approval.receiving.reject',
 
             // ── SALES ─────────────────────────────────────────
-            'sales.menu',
 
             'sales.order.view',
             'sales.order.create',
@@ -118,12 +99,10 @@ class PermissionSeeder extends Seeder
             'sales.invoice.export',
 
             // ── REPORTS ────────────────────────────────────────
-            'reports.menu',
-            'reports.purchasing',
+            'reports.purchasing.view',
+            'reports.purchasing.export',
 
             // ── UTILITY ───────────────────────────────────────
-            'utility.menu',
-
             'utility.user.view',
             'utility.user.create',
             'utility.user.edit',
@@ -134,16 +113,23 @@ class PermissionSeeder extends Seeder
             'utility.role.edit',
             'utility.role.delete',
 
-            'utility.menu.view',
-            'utility.menu.create',
-            'utility.menu.edit',
-            'utility.menu.delete',
-
             'utility.activity-log.view',
         ];
 
-        foreach ($permissions as $permission) {
-            Permission::query()->firstOrCreate(['name' => $permission]);
+        foreach ($permissions as $slug) {
+            $parts = explode('.', $slug);
+            $module = ucfirst(array_shift($parts)); 
+            $action = count($parts) > 0 ? ucfirst(array_pop($parts)) : 'Menu'; 
+            $subModule = count($parts) > 0 ? ucwords(str_replace('-', ' ', implode(' ', $parts))) : null;
+            
+            Permission::query()->firstOrCreate(
+                ['slug' => $slug],
+                [
+                    'module' => $module,
+                    'sub_module' => $subModule,
+                    'action' => $action
+                ]
+            );
         }
     }
 }

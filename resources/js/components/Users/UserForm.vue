@@ -126,10 +126,9 @@ onMounted(async () => {
             <div class="flex flex-col gap-1.5">
                 <label for="roles" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Roles</label>
                 <MultiSelect id="roles" v-model="form.roles" :options="roleStore.roles" optionLabel="name"
-                    optionValue="name" placeholder="Select Roles" size="small" :invalid="!!form.errors.roles"
-                    class="w-full!" :loading="roleStore.isFetchingRoles" filter showClear />
-                <small v-if="form.errors.roles" class="text-[10px] text-red-600 font-bold">{{ form.errors.roles
-                }}</small>
+                    optionValue="slug" placeholder="Select Roles" size="small" :invalid="!!form.errors.roles" class="w-full!"
+                    :loading="roleStore.isFetchingRoles" filter showClear />
+                <small v-if="form.errors.roles" class="text-[10px] text-red-600 font-bold">{{ form.errors.roles }}</small>
             </div>
 
             <div class="flex flex-col gap-1.5">

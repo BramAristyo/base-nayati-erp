@@ -2,20 +2,19 @@
 
 namespace App\Models\Utility;
 
+use App\Traits\HasPermission;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'email','approver_name', 'approver_title', 'branch_code', 'position', 'is_active', 'password', 'is_password_changed'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    use HasRoles;
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasPermission;
 
     /**
      * Get the attributes that should be cast.
@@ -50,4 +49,14 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_role');
+    }
+
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'user_permission')
+                    ->withPivot('is_denied');
+    }
 }

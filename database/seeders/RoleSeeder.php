@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Cache;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use App\Models\Utility\Permission;
+use App\Models\Utility\Role;
 
 class RoleSeeder extends Seeder
 {
@@ -13,17 +13,20 @@ class RoleSeeder extends Seeder
     {
         Cache::flush();
     
-        $baseRoles = [
-            'admin',
-            'user',
-        ];
+        $admin = Role::query()->firstOrCreate(
+            ['slug' => 'admin'],
+            ['name' => 'Administrator', 'description' => 'Full access to all features']
+        );
 
-        foreach ($baseRoles as $role) {
-            Role::query()->firstOrCreate(['name' => $role]);
-        }
+        Role::query()->firstOrCreate(
+            ['slug' => 'user'],
+            ['name' => 'Regular User', 'description' => 'Standard access']
+        );
         
         $permissions = Permission::all();
 
-        Role::findByName('admin')->givePermissionTo($permissions);
+        if ($admin) {
+            $admin->permissions()->sync($permissions->pluck('id')->toArray());
+        }
     }
 }

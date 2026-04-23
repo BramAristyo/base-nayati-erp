@@ -39,12 +39,12 @@ const submit = () => {
             <form @submit.prevent="submit" class="max-w-4xl space-y-10">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
                     <div class="flex flex-col gap-1.5">
-                        <label for="name" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Full
-                            Name</label>
+                        <label for="name" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Name
+                            (unchangeable)</label>
                         <InputText id="name" v-model="form.name" size="small" class="w-full!"
-                            :invalid="!!form.errors.name" />
+                            :invalid="!!form.errors.name" disabled />
                         <small v-if="form.errors.name" class="text-[10px] text-red-600 font-bold">{{ form.errors.name
-                        }}</small>
+                            }}</small>
                     </div>
 
                     <div class="flex flex-col gap-1.5">
@@ -53,7 +53,7 @@ const submit = () => {
                         <InputText id="email" v-model="form.email" type="email" size="small" class="w-full!"
                             :invalid="!!form.errors.email" />
                         <small v-if="form.errors.email" class="text-[10px] text-red-600 font-bold">{{ form.errors.email
-                        }}</small>
+                            }}</small>
                     </div>
                 </div>
 

@@ -49,17 +49,15 @@ class UserMigrateSeeder extends Seeder
                 }
 
                 if ($legacyUser->super === 'T') {
-                    $roleExists = DB::table('model_has_roles')
-                        ->where('model_id', $userId)
-                        ->where('model_type', 'App\Models\User')
+                    $roleExists = DB::table('user_role')
+                        ->where('user_id', $userId)
                         ->where('role_id', 1)
                         ->exists();
 
                     if (! $roleExists) {
-                        DB::table('model_has_roles')->insert([
+                        DB::table('user_role')->insert([
                             'role_id' => 1,
-                            'model_type' => 'App\Models\User',
-                            'model_id' => $userId,
+                            'user_id' => $userId,
                         ]);
                     }
                 }

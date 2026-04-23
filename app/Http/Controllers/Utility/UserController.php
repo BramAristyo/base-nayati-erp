@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Utility;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\BasicPaginateRequest;
+use App\Models\Utility\Role;
 use App\Models\Utility\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -154,11 +155,11 @@ class UserController extends Controller
                 'branch_code' => $validated['branch_code'],
                 'position' => $validated['position'],
                 'is_active' => $validated['is_active'],
-                'password' => Hash::make('password'), // Default password
+                'password' => Hash::make('password'),
                 'is_password_changed' => false,
             ]);
 
-            $user->syncRoles($validated['roles']);
+            $user->roles()->sync(Role::whereIn('slug', $validated['roles'])->pluck('id'));
             $user->warehouses()->sync($validated['warehouses']);
 
             return redirect()->route('utility.users.paginate')->with('success', 'User created successfully.');
@@ -171,7 +172,7 @@ class UserController extends Controller
     public function show($id)
     {
         try {
-            $user = User::with(['roles', 'warehouses'])->findOrFail($id);
+            $user = User::with(['roles', 'warehouses', 'permissions'])->findOrFail($id);
             return inertia('Utility/User/Show', [
                 'user' => $user,
             ]);
@@ -212,7 +213,7 @@ class UserController extends Controller
                 $user->update(['password' => Hash::make($request->password)]);
             }
 
-            $user->syncRoles($validated['roles']);
+            $user->roles()->sync(Role::whereIn('slug', $validated['roles'])->pluck('id'));
             $user->warehouses()->sync($validated['warehouses']);
 
             return redirect()->route('utility.users.paginate')->with('success', 'User updated successfully.');

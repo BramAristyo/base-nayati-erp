@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Utility;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\BasicPaginateRequest;
+use App\Models\Utility\Permission;
+use App\Models\Utility\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class RolePermissionController extends Controller
 {
@@ -49,9 +49,10 @@ class RolePermissionController extends Controller
             $roles = Role::query()
                 ->withCount('permissions')
                 ->when($request->search, function ($query) use ($request) {
-                    $query->where('name', 'like', "%{$request->search}%");
+                    $query->where('name', 'like', "%{$request->search}%")
+                          ->orWhere('slug', 'like', "%{$request->search}%");
                 })
-                ->orderBy($request->sort_by, $request->sort_order)
+                ->orderBy($request->sort_by ?? 'created_at', $request->sort_order ?? 'desc')
                 ->paginate($request->per_page)
                 ->withQueryString();
 
@@ -100,13 +101,20 @@ class RolePermissionController extends Controller
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
+                'slug' => 'required|string|max:255|unique:roles,slug,' . $id,
+                'description' => 'nullable|string',
                 'permissions' => 'required|array',
             ]);
 
             $role = Role::findOrFail($id);
-            $role->update($validated);
+            $role->update([
+                'name' => $validated['name'],
+                'slug' => $validated['slug'],
+                'description' => $validated['description'],
+            ]);
 
-            $role->syncPermissions($validated['permissions']);
+            // Sync by ID
+            $role->permissions()->sync($validated['permissions']);
 
             return redirect()->route('utility.roles.paginate')->with('success', 'Role updated successfully.');
         } catch (\Exception $e) {

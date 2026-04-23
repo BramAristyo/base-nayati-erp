@@ -16,13 +16,14 @@ export interface User {
     updated_at: string;
     is_password_changed: number;
     roles?: Role[];
-    permissions?: Permission[];
+    permissions?: (Permission & { pivot: { is_denied: boolean } })[];
     warehouses?: Warehouse[];
 }
 
 export interface ShowUser extends User {
     roles: Role[];
     warehouses: Warehouse[];
+    permissions: (Permission & { pivot: { is_denied: boolean } })[];
 }
 
 export interface StoreUserRequest {
@@ -32,7 +33,7 @@ export interface StoreUserRequest {
     approver_title: string;
     branch_code: string;
     position: string;
-    roles: string[]; // Role names
+    roles: string[]; // Role slugs
     warehouses: number[]; // Warehouse IDs
     is_active: number;
 }

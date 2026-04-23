@@ -32,11 +32,32 @@ export const useRolePermissionStore = defineStore('rolePermission', () => {
         }
     };
 
+    const fetchAllPermissions = async (force: boolean = false) => {
+        if (!force && permissions.value.length > 0) return;
+        isFetchingPermissions.value = true;
+        try {
+            const response: any = await http.get(route('api.utility.permissions.all'));
+            if (response.status) {
+                permissions.value = response.data;
+            }
+        } catch (error: any) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: error.message || 'Failed to fetch permissions',
+                life: 3000
+            });
+        } finally {
+            isFetchingPermissions.value = false;
+        }
+    };
+
     return {
         roles,
         permissions,
         isFetchingRoles,
         isFetchingPermissions,
-        fetchAllRoles
+        fetchAllRoles,
+        fetchAllPermissions
     };
 });

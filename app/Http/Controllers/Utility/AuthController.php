@@ -7,6 +7,7 @@ use App\Models\Utility\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -65,10 +66,10 @@ class AuthController extends Controller
             $userId = $user->id;
 
             $roles = Cache::remember("user_roles_{$userId}", now()->addHour(), 
-                fn () => $user->roles->pluck('name'));
+                fn () => $user->roles->pluck('slug'));
                 
             $permissions = Cache::remember("user_permissions_{$userId}", now()->addHour(),
-                fn () => $user->getAllPermissions()->pluck('name'));
+                fn () => $user->getAllPermissions()->pluck('slug'));
 
 
             return $this->successResponse([
@@ -78,7 +79,8 @@ class AuthController extends Controller
             ]);
 
         } catch (\Throwable $th) {
-            return $this->errorResponse($th->getMessage(), 500);
+            Log::error($th->getMessage());
+            return $this->errorResponse("Something went wrong", 500);
         }
     }
 
