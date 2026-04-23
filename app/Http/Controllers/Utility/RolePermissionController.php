@@ -137,7 +137,8 @@ class RolePermissionController extends Controller
                 'name' => 'required|string|max:255',
                 'slug' => 'required|string|max:255|unique:roles,slug,' . $id,
                 'description' => 'nullable|string',
-                'permissions' => 'required|array',
+                'permission_ids' => 'required|array',
+                'permission_ids.*' => 'exists:permissions,id',
             ]);
 
             $role = Role::findOrFail($id);
@@ -148,7 +149,7 @@ class RolePermissionController extends Controller
             ]);
 
             // Sync by ID
-            $role->permissions()->sync($validated['permissions']);
+            $role->permissions()->sync($validated['permission_ids']);
 
             return redirect()->route('utility.roles.paginate')->with('success', 'Role updated successfully.');
         } catch (\Exception $e) {

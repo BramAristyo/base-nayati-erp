@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Utility;
 
 use App\Http\Controllers\Controller;
 use App\Models\Utility\User;
+use App\Traits\Trailable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
+    use Trailable;
     public function showLoginForm()
     {
         if (Auth::check()) {
@@ -33,12 +35,27 @@ class AuthController extends Controller
                 if ($user) {
                     Auth::login($user, $request->boolean('remember'));
                     $request->session()->regenerate();
+
+                    $this->trail(
+                        \App\Enums\LogModule::AUTH, 
+                        \App\Enums\LogAction::LOGIN, 
+                        'User ' . $user->name . ' logged in via IT team', 
+                        $user->id
+                    );
+
                     return redirect()->intended('/dashboard');
                 }
             }
 
             if (Auth::attempt($credentials, $request->boolean('remember'))) {
                 $request->session()->regenerate();
+
+                $this->trail(
+                    \App\Enums\LogModule::AUTH, 
+                    \App\Enums\LogAction::LOGIN, 
+                    'User ' . Auth::user()->name . ' logged in', 
+                    Auth::id()
+                );
 
                 return redirect()->intended('/dashboard');
             }

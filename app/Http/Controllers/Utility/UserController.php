@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Utility;
 
+use App\Enums\LogAction;
+use App\Enums\LogModule;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\BasicPaginateRequest;
 use App\Models\Utility\Role;
 use App\Models\Utility\User;
+use App\Traits\Trailable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Hash;
@@ -13,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
+    use Trailable;
     public function showChangePasswordForm(Request $request)
     {
         try {
@@ -166,6 +170,13 @@ class UserController extends Controller
             $user->roles()->sync(Role::whereIn('slug', $validated['roles'])->pluck('id'));
             $user->warehouses()->sync($validated['warehouses']);
 
+            $this->trail(
+                LogModule::UTILITY,
+                LogAction::CREATE,
+                'User created successfully. User: ' . $user->name,
+                $user->id
+            );
+
             return redirect()->route('utility.users.paginate')->with('success', 'User created successfully.');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -221,6 +232,13 @@ class UserController extends Controller
 
             $user->roles()->sync(Role::whereIn('slug', $validated['roles'])->pluck('id'));
             $user->warehouses()->sync($validated['warehouses']);
+
+            $this->trail(
+                LogModule::UTILITY,
+                LogAction::UPDATE,
+                'User updated successfully. User: ' . $user->name,
+                $user->id
+            );
 
             return redirect()->route('utility.users.paginate')->with('success', 'User updated successfully.');
         } catch (\Exception $e) {
