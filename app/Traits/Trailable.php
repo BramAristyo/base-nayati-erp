@@ -16,7 +16,7 @@ trait Trailable
         LogAction $action,
         string $description,
         int|string|null $subjectId = null,
-        LogDetailRoute $detailRoute
+        LogDetailRoute | null $detailRoute = null
     ): void {
         try {
             AuditTrail::create([

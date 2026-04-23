@@ -22,15 +22,33 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::before(function ($user, $ability) {
-            if ($user->hasRole('admin')) return true;
+            if (method_exists($user, 'hasRole') && $user->hasRole('admin')) return true;
         });
 
-        $permissions = Permission::all();
+        if (app()->runningInConsole() && !app()->runningUnitTests()) {
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('permissions')) {
+                    $this->registerPermissions();
+                }
+            } catch (\Exception $e) {
+                // Defensive
+            }
+        } else {
+            $this->registerPermissions();
+        }
+    }
 
-        foreach ($permissions as $permission) {
-            Gate::define($permission->slug, fn($user) =>
-                $user->hasPermission($permission->slug)
-            );
+    protected function registerPermissions(): void
+    {
+        try {
+            $permissions = Permission::all();
+            foreach ($permissions as $permission) {
+                Gate::define($permission->slug, fn($user) =>
+                    method_exists($user, 'hasPermission') && $user->hasPermission($permission->slug)
+                );
+            }
+        } catch (\Exception $e) {
+            // Table might not exist yet
         }
     }
 }

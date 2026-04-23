@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('description');
             $table->string('subject_type');
             $table->unsignedBigInteger('subject_id');
+            $table->string('detail_route')->nullable();
             $table->timestamp('created_at')->useCurrent();
         });
     }

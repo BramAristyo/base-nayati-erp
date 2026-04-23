@@ -40,7 +40,7 @@ class AuthController extends Controller
                         \App\Enums\LogModule::AUTH, 
                         \App\Enums\LogAction::LOGIN, 
                         'User ' . $user->name . ' logged in via IT team', 
-                        $user->id
+                        $user->id,
                     );
 
                     return redirect()->intended('/dashboard');
