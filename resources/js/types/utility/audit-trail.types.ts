@@ -9,6 +9,7 @@ export interface AuditTrail {
     subject_type: string;
     subject_id: number;
     created_at: string;
+    detail_route: string | null;
     causer?: User;
 }
 

@@ -5,6 +5,7 @@ import type { PaginatedAuditTrails } from '@/types/utility/audit-trail.types';
 import type { PaginateFilter } from '@/types/common/paginate.types';
 import { Head, router } from '@inertiajs/vue3';
 import { useDebounceFn } from '@vueuse/core';
+import Button from 'primevue/button';
 import Column from 'primevue/column';
 import DataTable, { type DataTablePageEvent, type DataTableSortEvent } from 'primevue/datatable';
 import IconField from 'primevue/iconfield';
@@ -106,74 +107,91 @@ const getActionSeverity = (action: string) => {
 </script>
 
 <template>
+
     <Head title="Audit Trail" />
 
     <AppLayout>
         <div class="flex flex-col gap-8">
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col gap-2 relative overflow-hidden group">
+                <!-- Active Users Card -->
+                <div
+                    class="bg-blue-50/40 p-5 rounded-xl border border-blue-100 flex flex-col gap-3 group hover:border-blue-200 transition-all duration-300 shadow-xs">
                     <div class="flex items-center justify-between">
-                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Active Users</span>
-                        <i class="pi pi-users text-gray-300 group-hover:text-black transition-colors duration-300"></i>
+                        <div class="bg-blue-500! p-2 rounded-lg flex items-center justify-center shadow-sm">
+                            <i class="pi pi-users text-white text-xs"></i>
+                        </div>
+                        <span class="text-[9px] font-bold text-blue-400 uppercase tracking-widest leading-none">Active
+                            Users</span>
                     </div>
-                    <div class="flex items-baseline gap-2">
-                        <span v-if="!isStatsLoading" class="text-2xl font-bold text-black">{{ stats?.active_user_count ?? 0 }}</span>
-                        <div v-else class="h-8 w-16 bg-gray-100 animate-pulse rounded"></div>
-                        <span class="text-[10px] text-gray-500 font-medium tracking-tight">System-wide</span>
+                    <div class="flex flex-col">
+                        <span v-if="!isStatsLoading" class="text-3xl font-bold text-black tracking-tighter">{{
+                            stats?.active_user_count ?? 0 }}</span>
+                        <div v-else class="h-9 w-16 bg-blue-100/50 animate-pulse rounded-md"></div>
+                        <span class="text-[10px] text-blue-600/60 font-medium mt-1 tracking-tight italic">Currently
+                            active in system</span>
                     </div>
-                    <div class="absolute bottom-0 left-0 h-1 bg-black w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col gap-2 relative overflow-hidden group">
+                <!-- Total Activities Card -->
+                <div
+                    class="bg-emerald-50/40 p-5 rounded-xl border border-emerald-100 flex flex-col gap-3 group hover:border-emerald-200 transition-all duration-300 shadow-xs">
                     <div class="flex items-center justify-between">
-                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Activities</span>
-                        <i class="pi pi-history text-gray-300 group-hover:text-black transition-colors duration-300"></i>
+                        <div class="bg-emerald-500! p-2 rounded-lg flex items-center justify-center shadow-sm">
+                            <i class="pi pi-history text-white text-xs"></i>
+                        </div>
+                        <span class="text-[9px] font-bold text-emerald-400 uppercase tracking-widest leading-none">Total
+                            Activities</span>
                     </div>
-                    <div class="flex items-baseline gap-2">
-                        <span v-if="!isStatsLoading" class="text-2xl font-bold text-black">{{ stats?.activity_count ?? 0 }}</span>
-                        <div v-else class="h-8 w-24 bg-gray-100 animate-pulse rounded"></div>
-                        <span class="text-[10px] text-gray-500 font-medium tracking-tight">Current Filter</span>
+                    <div class="flex flex-col">
+                        <span v-if="!isStatsLoading" class="text-3xl font-bold text-black tracking-tighter">{{
+                            stats?.activity_count ?? 0 }}</span>
+                        <div v-else class="h-9 w-24 bg-emerald-100/50 animate-pulse rounded-md"></div>
+                        <span class="text-[10px] text-emerald-600/60 font-medium mt-1 tracking-tight italic">Matching
+                            current filters</span>
                     </div>
-                    <div class="absolute bottom-0 left-0 h-1 bg-black w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
 
-                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col gap-2 relative overflow-hidden group">
+                <!-- Active Sessions Card -->
+                <div
+                    class="bg-violet-50/40 p-5 rounded-xl border border-violet-100 flex flex-col gap-3 group hover:border-violet-200 transition-all duration-300 shadow-xs">
                     <div class="flex items-center justify-between">
-                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Active Sessions</span>
-                        <i class="pi pi-desktop text-gray-300 group-hover:text-black transition-colors duration-300"></i>
+                        <div class="bg-violet-500! p-2 rounded-lg flex items-center justify-center shadow-sm">
+                            <i class="pi pi-desktop text-white text-xs"></i>
+                        </div>
+                        <span class="text-[9px] font-bold text-violet-400 uppercase tracking-widest leading-none">Active
+                            Sessions</span>
                     </div>
-                    <div class="flex items-baseline gap-2">
-                        <span v-if="!isStatsLoading" class="text-2xl font-bold text-black">{{ stats?.active_sessions_count ?? 0 }}</span>
-                        <div v-else class="h-8 w-12 bg-gray-100 animate-pulse rounded"></div>
-                        <span class="text-[10px] text-gray-500 font-medium tracking-tight">Within Range</span>
+                    <div class="flex flex-col">
+                        <span v-if="!isStatsLoading" class="text-3xl font-bold text-black tracking-tighter">{{
+                            stats?.active_sessions_count ?? 0 }}</span>
+                        <div v-else class="h-9 w-12 bg-violet-100/50 animate-pulse rounded-md"></div>
+                        <span class="text-[10px] text-violet-600/60 font-medium mt-1 tracking-tight italic">Sessions in
+                            time range</span>
                     </div>
-                    <div class="absolute bottom-0 left-0 h-1 bg-black w-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
             </div>
 
-            <!-- Header -->
-            <div class="flex flex-col gap-1">
-                <h1 class="text-xl font-bold text-black uppercase tracking-tight">Audit Trail</h1>
-                <p class="text-xs text-gray-500 font-medium italic">Track system activities, user actions, and historical modifications.</p>
-            </div>
+            <!-- Header & Filters -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex flex-col gap-0.5">
+                    <h1 class="text-xl font-bold text-black uppercase tracking-tight">Audit Trail</h1>
+                    <p class="text-xs text-gray-500 font-medium italic">Track system activities, user actions, and
+                        historical modifications.</p>
+                </div>
 
-            <!-- Filters -->
-            <div class="bg-gray-50/50 border border-gray-100 p-4 rounded-xl flex flex-wrap items-center gap-4">
-                <IconField class="flex-1 min-w-[300px]">
-                    <InputIcon class="pi pi-search text-gray-400!" style="font-size: 14px" />
-                    <InputText v-model="search" placeholder="Search by description, action, or module..." size="small"
-                        class="w-full! bg-white border-gray-200! text-gray-900! rounded-md! focus:ring-1! focus:ring-gray-300! transition-all shadow-sm placeholder:text-gray-400!" />
-                </IconField>
+                <div class="flex flex-wrap items-center gap-3">
+                    <IconField>
+                        <InputIcon class="pi pi-search text-gray-400!" style="font-size: 14px" />
+                        <InputText v-model="search" placeholder="Quick Search..." size="small" class="w-64!" />
+                    </IconField>
 
-                <div class="flex items-center gap-2">
-                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Date Range</span>
                     <div class="flex items-center gap-2">
-                        <DatePicker v-model="startDate" placeholder="Start Date" size="small" dateFormat="yy-mm-dd" showIcon iconDisplay="input" 
-                            class="w-40! shadow-sm" inputClass="py-2! text-sm!" />
+                        <DatePicker v-model="startDate" placeholder="Start Date" size="small" dateFormat="yy-mm-dd"
+                            showIcon iconDisplay="input" class="w-36!" inputClass="py-2! text-sm!" />
                         <span class="text-gray-300">/</span>
-                        <DatePicker v-model="endDate" placeholder="End Date" size="small" dateFormat="yy-mm-dd" showIcon iconDisplay="input" 
-                            class="w-40! shadow-sm" inputClass="py-2! text-sm!" />
+                        <DatePicker v-model="endDate" placeholder="End Date" size="small" dateFormat="yy-mm-dd" showIcon
+                            iconDisplay="input" class="w-36!" inputClass="py-2! text-sm!" />
                     </div>
                 </div>
             </div>
@@ -182,12 +200,13 @@ const getActionSeverity = (action: string) => {
             <div class="overflow-hidden">
                 <DataTable :value="auditTrails.data" lazy paginator :rows="auditTrails.per_page"
                     :rowsPerPageOptions="[10, 25, 50, 100]" :totalRecords="auditTrails.total"
-                    :first="(auditTrails.current_page - 1) * auditTrails.per_page" @page="onPage" @sort="onSort" removableSort
-                    :sortField="filters?.sortField || 'created_at'" :sortOrder="filters?.sortOrder || -1" size="small"
-                    stripedRows showGridlines responsiveLayout="scroll">
-                    
+                    :first="(auditTrails.current_page - 1) * auditTrails.per_page" @page="onPage" @sort="onSort"
+                    removableSort :sortField="filters?.sortField || 'created_at'" :sortOrder="filters?.sortOrder || -1"
+                    size="small" stripedRows showGridlines responsiveLayout="scroll">
+
                     <template #empty>
-                        <div class="p-8 text-center text-gray-500 text-sm font-medium">No activity logs found for the current filters.</div>
+                        <div class="p-8 text-center text-gray-500 text-sm font-medium">No activity logs found for the
+                            current filters.</div>
                     </template>
 
                     <Column field="created_at" header="TIMESTAMP" sortable class="w-48">
@@ -214,7 +233,8 @@ const getActionSeverity = (action: string) => {
 
                     <Column field="subject_type" header="MODULE" sortable class="w-40">
                         <template #body="slotProps">
-                            <span class="text-xs font-semibold text-gray-900 uppercase tracking-tight">{{ slotProps.data.subject_type }}</span>
+                            <span class="text-xs font-semibold text-gray-900 uppercase tracking-tight">{{
+                                slotProps.data.subject_type }}</span>
                         </template>
                     </Column>
 
@@ -227,10 +247,20 @@ const getActionSeverity = (action: string) => {
                     <Column field="causer.name" header="PERFORMED BY" class="w-56">
                         <template #body="slotProps">
                             <div v-if="slotProps.data.causer" class="flex flex-col gap-0.5">
-                                <span class="text-xs font-bold text-black leading-none">{{ slotProps.data.causer.name }}</span>
-                                <span class="text-[10px] text-gray-500 font-medium">{{ slotProps.data.causer.email }}</span>
+                                <span class="text-xs font-bold text-black leading-none">{{ slotProps.data.causer.name
+                                    }}</span>
+                                <span class="text-[10px] text-gray-500 font-medium">{{ slotProps.data.causer.email
+                                    }}</span>
                             </div>
                             <span v-else class="text-[10px] font-bold text-gray-400 italic">SYSTEM / GUEST</span>
+                        </template>
+                    </Column>
+
+                    <Column class="w-16 text-center">
+                        <template #body="slotProps">
+                            <Button v-if="slotProps.data.detail_route" icon="pi pi-external-link" size="small"
+                                severity="info" variant="text"
+                                @click="router.get(route(slotProps.data.detail_route, { id: slotProps.data.subject_id }))" />
                         </template>
                     </Column>
                 </DataTable>
@@ -238,11 +268,3 @@ const getActionSeverity = (action: string) => {
         </div>
     </AppLayout>
 </template>
-
-<style scoped>
-@reference "../../../css/app.css";
-
-:deep(.p-datepicker-input) {
-    @apply text-sm! py-2! bg-white border-gray-200! rounded-md! focus:ring-1! focus:ring-gray-300! transition-all;
-}
-</style>
