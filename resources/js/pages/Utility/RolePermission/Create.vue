@@ -55,6 +55,13 @@ watch(() => form.name, (newName) => {
 });
 
 const submit = () => {
+    form.clearErrors();
+    
+    if (form.permission_ids.length === 0) {
+        form.setError('permission_ids', 'You must select at least one action to create a role.');
+        return;
+    }
+
     form.post(route('utility.roles.store'));
 };
 
