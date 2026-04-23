@@ -60,7 +60,6 @@ class RolePermissionController extends Controller
                 ->paginate($request->per_page)
                 ->withQueryString();
 
-            dd($roles);
             return inertia('Utility/RolePermission/Index', [
                 'roles' => $roles,
                 'filters' => [
@@ -72,6 +71,33 @@ class RolePermissionController extends Controller
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return back()->with('error', 'Error while loading roles.');
+        }
+    }
+
+    #[Middleware('can:utility.role.create')]
+    public function store(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'slug' => 'required|string|max:255|unique:roles,slug',
+                'description' => 'nullable|string',
+                'permission_ids' => 'required|array',
+                'permission_ids.*' => 'exists:permissions,id',
+            ]);
+
+            $role = Role::create([
+                'name' => $validated['name'],
+                'slug' => $validated['slug'],
+                'description' => $validated['description'],
+            ]);
+
+            $role->permissions()->sync($validated['permission_ids']);
+
+            return redirect()->route('utility.roles.paginate')->with('success', 'Role created successfully.');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return back()->with('error', 'Failed to create role.')->withInput();
         }
     }
 

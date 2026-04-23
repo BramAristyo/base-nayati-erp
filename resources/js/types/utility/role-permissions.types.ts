@@ -13,8 +13,22 @@ export interface Role {
     name: string;
     slug: string;
     description?: string;
-    permissions?: Permission[];
     permissions_count?: number;
     created_at?: string;
     updated_at?: string;
+}
+
+export interface ShowRole extends Role {
+    permissions: Permission[];
+}
+
+export interface StoreRoleRequest {
+    name: string;
+    slug: string;
+    description?: string;
+    permission_ids: number[];
+}
+
+export interface UpdateRoleRequest extends Partial<StoreRoleRequest> {
+    id: number;
 }
