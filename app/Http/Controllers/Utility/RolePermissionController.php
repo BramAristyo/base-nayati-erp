@@ -12,6 +12,8 @@ use Illuminate\Routing\Attributes\Controllers\Middleware;
 
 class RolePermissionController extends Controller
 {
+    private array $defaultIds = [1,2];
+    
     #[Middleware('can:utility.role.view')]
     public function getAllRoles()
     {
@@ -132,6 +134,10 @@ class RolePermissionController extends Controller
     #[Middleware('can:utility.role.edit')]
     public function update(Request $request, $id)
     {
+        if (in_array((int) $id, $this->defaultIds)) {
+            return back()->with('error', 'Default roles cannot be modified.');
+        }
+
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
@@ -161,6 +167,10 @@ class RolePermissionController extends Controller
     #[Middleware('can:utility.role.delete')]
     public function delete($id)
     {
+        if (in_array((int) $id, $this->defaultIds)) {
+            return back()->with('error', 'Default roles cannot be deleted.');
+        }
+
         try {
             $role = Role::findOrFail($id);
             $role->delete();

@@ -28,13 +28,19 @@ const { search, onPage, onSort } = useDataTable({
 });
 
 const onRowClick = (event: DataTableRowClickEvent) => {
+    if (event.data.id === 1) return;
     if (authStore.hasPermission('utility.role.view') || authStore.hasPermission('utility.role.edit')) {
         router.get(route('utility.roles.show', { id: event.data.id }));
     }
 };
+
+const getRowClass = (data: any) => {
+    return data.id === 1 ? 'opacity-80' : 'cursor-pointer';
+};
 </script>
 
 <template>
+
     <Head title="Role & Permissions" />
 
     <AppLayout>
@@ -50,33 +56,19 @@ const onRowClick = (event: DataTableRowClickEvent) => {
                 <div class="flex items-center gap-3">
                     <IconField>
                         <InputIcon class="pi pi-search text-gray-400!" style="font-size: 14px" />
-                        <InputText
-                            v-model="search"
-                            placeholder="Quick Search..."
-                            size="small"
-                            class="w-64! bg-white border-gray-200! text-gray-900! rounded-md! focus:ring-1! focus:ring-gray-300! shadow-sm transition-all placeholder:text-gray-400!"
-                        />
+                        <InputText v-model="search" placeholder="Quick Search..." size="small"
+                            class="w-64! bg-white border-gray-200! text-gray-900! rounded-md! focus:ring-1! focus:ring-gray-300! shadow-sm transition-all placeholder:text-gray-400!" />
                     </IconField>
                     <Link v-if="authStore.hasPermission('utility.role.create')" :href="route('utility.roles.create')">
-                        <Button
-                            icon="pi pi-plus"
-                            label="Create"
-                            size="small"
-                            class="bg-black! border-none! text-white! px-4! font-bold! uppercase! tracking-widest! rounded-md! shadow-md!"
-                        />
+                        <Button icon="pi pi-plus" label="Create" size="small"
+                            class="bg-black! border-none! text-white! px-4! font-bold! uppercase! tracking-widest! rounded-md! shadow-md!" />
                     </Link>
                 </div>
             </div>
 
             <div class="overflow-hidden">
-                <StandardDataTable
-                    :data="roles"
-                    :filters="filters"
-                    class="cursor-pointer"
-                    @page="onPage"
-                    @sort="onSort"
-                    @row-click="onRowClick"
-                >
+                <StandardDataTable :data="roles" :filters="filters" class="cursor-pointer" @page="onPage" @sort="onSort"
+                    @row-click="onRowClick">
                     <template #empty>
                         <div class="p-8 text-center text-sm font-medium text-gray-500">
                             No roles found matching your search.
@@ -90,8 +82,7 @@ const onRowClick = (event: DataTableRowClickEvent) => {
                     <Column field="permissions_count" header="PERMISSIONS" sortable>
                         <template #body="slotProps">
                             <span
-                                class="rounded-full border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-800"
-                            >
+                                class="rounded-full border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-800">
                                 {{ slotProps.data.permissions_count || 0 }} Actions
                             </span>
                         </template>

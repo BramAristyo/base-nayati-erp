@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3';
 import Accordion from 'primevue/accordion';
 import AccordionContent from 'primevue/accordioncontent';
 import AccordionHeader from 'primevue/accordionheader';
@@ -8,10 +7,11 @@ import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
-import { useConfirm } from 'primevue/useconfirm';
 import { computed, onMounted, watch } from 'vue';
 import { useRolePermissionStore } from '@/stores/utility/useRolePermissionStore';
 import type { Permission } from '@/types/utility/role-permissions.types';
+import { route } from 'ziggy-js';
+import { useCancelConfirm } from '@/composables/common/useCancelConfirm';
 
 const props = defineProps<{
     form: any; // Inertia useForm type
@@ -21,7 +21,7 @@ const props = defineProps<{
 const emit = defineEmits(['submit']);
 
 const roleStore = useRolePermissionStore();
-const confirm = useConfirm();
+const { confirmCancel } = useCancelConfirm();
 
 const groupedPermissions = computed(() => {
     const groups: Record<string, Record<string, Permission[]>> = {};
@@ -43,10 +43,32 @@ const groupedPermissions = computed(() => {
     return groups;
 });
 
+const isPermissionSelected = (id: number) => {
+    return props.form.permission_ids.includes(id);
+};
+
+const togglePermission = (id: number) => {
+    const index = props.form.permission_ids.indexOf(id);
+    if (index === -1) {
+        props.form.permission_ids.push(id);
+    } else {
+        props.form.permission_ids.splice(index, 1);
+    }
+};
+
+const selectAll = () => {
+    props.form.permission_ids = roleStore.permissions.map(p => p.id);
+};
+
+const deselectAll = () => {
+    props.form.permission_ids = [];
+};
+
 const generateSlug = (name: string) => {
     return name
         .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/[^\w ]+/g, '')
+        .replace(/ +/g, '-')
         .replace(/(^-|-$)+/g, '');
 };
 
@@ -56,28 +78,8 @@ watch(() => props.form.name, (newName) => {
     }
 });
 
-const confirmCancel = () => {
-    confirm.require({
-        message: 'Are you sure you want to cancel? Any unsaved changes will be lost.',
-        header: 'Discard Changes',
-        icon: 'pi pi-exclamation-triangle',
-        rejectLabel: 'No, stay',
-        acceptLabel: 'Yes, discard',
-        rejectProps: {
-            label: 'No, stay',
-            severity: 'secondary',
-            outlined: true,
-            size: 'small'
-        },
-        acceptProps: {
-            label: 'Yes, discard',
-            severity: 'danger',
-            size: 'small'
-        },
-        accept: () => {
-            router.get(route('utility.roles.paginate'));
-        }
-    });
+const handleCancel = () => {
+    confirmCancel(route('utility.roles.paginate'));
 };
 
 onMounted(() => {
@@ -86,81 +88,120 @@ onMounted(() => {
 </script>
 
 <template>
-    <form @submit.prevent="emit('submit')" class="max-w-4xl space-y-10">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 border-b border-gray-100 pb-10">
-            <div class="flex flex-col gap-1.5">
-                <label for="name" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Role Name</label>
-                <InputText id="name" v-model="form.name" size="small" :invalid="!!form.errors.name" class="w-full!" placeholder="e.g. Administrator" />
-                <small v-if="form.errors.name" class="text-[10px] text-red-600 font-bold">{{ form.errors.name }}</small>
-            </div>
-
-            <div class="flex flex-col gap-1.5">
-                <label for="slug" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Slug</label>
-                <InputText id="slug" v-model="form.slug" size="small" :invalid="!!form.errors.slug" class="w-full!" placeholder="role-slug" :disabled="isEdit" />
-                <small v-if="form.errors.slug" class="text-[10px] text-red-600 font-bold">{{ form.errors.slug }}</small>
-            </div>
-
-            <div class="flex flex-col gap-1.5 md:col-span-2">
-                <label for="description" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Description</label>
-                <Textarea id="description" v-model="form.description" rows="3" size="small" :invalid="!!form.errors.description" class="w-full! text-sm!" placeholder="Describe the purpose of this role..." />
-                <small v-if="form.errors.description" class="text-[10px] text-red-600 font-bold">{{ form.errors.description }}</small>
-            </div>
-        </div>
-
-        <div class="space-y-4">
-            <div class="flex items-end justify-between border-b border-gray-100 pb-4">
+    <form @submit.prevent="emit('submit')" class="flex flex-col gap-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <!-- Left Column: Primary Information -->
+            <div class="flex flex-col gap-8">
                 <div class="flex flex-col gap-1">
-                    <h2 class="text-sm font-bold text-black uppercase tracking-tight">Permissions Assignment</h2>
-                    <p class="text-[11px] text-gray-500 font-medium italic">Select the actions this role is authorized to perform across different modules.</p>
+                    <h2 class="text-sm font-bold text-black uppercase tracking-widest">Role Identity</h2>
+                    <p class="text-[11px] text-gray-500 font-medium italic">Basic identification and definition of the
+                        role.</p>
                 </div>
-                <div class="flex items-center gap-4">
-                    <div class="flex flex-col items-end">
-                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Selected</span>
-                        <span class="text-xs font-bold text-black">{{ form.permission_ids.length }} / {{ roleStore.permissions.length }} Actions</span>
+
+                <div class="flex flex-col gap-6">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[10px] font-bold text-gray-900 uppercase tracking-widest">Role Name</label>
+                        <InputText v-model="form.name" placeholder="e.g. Sales Manager" size="small"
+                            class="w-full! bg-white border-gray-300! text-gray-900! rounded-md! focus:ring-1! focus:ring-gray-300! transition-all shadow-sm placeholder:text-gray-400!"
+                            :class="{ 'border-red-500!': form.errors.name }" />
+                        <small v-if="form.errors.name" class="text-[10px] text-red-600 font-bold italic">{{
+                            form.errors.name
+                        }}</small>
                     </div>
-                    <div class="h-8 w-px bg-gray-100"></div>
-                    <div class="flex gap-2">
-                        <Button type="button" label="Select All" size="small" variant="text" 
-                            class="text-[10px]! font-bold! uppercase! tracking-widest! py-1! px-2!" 
-                            @click="form.permission_ids = roleStore.permissions.map(p => p.id)" />
-                        <Button type="button" label="Deselect All" size="small" variant="text" severity="danger"
-                            class="text-[10px]! font-bold! uppercase! tracking-widest! py-1! px-2!" 
-                            @click="form.permission_ids = []" />
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[10px] font-bold text-gray-900 uppercase tracking-widest">Role Slug</label>
+                        <InputText v-model="form.slug" placeholder="e.g. sales-manager" size="small"
+                            class="w-full! bg-gray-50 border-gray-200! text-gray-500! rounded-md! cursor-not-allowed"
+                            disabled />
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[10px] font-bold text-gray-900 uppercase tracking-widest">Description</label>
+                        <Textarea v-model="form.description" rows="4"
+                            placeholder="Briefly describe this role's purpose..." size="small"
+                            class="w-full! bg-white border-gray-300! text-gray-900! rounded-md! focus:ring-1! focus:ring-gray-300! transition-all shadow-sm placeholder:text-gray-400!" />
                     </div>
                 </div>
             </div>
 
-            <Accordion :multiple="true" class="border-none!">
-                <AccordionPanel v-for="(subModules, module) in groupedPermissions" :key="module" :value="module" class="border border-gray-100 rounded-lg! overflow-hidden mb-2">
-                    <AccordionHeader class="bg-gray-50/50! py-3! px-4! hover:bg-gray-100/50! transition-all!">
-                        <span class="text-xs font-bold uppercase tracking-widest text-gray-700">{{ module }}</span>
-                    </AccordionHeader>
-                    <AccordionContent class="p-4! border-t border-gray-50!">
-                        <div class="space-y-6">
-                            <div v-for="(perms, subModule) in subModules" :key="subModule" class="space-y-3">
-                                <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50 pb-1">{{ subModule }}</h3>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                    <div v-for="permission in perms" :key="permission.id" class="flex items-center gap-2 group">
-                                        <Checkbox v-model="form.permission_ids" :inputId="'perm-' + permission.id" :value="permission.id" size="small" class="transition-transform group-active:scale-90" />
-                                        <label :for="'perm-' + permission.id" class="text-xs font-medium text-gray-700 cursor-pointer select-none group-hover:text-black transition-colors">
-                                            {{ permission.action }}
-                                        </label>
+            <!-- Right Column: Permissions Selection -->
+            <div class="flex flex-col gap-8">
+                <div class="flex flex-col gap-1">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-sm font-bold text-black uppercase tracking-widest">Access Control Policies</h2>
+                        <span class="text-[10px] font-bold bg-black text-white px-2 py-0.5 rounded-full shadow-sm">{{
+                            form.permission_ids.length }} SELECTED</span>
+                    </div>
+                    <p class="text-[11px] text-gray-500 font-medium italic">Define which actions this role is authorized
+                        to
+                        perform.</p>
+                </div>
+
+                <div v-if="roleStore.isFetchingPermissions" class="flex flex-col gap-3">
+                    <div v-for="i in 3" :key="i" class="h-10 w-full bg-gray-100 animate-pulse rounded-md"></div>
+                </div>
+
+                <div v-else class="flex flex-col gap-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <Button label="Select All" icon="pi pi-check-square" size="small" severity="secondary"
+                            variant="text" class="text-[10px]! font-bold! uppercase! tracking-widest!"
+                            @click="selectAll" />
+                        <span class="text-gray-300">|</span>
+                        <Button label="Deselect All" icon="pi pi-stop" size="small" severity="secondary" variant="text"
+                            class="text-[10px]! font-bold! uppercase! tracking-widest!" @click="deselectAll" />
+                    </div>
+
+                    <Accordion>
+                        <AccordionPanel v-for="(subModules, module) in groupedPermissions" :key="module" :value="module"
+                            class="border border-gray-200! rounded-lg! overflow-hidden! mb-2!">
+                            <AccordionHeader class="bg-gray-50/50! py-3! px-4!">
+                                <div class="flex items-center gap-3">
+                                    <i class="pi pi-shield text-gray-400 text-xs"></i>
+                                    <span class="text-[11px] font-bold text-black uppercase tracking-widest">{{ module
+                                    }}</span>
+                                </div>
+                            </AccordionHeader>
+                            <AccordionContent class="p-0!">
+                                <div class="divide-y divide-gray-100">
+                                    <div v-for="(permissions, subModule) in subModules" :key="subModule" class="p-4">
+                                        <h4
+                                            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 italic">
+                                            {{ subModule }}</h4>
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div v-for="permission in permissions" :key="permission.id"
+                                                class="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer group"
+                                                @click="togglePermission(permission.id)">
+                                                <Checkbox :modelValue="isPermissionSelected(permission.id)"
+                                                    :binary="true" size="small"
+                                                    @click.stop="togglePermission(permission.id)" />
+                                                <div class="flex flex-col gap-0.5">
+                                                    <span class="text-xs font-bold text-gray-900 leading-none">{{
+                                                        permission.action }}</span>
+                                                    <span class="text-[10px] text-gray-500 font-medium">{{
+                                                        permission.slug
+                                                    }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </AccordionContent>
-                </AccordionPanel>
-            </Accordion>
-            <small v-if="form.errors.permission_ids" class="text-[10px] text-red-600 font-bold">{{ form.errors.permission_ids }}</small>
+                            </AccordionContent>
+                        </AccordionPanel>
+                    </Accordion>
+                    <small v-if="form.errors.permission_ids" class="text-[10px] text-red-600 font-bold italic">{{
+                        form.errors.permission_ids }}</small>
+                </div>
+            </div>
         </div>
 
-        <div class="pt-6 border-t border-gray-100 flex justify-start gap-3">
-            <Button type="submit" :label="isEdit ? 'Update Role' : 'Save Role'" :loading="form.processing"
-                class="px-8! rounded-md! text-[10px]! bg-black! border-none! text-white! font-bold! uppercase! tracking-widest! transition-all! active:scale-95!" />
-
-            <Button label="Cancel" severity="secondary" variant="text"
-                class="text-[10px]! font-bold! uppercase! tracking-widest!" @click="confirmCancel" />
+        <!-- Footer Actions -->
+        <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
+            <Button label="Discard" icon="pi pi-times" severity="secondary" variant="text" size="small"
+                class="text-[10px]! font-bold! uppercase! tracking-widest!" @click="handleCancel" />
+            <Button type="submit" :label="isEdit ? 'Update Role' : 'Create Role'" icon="pi pi-check" size="small"
+                :loading="form.processing"
+                class="bg-black! border-none! text-white! font-bold! uppercase! tracking-widest! rounded-md! px-6! shadow-md! transition-all hover:bg-gray-900!" />
         </div>
     </form>
 </template>
