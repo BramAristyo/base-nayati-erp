@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import IconField from 'primevue/iconfield';
 import InputText from 'primevue/inputtext';
-import { ref, computed, watch, onMounted } from 'vue';
 import { route } from 'ziggy-js';
+import { useSidebar } from './composables/useSidebar';
 
 const props = defineProps<{
     collapsed: boolean
@@ -11,115 +11,12 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:collapsed']);
 
-interface MenuItem {
-    label: string;
-    icon: string;
-    route?: string;
-    items?: ChildMenu[];
-    isOpen?: boolean;
-}
-
-interface ChildMenu {
-    label: string;
-    route?: string;
-}
-
-const searchQuery = ref('');
-const page = usePage();
-
-const menus = ref<MenuItem[]>([
-    { label: 'Dashboard', icon: 'pi pi-objects-column', route: 'dashboard' },
-    {
-        label: 'System',
-        icon: 'pi pi-cog',
-        isOpen: false,
-        items: [
-            { label: 'User Management', route: 'utility.users.paginate' },
-            { label: 'Permissions', route: 'dashboard' },
-        ]
-    }
-]);
-
-const isRouteActive = (routeName?: string) => {
-    if (!routeName) {
-        return false;
-    }
-
-    // Check for exact match or if the current route is a sub-route (e.g., utility.users.*)
-    const current = route().current();
-    if (!current) return false;
-
-    if (current === routeName) return true;
-
-    // Handle resource-like matching (utility.users.paginate -> utility.users.*)
-    if (routeName.endsWith('.paginate')) {
-        const base = routeName.replace('.paginate', '');
-        return current.startsWith(base);
-    }
-
-    return current.startsWith(routeName);
-};
-
-const syncExpandedState = () => {
-    menus.value.forEach(menu => {
-        if (menu.items) {
-            const hasActiveChild = menu.items.some(child => isRouteActive(child.route));
-
-            if (hasActiveChild) {
-                menu.isOpen = true;
-            }
-        }
-    });
-};
-
-const toggleSubMenu = (clickedMenu: MenuItem) => {
-    if (props.collapsed) {
-        emit('update:collapsed', false);
-    }
-
-    const currentState = clickedMenu.isOpen;
-
-    menus.value.forEach(menu => {
-        if (menu.items) {
-            menu.isOpen = false;
-        }
-    });
-
-    clickedMenu.isOpen = !currentState;
-};
-
-const filteredMenus = computed(() => {
-    if (!searchQuery.value) {
-        return menus.value;
-    }
-
-    const query = searchQuery.value.toLowerCase();
-
-    return menus.value.reduce((acc: MenuItem[], menu) => {
-        const matchesLabel = menu.label.toLowerCase().includes(query);
-        const filteredChildren = menu.items?.filter(child =>
-            child.label.toLowerCase().includes(query)
-        );
-
-        if (matchesLabel || (filteredChildren && filteredChildren.length > 0)) {
-            acc.push({
-                ...menu,
-                isOpen: true,
-                items: matchesLabel ? menu.items : filteredChildren
-            });
-        }
-
-        return acc;
-    }, []);
-});
-
-watch(() => page.url, () => {
-    syncExpandedState();
-}, { immediate: true });
-
-onMounted(() => {
-    syncExpandedState();
-});
+const {
+    searchQuery,
+    filteredMenus,
+    isRouteActive,
+    toggleSubMenu
+} = useSidebar(props, emit);
 </script>
 
 <template>
@@ -131,7 +28,7 @@ onMounted(() => {
                 :class="[props.collapsed ? 'justify-center' : '']">
                 <img src="/images/logo_ima.png" alt="Inox Logo"
                     class="w-auto object-contain shrink-0 transition-all duration-300"
-                    :class="[props.collapsed ? 'h-9' : 'h-7']" />
+                    :class="[props.collapsed ? 'h-9' : 'h-9']" />
                 <div v-if="!props.collapsed" class="flex flex-col min-w-0 transition-opacity duration-300">
                     <span class="font-bold text-black leading-none text-sm tracking-tight">Inox ERP</span>
                     <span class="text-[10px] text-gray-700 font-bold uppercase tracking-widest mt-0.5">PT Inox Metal
@@ -149,7 +46,7 @@ onMounted(() => {
             <nav class="flex-1 space-y-0.5 overflow-y-auto no-scrollbar">
                 <div v-for="menu in filteredMenus" :key="menu.label" class="space-y-0.5">
                     <template v-if="!menu.items">
-                        <Link v-tooltip.right="props.collapsed ? menu.label : null"
+                        <Link v-tooltip.right="props.collapsed ? menu.label : ''"
                             :href="menu.route ? route(menu.route) : '#'"
                             class="flex items-center gap-3 px-2.5 py-2 rounded-md transition-all group relative border border-transparent"
                             :class="[
@@ -164,7 +61,7 @@ onMounted(() => {
                     </template>
 
                     <template v-else>
-                        <button v-tooltip.right="props.collapsed ? menu.label : null" @click="toggleSubMenu(menu)"
+                        <button v-tooltip.right="props.collapsed ? menu.label : ''" @click="toggleSubMenu(menu)"
                             class="w-full flex items-center gap-3 px-2.5 py-2 rounded-md transition-all group text-gray-800 hover:text-black hover:bg-gray-100/50"
                             :class="[props.collapsed ? 'justify-center' : 'justify-between']">
                             <div class="flex items-center gap-3">
@@ -192,7 +89,7 @@ onMounted(() => {
             </nav>
 
             <div class="pt-4 border-t border-gray-200 mt-auto space-y-0.5">
-                <Link v-tooltip.right="props.collapsed ? 'Settings' : null" :href="route('user.settings')"
+                <Link v-tooltip.right="props.collapsed ? 'Settings' : ''" :href="route('user.settings')"
                     class="flex items-center gap-3 px-2.5 py-2 rounded-md transition-all group text-gray-800 hover:text-black hover:bg-gray-100/50"
                     :class="[
                         isRouteActive('user.settings') ? 'bg-white shadow-sm border-gray-100 text-black font-bold' : '',
@@ -202,7 +99,7 @@ onMounted(() => {
                         :class="['pi pi-cog text-base', isRouteActive('user.settings') ? 'text-black' : 'text-gray-600 group-hover:text-black']"></i>
                     <span v-if="!props.collapsed" class="text-sm font-semibold tracking-wide">Settings</span>
                 </Link>
-                <Link v-tooltip.right="props.collapsed ? 'Log out' : null" :href="route('logout')" method="post"
+                <Link v-tooltip.right="props.collapsed ? 'Log out' : ''" :href="route('logout')" method="post"
                     as="button"
                     class="w-full flex items-center gap-3 px-2.5 py-2 rounded-md transition-all group text-red-600 hover:text-red-700 hover:bg-red-50"
                     :class="[props.collapsed ? 'justify-center' : '']">

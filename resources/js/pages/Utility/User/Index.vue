@@ -14,6 +14,7 @@ import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
 import { ref, watch } from 'vue';
 import { useAuthStore } from '@/stores/utility/useAuthStore';
+import { route } from 'ziggy-js';
 
 const authStore = useAuthStore();
 const props = defineProps<{

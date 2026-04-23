@@ -79,7 +79,7 @@ onMounted(async () => {
                 <InputText id="email" v-model="form.email" size="small" :invalid="!!form.errors.email" class="w-full!"
                     placeholder="john@ns.inox" />
                 <small v-if="form.errors.email" class="text-[10px] text-red-600 font-bold">{{ form.errors.email
-                }}</small>
+                    }}</small>
             </div>
 
             <div class="flex flex-col gap-1.5">
@@ -89,7 +89,7 @@ onMounted(async () => {
                     optionValue="value" size="small" :invalid="!!form.errors.position" class="w-full!"
                     placeholder="Select Position" />
                 <small v-if="form.errors.position" class="text-[10px] text-red-600 font-bold">{{ form.errors.position
-                }}</small>
+                    }}</small>
             </div>
 
             <div class="flex flex-col gap-1.5">
@@ -110,7 +110,7 @@ onMounted(async () => {
                     :invalid="!!form.errors.approver_name" class="w-full!" placeholder="e.g. Jane Smith" />
                 <small v-if="form.errors.approver_name" class="text-[10px] text-red-600 font-bold">{{
                     form.errors.approver_name
-                }}</small>
+                    }}</small>
             </div>
 
             <div class="flex flex-col gap-1.5">
@@ -121,16 +121,17 @@ onMounted(async () => {
                     :invalid="!!form.errors.approver_title" class="w-full!" placeholder="e.g. Operational Director" />
                 <small v-if="form.errors.approver_title" class="text-[10px] text-red-600 font-bold">{{
                     form.errors.approver_title
-                }}</small>
+                    }}</small>
             </div>
 
             <!-- Roles and Warehouses -->
             <div class="flex flex-col gap-1.5">
                 <label for="roles" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Roles</label>
                 <MultiSelect id="roles" v-model="form.roles" :options="roleStore.roles" optionLabel="name"
-                    optionValue="slug" placeholder="Select Roles" size="small" :invalid="!!form.errors.roles" class="w-full!"
-                    :loading="roleStore.isFetchingRoles" filter showClear />
-                <small v-if="form.errors.roles" class="text-[10px] text-red-600 font-bold">{{ form.errors.roles }}</small>
+                    optionValue="slug" placeholder="Select Roles" size="small" :invalid="!!form.errors.roles"
+                    class="w-full!" :loading="roleStore.isFetchingRoles" filter showClear />
+                <small v-if="form.errors.roles" class="text-[10px] text-red-600 font-bold">{{ form.errors.roles
+                    }}</small>
             </div>
 
             <div class="flex flex-col gap-1.5">
@@ -179,11 +180,13 @@ onMounted(async () => {
 
         <!-- Submit -->
         <div class="pt-6 border-t border-gray-100 flex justify-start gap-3">
-            <Button v-if="(isEdit && authStore.hasPermission('utility.user.edit')) || (!isEdit && authStore.hasPermission('utility.user.create'))"
+            <Button
+                v-if="(isEdit && authStore.hasPermission('utility.user.edit')) || (!isEdit && authStore.hasPermission('utility.user.create'))"
                 type="submit" :label="isEdit ? 'Update User' : 'Save User'" :loading="form.processing"
                 class="px-8! rounded-md! text-[10px]! bg-black! border-none! text-white! font-bold! uppercase! tracking-widest! transition-all! active:scale-95!" />
 
             <Button label="Cancel" severity="secondary" variant="text"
+                v-if="(isEdit && authStore.hasPermission('utility.user.edit')) || (!isEdit && authStore.hasPermission('utility.user.create'))"
                 class="text-[10px]! font-bold! uppercase! tracking-widest!" @click="confirmCancel" />
         </div>
     </form>
