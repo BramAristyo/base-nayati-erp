@@ -45,15 +45,21 @@ export function useDataTable<TFilters extends PaginateFilter>(options: UseDataTa
     };
 
     const onSort = (event: any) => {
-        updateRoute({
+        performSort({
             sortField: event.sortField,
             sortOrder: event.sortOrder,
-            page: 1
         });
     };
 
     const performSearch = useDebounceFn(() => {
         updateRoute({ page: 1 });
+    }, 500);
+
+    const performSort = useDebounceFn((params: any) => {
+        updateRoute({
+            ...params,
+            page: 1
+        });
     }, 500);
 
     watch(search, () => {
