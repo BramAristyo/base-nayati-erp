@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Enums\LogAction;
+use App\Enums\LogDetailRoute;
 use App\Enums\LogModule;
 use App\Models\Utility\AuditTrail;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,7 @@ trait Trailable
         LogAction $action,
         string $description,
         int|string|null $subjectId = null,
+        LogDetailRoute $detailRoute
     ): void {
         try {
             AuditTrail::create([
@@ -23,6 +25,7 @@ trait Trailable
                 'description' => $description,
                 'subject_type'=> $module->value,
                 'subject_id'  => $subjectId,
+                'detail_route' => $detailRoute->value,
             ]);
         } catch (\Throwable $e) {
             Log::error('Trail failed: ' . $e->getMessage());

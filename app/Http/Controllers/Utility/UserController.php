@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Utility;
 
 use App\Enums\LogAction;
+use App\Enums\LogDetailRoute;
 use App\Enums\LogModule;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\BasicPaginateRequest;
@@ -174,7 +175,8 @@ class UserController extends Controller
                 LogModule::UTILITY,
                 LogAction::CREATE,
                 'User created successfully. User: ' . $user->name,
-                $user->id
+                $user->id,
+                LogDetailRoute::USER
             );
 
             return redirect()->route('utility.users.paginate')->with('success', 'User created successfully.');
@@ -237,7 +239,8 @@ class UserController extends Controller
                 LogModule::UTILITY,
                 LogAction::UPDATE,
                 'User updated successfully. User: ' . $user->name,
-                $user->id
+                $user->id,
+                LogDetailRoute::USER
             );
 
             return redirect()->route('utility.users.paginate')->with('success', 'User updated successfully.');

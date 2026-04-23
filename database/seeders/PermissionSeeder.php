@@ -113,7 +113,7 @@ class PermissionSeeder extends Seeder
             'utility.role.edit',
             'utility.role.delete',
 
-            'utility.activity-log.view',
+            'utility.audit-trail.view',
         ];
 
         foreach ($permissions as $slug) {

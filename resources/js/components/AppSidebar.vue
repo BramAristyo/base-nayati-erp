@@ -178,8 +178,7 @@ onMounted(() => {
             <nav class="flex-1 space-y-0.5 overflow-y-auto no-scrollbar">
                 <div v-for="menu in filteredMenus" :key="menu.label" class="space-y-0.5">
                     <template v-if="!menu.items">
-                        <Link v-tooltip.right="collapsed ? menu.label : ''"
-                            :href="menu.route ? route(menu.route) : '#'"
+                        <Link v-tooltip.right="collapsed ? menu.label : ''" :href="menu.route ? route(menu.route) : '#'"
                             class="flex items-center gap-3 px-2.5 py-2 rounded-md transition-all group relative border border-transparent"
                             :class="[
                                 isRouteActive(menu.route) ? 'bg-white shadow-sm border-gray-100 text-black font-bold' : 'text-gray-800 hover:text-black hover:bg-gray-100/50',
@@ -187,8 +186,8 @@ onMounted(() => {
                             ]">
                             <i
                                 :class="[menu.icon, 'text-base', isRouteActive(menu.route) ? 'text-black' : 'text-gray-600 group-hover:text-black']"></i>
-                            <span v-if="!collapsed"
-                                class="text-sm font-semibold tracking-wide whitespace-nowrap">{{ menu.label }}</span>
+                            <span v-if="!collapsed" class="text-sm font-semibold tracking-wide whitespace-nowrap">{{
+                                menu.label }}</span>
                         </Link>
                     </template>
 
@@ -198,8 +197,8 @@ onMounted(() => {
                             :class="[collapsed ? 'justify-center' : 'justify-between']">
                             <div class="flex items-center gap-3">
                                 <i :class="[menu.icon, 'text-base text-gray-600 group-hover:text-black']"></i>
-                                <span v-if="!collapsed"
-                                    class="text-sm font-semibold tracking-wide whitespace-nowrap">{{ menu.label
+                                <span v-if="!collapsed" class="text-sm font-semibold tracking-wide whitespace-nowrap">{{
+                                    menu.label
                                     }}</span>
                             </div>
                             <i v-if="!collapsed"
@@ -231,8 +230,7 @@ onMounted(() => {
                         :class="['pi pi-cog text-base', isRouteActive('user.settings') ? 'text-black' : 'text-gray-600 group-hover:text-black']"></i>
                     <span v-if="!collapsed" class="text-sm font-semibold tracking-wide">Settings</span>
                 </Link>
-                <Link v-tooltip.right="collapsed ? 'Log out' : ''" :href="route('logout')" method="post"
-                    as="button"
+                <Link v-tooltip.right="collapsed ? 'Log out' : ''" :href="route('logout')" method="post" as="button"
                     class="w-full flex items-center gap-3 px-2.5 py-2 rounded-md transition-all group text-red-600 hover:text-red-700 hover:bg-red-50"
                     :class="[collapsed ? 'justify-center' : '']">
                     <i class="pi pi-power-off text-base"></i>

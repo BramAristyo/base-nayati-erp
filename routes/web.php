@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Utility\AuthController;
+use App\Http\Controllers\Utility\MonitoringController;
 use App\Http\Controllers\Utility\RolePermissionController;
 use App\Http\Controllers\Utility\UserController;
 use App\Http\Controllers\Utility\WarehouseController;
@@ -52,5 +53,6 @@ Route::middleware('auth')->prefix('api')->name('api.')->group(function (){
         Route::get('/warehouses/all', [WarehouseController::class, 'getAll'])->name('warehouses.all');
         Route::get('/roles/all', [RolePermissionController::class, 'getAllRoles'])->name('roles.all');
         Route::get('/permissions/all', [RolePermissionController::class, 'getAllPermissions'])->name('permissions.all');
+        Route::get('/monitoring/stats', [MonitoringController::class, 'getStats'])->name('api.utility.monitoring.stats');
     });
 });
