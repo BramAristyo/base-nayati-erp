@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+import AppPageHeader from '@/components/common/AppPageHeader.vue';
 import UserForm from '@/components/Users/UserForm.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { ShowUser, UpdateUserRequest } from '@/types/utility/user.types';
+import { useToast } from 'primevue/usetoast';
 
 const props = defineProps<{
     user: ShowUser;
@@ -22,6 +24,7 @@ const form = useForm<UpdateUserRequest>({
     password: '',
     password_confirmation: ''
 });
+const toast = useToast();
 
 const submit = () => {
     form.post(route('utility.users.update', { id: props.user.id }));
@@ -34,11 +37,7 @@ const submit = () => {
 
     <AppLayout>
         <div class="space-y-10">
-            <div class="flex flex-col gap-1">
-                <h1 class="text-xl font-bold text-black uppercase tracking-tight">Edit User</h1>
-                <p class="text-xs text-gray-500 font-medium italic">Update user credentials, permissions, and account
-                    status.</p>
-            </div>
+            <AppPageHeader title="Edit User" description="Update user credentials, permissions, and account status." />
 
             <UserForm :form="form" :is-edit="true" @submit="submit" />
         </div>

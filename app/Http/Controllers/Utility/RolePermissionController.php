@@ -9,6 +9,7 @@ use App\Models\Utility\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
+use Inertia\Inertia;
 
 class RolePermissionController extends Controller
 {

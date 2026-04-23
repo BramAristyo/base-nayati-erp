@@ -7,6 +7,7 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
 import { route } from 'ziggy-js';
+import AppPageHeader from '@/components/common/AppPageHeader.vue';
 import StandardDataTable from '@/components/common/table/StandardDataTable.vue';
 import { useDataTable } from '@/composables/common/useDataTable';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -28,7 +29,10 @@ const { search, onPage, onSort } = useDataTable({
 });
 
 const onRowClick = (event: DataTableRowClickEvent) => {
-    if (event.data.id === 1) return;
+    if (event.data.id === 1) {
+return;
+}
+
     if (authStore.hasPermission('utility.role.view') || authStore.hasPermission('utility.role.edit')) {
         router.get(route('utility.roles.show', { id: event.data.id }));
     }
@@ -46,12 +50,10 @@ const getRowClass = (data: any) => {
     <AppLayout>
         <div class="flex flex-col gap-6">
             <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-xl font-bold uppercase tracking-tight text-black">Role & Permissions</h1>
-                    <p class="text-xs font-medium italic text-gray-500">
-                        Configure system roles and define access control policies.
-                    </p>
-                </div>
+                <AppPageHeader
+                    title="Role & Permissions"
+                    description="Configure system roles and define access control policies."
+                />
 
                 <div class="flex items-center gap-3">
                     <IconField>
@@ -67,8 +69,14 @@ const getRowClass = (data: any) => {
             </div>
 
             <div class="overflow-hidden">
-                <StandardDataTable :data="roles" :filters="filters" class="cursor-pointer" @page="onPage" @sort="onSort"
-                    @row-click="onRowClick">
+                <StandardDataTable
+                    :data="roles"
+                    :filters="filters"
+                    :row-class="getRowClass"
+                    @page="onPage"
+                    @sort="onSort"
+                    @row-click="onRowClick"
+                >
                     <template #empty>
                         <div class="p-8 text-center text-sm font-medium text-gray-500">
                             No roles found matching your search.

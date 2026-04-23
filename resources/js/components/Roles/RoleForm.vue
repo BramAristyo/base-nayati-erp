@@ -8,10 +8,10 @@ import Checkbox from 'primevue/checkbox';
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import { computed, onMounted, watch } from 'vue';
-import { useRolePermissionStore } from '@/stores/utility/useRolePermissionStore';
-import type { Permission } from '@/types/utility/role-permissions.types';
 import { route } from 'ziggy-js';
 import { useCancelConfirm } from '@/composables/common/useCancelConfirm';
+import { useRolePermissionStore } from '@/stores/utility/useRolePermissionStore';
+import type { Permission } from '@/types/utility/role-permissions.types';
 
 const props = defineProps<{
     form: any; // Inertia useForm type
@@ -49,6 +49,7 @@ const isPermissionSelected = (id: number) => {
 
 const togglePermission = (id: number) => {
     const index = props.form.permission_ids.indexOf(id);
+
     if (index === -1) {
         props.form.permission_ids.push(id);
     } else {

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { usePage, Link } from '@inertiajs/vue3';
+import { usePage, Link, router } from '@inertiajs/vue3';
 import Avatar from 'primevue/avatar';
 import Button from 'primevue/button';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch, computed, nextTick } from 'vue';
 import { route } from 'ziggy-js';
 import AppSidebar from '@/components/AppSidebar.vue';
 import { useAuthStore } from '@/stores/utility/useAuthStore';
@@ -21,14 +21,29 @@ const toggleSidebar = () => {
 
 authStore.fetchUser();
 
-watch(() => page.props.flash, (flash: any) => {
+const showToast = (flash: any) => {
     if (flash?.success) {
-        toast.add({ severity: 'success', summary: 'Success', detail: flash.success, life: 3000 });
+        toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: flash.success,
+            life: 3000
+        });
     }
 
     if (flash?.error) {
-        toast.add({ severity: 'error', summary: 'Error', detail: flash.error, life: 3000 });
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: flash.error,
+            life: 3000
+        });
     }
+};
+
+watch(() => page.props.flash, async (newFlash: any) => {
+    await nextTick();
+    showToast(newFlash);
 }, { deep: true, immediate: true });
 </script>
 

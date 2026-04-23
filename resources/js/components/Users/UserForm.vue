@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/utility/useAuthStore';
-import { useRolePermissionStore } from '@/stores/utility/useRolePermissionStore';
-import { useWarehouseStore } from '@/stores/utility/useWarehouseStore';
-import { route } from 'ziggy-js';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import MultiSelect from 'primevue/multiselect';
 import Select from 'primevue/select';
 import ToggleSwitch from 'primevue/toggleswitch';
 import { onMounted } from 'vue';
+import { route } from 'ziggy-js';
 import { useCancelConfirm } from '@/composables/common/useCancelConfirm';
+import { useRolePermissionStore } from '@/stores/utility/useRolePermissionStore';
+import { useWarehouseStore } from '@/stores/utility/useWarehouseStore';
 
 defineProps<{
     form: any; // Using any for Inertia useForm type

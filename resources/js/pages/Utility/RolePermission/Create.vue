@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+import AppPageHeader from '@/components/common/AppPageHeader.vue';
 import RoleForm from '@/components/Roles/RoleForm.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { StoreRoleRequest } from '@/types/utility/role-permissions.types';
@@ -25,16 +26,14 @@ const submit = () => {
 </script>
 
 <template>
-
     <Head title="Create Role" />
 
     <AppLayout>
         <div class="space-y-10">
-            <div class="flex flex-col gap-1">
-                <h1 class="text-xl font-bold text-black uppercase tracking-tight">Create New Role</h1>
-                <p class="text-xs text-gray-500 font-medium italic">Define a new system role and assign specific access
-                    permissions.</p>
-            </div>
+            <AppPageHeader
+                title="Create New Role"
+                description="Define a new system role and assign specific access permissions."
+            />
 
             <RoleForm :form="form" @submit="submit" />
         </div>

@@ -7,6 +7,7 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
 import { route } from 'ziggy-js';
+import AppPageHeader from '@/components/common/AppPageHeader.vue';
 import ActiveBadge from '@/components/common/badges/ActiveBadge.vue';
 import PositionBadge from '@/components/common/badges/PositionBadge.vue';
 import StandardDataTable from '@/components/common/table/StandardDataTable.vue';
@@ -41,12 +42,10 @@ const onRowClick = (event: DataTableRowClickEvent) => {
     <AppLayout>
         <div class="flex flex-col gap-6">
             <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-xl font-bold uppercase tracking-tight text-black">User Management</h1>
-                    <p class="text-xs font-medium italic text-gray-500">
-                        Overview of all system terminals and authorized personnel.
-                    </p>
-                </div>
+                <AppPageHeader
+                    title="User Management"
+                    description="Overview of all system terminals and authorized personnel."
+                />
 
                 <div class="flex items-center gap-3">
                     <IconField>

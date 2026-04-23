@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+import AppPageHeader from '@/components/common/AppPageHeader.vue';
 import UserForm from '@/components/Users/UserForm.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { StoreUserRequest } from '@/types/utility/user.types';
@@ -26,10 +27,10 @@ const submit = () => {
 
     <AppLayout>
         <div class="space-y-10">
-            <div class="flex flex-col gap-1">
-                <h1 class="text-xl font-bold text-black uppercase tracking-tight">Create New User</h1>
-                <p class="text-xs text-gray-500 font-medium italic">Register a new system user and assign permissions.</p>
-            </div>
+            <AppPageHeader
+                title="Create New User"
+                description="Register a new system user and assign permissions."
+            />
 
             <UserForm :form="form" @submit="submit" />
         </div>
