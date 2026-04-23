@@ -7,6 +7,7 @@ use App\Http\Requests\Common\BasicPaginateRequest;
 use App\Models\Utility\Role;
 use App\Models\Utility\User;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
@@ -99,6 +100,7 @@ class UserController extends Controller
         return redirect()->back()->with('success', 'Profile updated successfully.');
     }
 
+    #[Middleware('can:utility.user.view')]
     public function paginate(BasicPaginateRequest $request)
     {
         try {
@@ -122,6 +124,7 @@ class UserController extends Controller
         }
     }
 
+    #[Middleware('can:utility.user.create')]
     public function create()
     {
         try {
@@ -132,6 +135,7 @@ class UserController extends Controller
         }
     }
 
+    #[Middleware('can:utility.user.create')]
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -169,6 +173,7 @@ class UserController extends Controller
         }
     }
 
+    #[Middleware('can:utility.user.view')]
     public function show($id)
     {
         try {
@@ -182,6 +187,7 @@ class UserController extends Controller
         }
     }
 
+    #[Middleware('can:utility.user.edit')]
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);

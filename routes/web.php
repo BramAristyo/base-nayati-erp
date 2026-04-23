@@ -46,6 +46,7 @@ Route::middleware('auth')->prefix('utility')->name('utility.')->group(function (
 // ---------------- API ----------------
 Route::middleware('auth')->prefix('api')->name('api.')->group(function (){
     Route::get('/me', [AuthController::class, 'me'])->name('me');
+    Route::get('/me/permissions', [AuthController::class, 'getMePermissions'])->name('me.permissions');
 
     Route::prefix('utility')->name('utility.')->group(function (){
         Route::get('/warehouses/all', [WarehouseController::class, 'getAll'])->name('warehouses.all');

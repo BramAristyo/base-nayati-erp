@@ -8,9 +8,11 @@ use App\Models\Utility\Permission;
 use App\Models\Utility\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 
 class RolePermissionController extends Controller
 {
+    #[Middleware('can:utility.role.view')]
     public function getAllRoles()
     {
         try {
@@ -27,6 +29,7 @@ class RolePermissionController extends Controller
         }
     }
 
+    #[Middleware('can:utility.role.view')]
     public function getAllPermissions()
     {
         try {
@@ -70,6 +73,7 @@ class RolePermissionController extends Controller
         }
     }
 
+    #[Middleware('can:utility.role.create')]
     public function create()
     {
         try {
@@ -80,6 +84,7 @@ class RolePermissionController extends Controller
         }
     }
 
+    #[Middleware('can:utility.role.view')]
     public function show($id)
     {
         try {
@@ -96,6 +101,7 @@ class RolePermissionController extends Controller
         }
     }
 
+    #[Middleware('can:utility.role.edit')]
     public function update(Request $request, $id)
     {
         try {
@@ -123,6 +129,7 @@ class RolePermissionController extends Controller
         }
     }
 
+    #[Middleware('can:utility.role.delete')]
     public function delete($id)
     {
         try {

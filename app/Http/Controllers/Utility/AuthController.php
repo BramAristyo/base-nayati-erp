@@ -84,6 +84,22 @@ class AuthController extends Controller
         }
     }
 
+    public function getMePermissions(Request $request)
+    {
+        try {
+            $user = $request->user();
+            if (!$user) {
+                return $this->errorResponse('Unauthenticated.', 401);
+            }
+            $user->load('roles.permissions', 'permissions');
+            $permissions = $user->getAllPermissions()->pluck('slug');
+            return $this->successResponse($permissions);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return $this->errorResponse("Something went wrong", 500);
+        }
+    }
+
     public function logout(Request $request)
     {
         try {
