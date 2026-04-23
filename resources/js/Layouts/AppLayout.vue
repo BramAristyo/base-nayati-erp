@@ -19,9 +19,7 @@ const toggleSidebar = () => {
     isSidebarCollapsed.value = !isSidebarCollapsed.value;
 };
 
-onMounted(() => {
-    authStore.fetchUser();
-});
+authStore.fetchUser();
 
 watch(() => page.props.flash, (flash: any) => {
     if (flash?.success) {
@@ -36,7 +34,7 @@ watch(() => page.props.flash, (flash: any) => {
 <template>
     <div class="flex h-screen bg-white text-gray-950 overflow-hidden font-sans">
         <Toast />
-        <AppSidebar v-model:collapsed="isSidebarCollapsed" />
+        <AppSidebar v-model:collapsed="isSidebarCollapsed" v-if="authStore.isInitialized" />
 
         <div class="flex-1 flex flex-col min-w-0 bg-white">
             <header

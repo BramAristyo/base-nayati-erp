@@ -46,6 +46,7 @@ class RolePermissionController extends Controller
         }
     }
 
+    #[Middleware('can:utility.role.view')]
     public function paginate(BasicPaginateRequest $request)
     {
         try {
@@ -59,6 +60,7 @@ class RolePermissionController extends Controller
                 ->paginate($request->per_page)
                 ->withQueryString();
 
+            dd($roles);
             return inertia('Utility/RolePermission/Index', [
                 'roles' => $roles,
                 'filters' => [
