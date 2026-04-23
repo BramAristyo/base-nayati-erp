@@ -31,6 +31,15 @@ class MonitoringService
         
         $this->applyDateFilter($query, $filters, 'created_at');
 
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('description', 'like', "%{$search}%")
+                  ->orWhere('action', 'like', "%{$search}%")
+                  ->orWhere('subject_type', 'like', "%{$search}%");
+            });
+        }
+
         return $query->count();
     }
 
@@ -45,11 +54,11 @@ class MonitoringService
         $query = DB::table('sessions');
 
         if ($start) {
-            $query->where('last_activity', '>=', Carbon::parse($start)->timestamp);
+            $query->where('last_activity', '>=', Carbon::parse($start)->startOfDay()->timestamp);
         }
 
         if ($end) {
-            $query->where('last_activity', '<=', Carbon::parse($end)->timestamp);
+            $query->where('last_activity', '<=', Carbon::parse($end)->endOfDay()->timestamp);
         }
 
         return $query->count();
@@ -64,11 +73,11 @@ class MonitoringService
         $end = $filters['end_date'] ?? null;
 
         if ($start && $end) {
-            $query->whereBetween($column, [$start, $end]);
+            $query->whereBetween($column, [$start . ' 00:00:00', $end . ' 23:59:59']);
         } elseif ($start) {
-            $query->where($column, '>=', $start);
+            $query->where($column, '>=', $start . ' 00:00:00');
         } elseif ($end) {
-            $query->where($column, '<=', $end);
+            $query->where($column, '<=', $end . ' 23:59:59');
         }
     }
 }

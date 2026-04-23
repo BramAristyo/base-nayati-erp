@@ -27,6 +27,7 @@ class MonitoringController extends Controller
             $stats = $this->monitoringService->getMonitoringStats([
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
+                'search' => $request->search,
             ]);
 
             return $this->successResponse($stats, 'Monitoring stats fetched successfully');

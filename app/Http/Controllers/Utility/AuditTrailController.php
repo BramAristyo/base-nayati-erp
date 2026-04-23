@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Utility;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Common\DateRangePaginateRequest;
 use App\Http\Requests\Common\PaginateFilterRequest;
 use App\Models\Utility\AuditTrail;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
 
@@ -55,15 +55,15 @@ class AuditTrailController extends Controller
         $end = $filters['end_date'] ?? null;
 
         if ($start && $end) {
-            return $query->whereBetween($column, [$start, $end]);
+            return $query->whereBetween($column, [$start . ' 00:00:00', $end . ' 23:59:59']);
         }
 
         if ($start) {
-            return $query->where($column, '>=', $start);
+            return $query->where($column, '>=', $start . ' 00:00:00');
         }
 
         if ($end) {
-            return $query->where($column, '<=', $end);
+            return $query->where($column, '<=', $end . ' 23:59:59');
         }
 
         return $query;

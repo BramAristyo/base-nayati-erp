@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Utility\AuditTrailController;
 use App\Http\Controllers\Utility\AuthController;
 use App\Http\Controllers\Utility\MonitoringController;
 use App\Http\Controllers\Utility\RolePermissionController;
@@ -41,6 +42,8 @@ Route::middleware('auth')->prefix('utility')->name('utility.')->group(function (
     Route::get('/roles/show/{id}', [RolePermissionController::class, 'show'])->name('roles.show');
     Route::post('/roles/update/{id}', [RolePermissionController::class, 'update'])->name('roles.update');
     Route::delete('/roles/delete/{id}', [RolePermissionController::class, 'delete'])->name('roles.delete');
+
+    Route::get('/audit-trails', [AuditTrailController::class, 'paginate'])->name('audit-trails.paginate');
 });
 
 
@@ -53,6 +56,6 @@ Route::middleware('auth')->prefix('api')->name('api.')->group(function (){
         Route::get('/warehouses/all', [WarehouseController::class, 'getAll'])->name('warehouses.all');
         Route::get('/roles/all', [RolePermissionController::class, 'getAllRoles'])->name('roles.all');
         Route::get('/permissions/all', [RolePermissionController::class, 'getAllPermissions'])->name('permissions.all');
-        Route::get('/monitoring/stats', [MonitoringController::class, 'getStats'])->name('api.utility.monitoring.stats');
+        Route::get('/monitoring/stats', [MonitoringController::class, 'getStats'])->name('monitoring.stats');
     });
 });

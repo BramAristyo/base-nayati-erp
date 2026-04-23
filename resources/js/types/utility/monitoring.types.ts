@@ -7,4 +7,9 @@ export interface MonitoringStats {
 export interface MonitoringFilter {
     start_date?: string;
     end_date?: string;
+    search?: string;
+    per_page?: number;
+    page?: number;
+    sortField?: string;
+    sortOrder?: number;
 }
