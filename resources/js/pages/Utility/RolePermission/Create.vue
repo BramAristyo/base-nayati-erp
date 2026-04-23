@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import AppLayout from '@/Layouts/AppLayout.vue';
-import RoleForm from '@/components/Roles/RoleForm.vue';
-import type { StoreRoleRequest } from '@/types/utility/role-permissions.types';
 import { Head, useForm } from '@inertiajs/vue3';
+import RoleForm from '@/components/Roles/RoleForm.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import type { StoreRoleRequest } from '@/types/utility/role-permissions.types';
 
 const form = useForm<StoreRoleRequest>({
     name: '',
@@ -16,6 +16,7 @@ const submit = () => {
 
     if (form.permission_ids.length === 0) {
         form.setError('permission_ids', 'You must select at least one action to create a role.');
+
         return;
     }
 

@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { useRolePermissionStore } from '@/stores/utility/useRolePermissionStore';
-import { useWarehouseStore } from '@/stores/utility/useWarehouseStore';
-import type { StoreUserRequest, UpdateUserRequest } from '@/types/utility/user.types';
 import { Link, router } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
@@ -11,6 +8,9 @@ import ToggleSwitch from 'primevue/toggleswitch';
 import { useConfirm } from 'primevue/useconfirm';
 import { onMounted } from 'vue';
 import { useAuthStore } from '@/stores/utility/useAuthStore';
+import { useRolePermissionStore } from '@/stores/utility/useRolePermissionStore';
+import { useWarehouseStore } from '@/stores/utility/useWarehouseStore';
+import type { StoreUserRequest, UpdateUserRequest } from '@/types/utility/user.types';
 
 const props = defineProps<{
     form: any; // Using any for Inertia useForm type

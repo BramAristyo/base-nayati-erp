@@ -49,12 +49,18 @@ const isRouteActive = (routeName?: string) => {
     }
 
     const current = route().current();
-    if (!current) return false;
 
-    if (current === routeName) return true;
+    if (!current) {
+return false;
+}
+
+    if (current === routeName) {
+return true;
+}
 
     if (routeName.endsWith('.paginate')) {
         const base = routeName.replace('.paginate', '');
+
         return current.startsWith(base);
     }
 
@@ -79,7 +85,10 @@ const toggleSubMenu = (clickedMenu: MenuItem) => {
     }
 
     const targetMenu = menus.value.find(m => m.label === clickedMenu.label);
-    if (!targetMenu) return;
+
+    if (!targetMenu) {
+return;
+}
 
     const currentState = targetMenu.isOpen;
 

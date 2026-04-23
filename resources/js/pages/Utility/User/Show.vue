@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import AppLayout from '@/Layouts/AppLayout.vue';
-import UserForm from '@/components/Users/UserForm.vue';
-import type { ShowUser, UpdateUserRequest } from '@/types/utility/user.types';
 import { Head, useForm } from '@inertiajs/vue3';
+import UserForm from '@/components/Users/UserForm.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import type { ShowUser, UpdateUserRequest } from '@/types/utility/user.types';
 
 const props = defineProps<{
     user: ShowUser;

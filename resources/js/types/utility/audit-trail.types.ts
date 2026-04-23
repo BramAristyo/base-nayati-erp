@@ -1,5 +1,5 @@
-import type { User } from './user.types';
 import type { PaginatedResponse } from '../common/paginate.types';
+import type { User } from './user.types';
 
 export interface AuditTrail {
     id: number;

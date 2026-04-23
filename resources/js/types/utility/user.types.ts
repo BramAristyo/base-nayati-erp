@@ -1,6 +1,6 @@
 import type { PaginatedResponse } from '../common/paginate.types';
-import type { Warehouse } from './warehouse.types';
 import type { Role, Permission } from './role-permissions.types';
+import type { Warehouse } from './warehouse.types';
 
 export interface User {
     id: number;

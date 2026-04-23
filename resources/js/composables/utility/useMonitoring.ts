@@ -1,6 +1,6 @@
 import { ref } from 'vue';
-import http from '@/lib/http';
 import { route } from 'ziggy-js';
+import http from '@/lib/http';
 import type { MonitoringStats, MonitoringFilter } from '@/types/utility/monitoring.types';
 
 export function useMonitoring() {
@@ -11,6 +11,7 @@ export function useMonitoring() {
     const fetchStats = async (filters: MonitoringFilter = {}) => {
         isLoading.value = true;
         error.value = null;
+
         try {
             const response: any = await http.get(route('api.utility.monitoring.stats'), {
                 params: filters

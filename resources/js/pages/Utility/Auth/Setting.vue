@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
+import AppLayout from '@/Layouts/AppLayout.vue';
 
 const props = defineProps<{
     user: any;

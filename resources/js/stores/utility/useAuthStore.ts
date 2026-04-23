@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
+import { useToast } from 'primevue/usetoast';
 import { ref } from 'vue';
 import http from '@/lib/http';
 import type { User } from '@/types/utility/user.types';
-import { useToast } from 'primevue/usetoast';
 
 export const useAuthStore = defineStore('auth', () => {
     const toast = useToast();
@@ -12,7 +12,9 @@ export const useAuthStore = defineStore('auth', () => {
     const isInitialized = ref<boolean>(false);
 
     const fetchUser = async () => {
-        if (isInitialized.value) { return; }
+        if (isInitialized.value) {
+ return; 
+}
 
         try {
             const response: any = await http.get('/api/me');

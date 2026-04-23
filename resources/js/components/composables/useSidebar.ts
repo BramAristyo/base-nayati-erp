@@ -1,6 +1,7 @@
-import { ref, computed, watch, onMounted, type Ref } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { storeToRefs } from 'pinia';
+import { ref, computed, watch, onMounted  } from 'vue';
+import type {Ref} from 'vue';
 import { route } from 'ziggy-js';
 import { useAuthStore } from '@/stores/utility/useAuthStore';
 import type { MenuItem } from '../../types/common/sidebar.types';
@@ -25,15 +26,23 @@ export function useSidebar(props: { collapsed: boolean }, emit: (event: 'update:
     ]);
 
     const isRouteActive = (routeName?: string) => {
-        if (!routeName) return false;
+        if (!routeName) {
+return false;
+}
 
         const current = route().current();
-        if (!current) return false;
 
-        if (current === routeName) return true;
+        if (!current) {
+return false;
+}
+
+        if (current === routeName) {
+return true;
+}
 
         if (routeName.endsWith('.paginate')) {
             const base = routeName.replace('.paginate', '');
+
             return current.startsWith(base);
         }
 
@@ -44,6 +53,7 @@ export function useSidebar(props: { collapsed: boolean }, emit: (event: 'update:
         menus.value.forEach(menu => {
             if (menu.items) {
                 const hasActiveChild = menu.items.some(child => isRouteActive(child.route));
+
                 if (hasActiveChild) {
                     menu.isOpen = true;
                 }

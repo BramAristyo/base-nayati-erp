@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
+import { useToast } from 'primevue/usetoast';
 import { ref } from 'vue';
+import { route } from 'ziggy-js';
 import http from '@/lib/http';
 import type { Role, Permission } from '@/types/utility/role-permissions.types';
-import { route } from 'ziggy-js';
-import { useToast } from 'primevue/usetoast';
 
 export const useRolePermissionStore = defineStore('rolePermission', () => {
     const toast = useToast();
@@ -13,10 +13,15 @@ export const useRolePermissionStore = defineStore('rolePermission', () => {
     const isFetchingPermissions = ref<boolean>(false);
 
     const fetchAllRoles = async (force: boolean = false) => {
-        if (!force && roles.value.length > 0) return;
+        if (!force && roles.value.length > 0) {
+return;
+}
+
         isFetchingRoles.value = true;
+
         try {
             const response: any = await http.get(route('api.utility.roles.all'));
+
             if (response.status) {
                 roles.value = response.data;
             }
@@ -33,10 +38,15 @@ export const useRolePermissionStore = defineStore('rolePermission', () => {
     };
 
     const fetchAllPermissions = async (force: boolean = false) => {
-        if (!force && permissions.value.length > 0) return;
+        if (!force && permissions.value.length > 0) {
+return;
+}
+
         isFetchingPermissions.value = true;
+
         try {
             const response: any = await http.get(route('api.utility.permissions.all'));
+
             if (response.status) {
                 permissions.value = response.data;
             }

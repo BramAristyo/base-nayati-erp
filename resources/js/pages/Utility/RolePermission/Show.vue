@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import AppLayout from '@/Layouts/AppLayout.vue';
-import RoleForm from '@/components/Roles/RoleForm.vue';
-import type { ShowRole, UpdateRoleRequest } from '@/types/utility/role-permissions.types';
 import { Head, useForm } from '@inertiajs/vue3';
+import RoleForm from '@/components/Roles/RoleForm.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import type { ShowRole, UpdateRoleRequest } from '@/types/utility/role-permissions.types';
 
 const props = defineProps<{
     role: ShowRole;
@@ -21,6 +21,7 @@ const submit = () => {
     
     if (form.permission_ids?.length === 0) {
         form.setError('permission_ids', 'You must select at least one action for this role.');
+
         return;
     }
 

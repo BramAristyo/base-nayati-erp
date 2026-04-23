@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useRolePermissionStore } from '@/stores/utility/useRolePermissionStore';
-import type { Permission } from '@/types/utility/role-permissions.types';
 import { router } from '@inertiajs/vue3';
 import Accordion from 'primevue/accordion';
 import AccordionContent from 'primevue/accordioncontent';
@@ -12,6 +10,8 @@ import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import { useConfirm } from 'primevue/useconfirm';
 import { computed, onMounted, watch } from 'vue';
+import { useRolePermissionStore } from '@/stores/utility/useRolePermissionStore';
+import type { Permission } from '@/types/utility/role-permissions.types';
 
 const props = defineProps<{
     form: any; // Inertia useForm type
@@ -32,6 +32,7 @@ const groupedPermissions = computed(() => {
         }
 
         const subModule = permission.sub_module || 'General';
+
         if (!groups[permission.module][subModule]) {
             groups[permission.module][subModule] = [];
         }
