@@ -3,6 +3,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 import IconField from 'primevue/iconfield';
 import InputText from 'primevue/inputtext';
 import { ref, computed, watch, onMounted } from 'vue';
+import { route } from 'ziggy-js';
 
 const props = defineProps<{
     collapsed: boolean
@@ -14,8 +15,13 @@ interface MenuItem {
     label: string;
     icon: string;
     route?: string;
-    items?: MenuItem[];
+    items?: ChildMenu[];
     isOpen?: boolean;
+}
+
+interface ChildMenu {
+    label: string;
+    route?: string;
 }
 
 const searchQuery = ref('');

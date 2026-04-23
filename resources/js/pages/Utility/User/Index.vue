@@ -13,8 +13,9 @@ import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
 import { ref, watch } from 'vue';
-import { route } from 'ziggy-js';
+import { useAuthStore } from '@/stores/utility/useAuthStore';
 
+const authStore = useAuthStore();
 const props = defineProps<{
     users: PaginatedUsers;
     filters: PaginateFilter;
@@ -53,7 +54,9 @@ const onSort = (event: DataTableSortEvent) => {
 };
 
 const onRowClick = (event: DataTableRowClickEvent) => {
-    router.get(route('utility.users.show', { id: event.data.id }));
+    if (authStore.hasPermission('utility.user.view') || authStore.hasPermission('utility.user.edit')) {
+        router.get(route('utility.users.show', { id: event.data.id }));
+    }
 };
 
 const performSearch = useDebounceFn(() => {
@@ -87,7 +90,7 @@ watch(search, () => {
                         <InputText v-model="search" placeholder="Quick Search..." size="small"
                             class="w-64! bg-white border-gray-200! text-gray-900! rounded-md! focus:ring-1! focus:ring-gray-300! transition-all shadow-sm placeholder:text-gray-400!" />
                     </IconField>
-                    <Link :href="route('utility.users.create')">
+                    <Link v-if="authStore.hasPermission('utility.user.create')" :href="route('utility.users.create')">
                         <Button icon="pi pi-plus" label="Create" size="small"
                             class="bg-black! border-none! text-white! font-bold! uppercase! tracking-widest! rounded-md! px-4! shadow-md!" />
                     </Link>

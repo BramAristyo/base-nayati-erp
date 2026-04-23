@@ -10,6 +10,7 @@ import Select from 'primevue/select';
 import ToggleSwitch from 'primevue/toggleswitch';
 import { useConfirm } from 'primevue/useconfirm';
 import { onMounted } from 'vue';
+import { useAuthStore } from '@/stores/utility/useAuthStore';
 
 const props = defineProps<{
     form: any; // Using any for Inertia useForm type
@@ -20,6 +21,7 @@ const emit = defineEmits(['submit']);
 
 const roleStore = useRolePermissionStore();
 const warehouseStore = useWarehouseStore();
+const authStore = useAuthStore();
 const confirm = useConfirm();
 
 const positions = [
@@ -177,7 +179,8 @@ onMounted(async () => {
 
         <!-- Submit -->
         <div class="pt-6 border-t border-gray-100 flex justify-start gap-3">
-            <Button type="submit" :label="isEdit ? 'Update User' : 'Save User'" :loading="form.processing"
+            <Button v-if="(isEdit && authStore.hasPermission('utility.user.edit')) || (!isEdit && authStore.hasPermission('utility.user.create'))"
+                type="submit" :label="isEdit ? 'Update User' : 'Save User'" :loading="form.processing"
                 class="px-8! rounded-md! text-[10px]! bg-black! border-none! text-white! font-bold! uppercase! tracking-widest! transition-all! active:scale-95!" />
 
             <Button label="Cancel" severity="secondary" variant="text"

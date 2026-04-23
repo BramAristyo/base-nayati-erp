@@ -48,11 +48,11 @@ export const useAuthStore = defineStore('auth', () => {
     };
 
     const hasRole = (roleName: string): boolean => {
-        return roles.value.includes(roleName);
+        return Array.isArray(roles.value) && roles.value.includes(roleName);
     };
 
     const hasPermission = (permissionName: string): boolean => {
-        return permissions.value.includes(permissionName);
+        return Array.isArray(permissions.value) && permissions.value.includes(permissionName);
     };
 
     return {

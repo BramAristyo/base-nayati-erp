@@ -66,10 +66,10 @@ class AuthController extends Controller
             $userId = $user->id;
 
             $roles = Cache::remember("user_roles_{$userId}", now()->addHour(), 
-                fn () => $user->roles->pluck('slug'));
+                fn () => $user->roles->pluck('slug')->toArray());
                 
             $permissions = Cache::remember("user_permissions_{$userId}", now()->addHour(),
-                fn () => $user->getAllPermissions()->pluck('slug'));
+                fn () => $user->getAllPermissions()->pluck('slug')->toArray());
 
 
             return $this->successResponse([
