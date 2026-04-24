@@ -3,6 +3,7 @@
 use App\Http\Controllers\Purchasing\PurchaseOrderController;
 use App\Http\Controllers\Purchasing\PurchaseRequestController;
 use App\Http\Controllers\Purchasing\ReceivingController;
+use App\Http\Controllers\Purchasing\LandedCostController;
 use Illuminate\Support\Facades\Route;
 
 // --- Purchase Request ---
@@ -24,4 +25,11 @@ Route::middleware('auth')->prefix('purchasing/receivings')->name('purchasing.rec
     Route::get('/', [ReceivingController::class, 'paginate'])->name('index');
     Route::get('/export', [ReceivingController::class, 'export'])->name('export');
     Route::get('/{id}', [ReceivingController::class, 'show'])->name('show');
+});
+
+// --- Landed Cost ---
+Route::middleware('auth')->prefix('purchasing/landed-costs')->name('purchasing.landed-costs.')->group(function () {
+    Route::get('/', [LandedCostController::class, 'paginate'])->name('index');
+    Route::get('/export', [LandedCostController::class, 'export'])->name('export');
+    Route::get('/{id}', [LandedCostController::class, 'show'])->name('show');
 });

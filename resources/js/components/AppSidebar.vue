@@ -39,6 +39,7 @@ const menus = ref<MenuItem[]>([
             { label: 'Purchase Request', route: 'purchasing.purchase-requests.index', permission: 'purchasing.purchase-request.view' },
             { label: 'Purchase Order', route: 'purchasing.purchase-orders.index', permission: 'purchasing.purchase-order.view' },
             { label: 'Receiving', route: 'purchasing.receivings.index', permission: 'purchasing.receiving.view' },
+            { label: 'Landed Cost', route: 'purchasing.landed-costs.index', permission: 'purchasing.receiving.view' },
         ]
     },
     {
