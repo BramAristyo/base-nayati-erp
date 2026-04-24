@@ -22,13 +22,15 @@ const { search, onPage, onSort } = useMasterDatatable({
 </script>
 
 <template>
+
     <Head title="Master Delivery Term" />
     <AppLayout>
         <div class="flex flex-col gap-6">
             <div class="flex flex-col gap-4 md:flex-row md:items-center justify-between px-1">
                 <div class="flex flex-col">
-                    <h1 class="text-xl font-bold uppercase tracking-tight text-foreground">Master Delivery Term</h1>
-                    <p class="text-xs font-medium italic text-muted-foreground">Manage shipment and delivery conditions.</p>
+                    <h1 class="text-xl font-bold uppercase tracking-tight text-foreground">Delivery Term</h1>
+                    <p class="text-xs font-medium italic text-muted-foreground">Manage shipment and delivery conditions.
+                    </p>
                 </div>
 
                 <IconField>

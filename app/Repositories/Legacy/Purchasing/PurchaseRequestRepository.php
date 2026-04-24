@@ -20,6 +20,11 @@ class PurchaseRequestRepository
         'employee_name' => 'e.ket',
     ];
 
+    private array $inventoryTypes = [
+        'Finish Goods' => 'FG',
+        'Raw Materials' => 'RM',
+    ];
+
     public function paginate(int $perPage = 25, array $filters = []): LengthAwarePaginator
     {
         $query = $this->baseQuery();
@@ -97,6 +102,29 @@ class PurchaseRequestRepository
         if (isset($filters['sort_by'], $this->sortableFields[$filters['sort_by']])) {
             $filters['sort_by'] = $this->sortableFields[$filters['sort_by']];
         }
+
+        // Index Filter
+        $query->when($filters['status'] ?? null, function ($q, $status) {
+            if ($status === 'approved') {
+                $q->where('hpr.approve', 'Y');
+            } elseif ($status === 'not_approved') {
+                $q->where('hpr.approve', '!=', 'Y');
+            }
+        });
+
+        // Approval History Filter
+        $query->when($filters['approval_status'] ?? null, function ($q, $status) {
+            if ($status === 'pending') {
+                $q->where('hpr.approve', '!=', 'Y');
+            } elseif ($status === 'processed') {
+                $q->where('hpr.approve', 'Y')
+                    ->whereNotExists(function ($subquery) {
+                        $subquery->select(DB::raw(1))
+                            ->from('dpo')
+                            ->whereRaw('dpo.no_pr = hpr.nota');
+                    });
+            }
+        });
 
         $this->applySortFilter($query, $filters, 'hpr.idhpr', 'desc');
     }

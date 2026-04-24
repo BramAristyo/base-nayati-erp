@@ -23,13 +23,15 @@ const { search, onPage, onSort } = useMasterDatatable({
 </script>
 
 <template>
+
     <Head title="Master Branch" />
     <AppLayout>
         <div class="flex flex-col gap-6">
             <div class="flex flex-col gap-4 md:flex-row md:items-center justify-between px-1">
                 <div class="flex flex-col">
-                    <h1 class="text-xl font-bold uppercase tracking-tight text-foreground">Master Branch</h1>
-                    <p class="text-xs font-medium italic text-muted-foreground">Manage organization branch locations.</p>
+                    <h1 class="text-xl font-bold uppercase tracking-tight text-foreground">Branch</h1>
+                    <p class="text-xs font-medium italic text-muted-foreground">Manage organization branch locations.
+                    </p>
                 </div>
 
                 <IconField>

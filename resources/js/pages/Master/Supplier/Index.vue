@@ -23,12 +23,13 @@ const { search, onPage, onSort } = useMasterDatatable({
 </script>
 
 <template>
+
     <Head title="Master Supplier" />
     <AppLayout>
         <div class="flex flex-col gap-6">
             <div class="flex flex-col gap-4 md:flex-row md:items-center justify-between px-1">
                 <div class="flex flex-col">
-                    <h1 class="text-xl font-bold uppercase tracking-tight text-foreground">Master Supplier</h1>
+                    <h1 class="text-xl font-bold uppercase tracking-tight text-foreground">Supplier</h1>
                     <p class="text-xs font-medium italic text-muted-foreground">Manage vendor and supplier records.</p>
                 </div>
 
