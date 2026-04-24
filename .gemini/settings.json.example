@@ -1,0 +1,24 @@
+{
+    "mcpServers": {
+        "laravel-tools": {
+            "command": "php",
+            "args": ["artisan", "mcp:serve"]
+        },
+        "project-files": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-filesystem", "./"]
+        },
+        "primevue": {
+            "command": "npx",
+            "args": ["-y", "@primevue/mcp"]
+        },
+        "mysql-dev": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@f4ww4z/mcp-mysql-server",
+                "mysql://root:Stg_R00t_P4ss!@192.168.109.3:3307/db_inox_development"
+            ]
+        }
+    }
+}
