@@ -9,6 +9,7 @@ use App\Http\Requests\Utility\Role\UpdateRoleRequest;
 use App\Services\Utility\RolePermissionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
 use Inertia\Response;
 
@@ -20,6 +21,7 @@ class RolePermissionController extends Controller
         protected RolePermissionService $rolePermissionService
     ) {}
 
+    #[Middleware('can:utility.role.view')]
     public function paginate(BasicPaginateRequest $request): Response|RedirectResponse
     {
         try {
@@ -35,6 +37,7 @@ class RolePermissionController extends Controller
         }
     }
 
+    #[Middleware('can:utility.role.create')]
     public function create(): Response|RedirectResponse
     {
         try {
@@ -45,6 +48,7 @@ class RolePermissionController extends Controller
         }
     }
 
+    #[Middleware('can:utility.role.create')]
     public function store(StoreRoleRequest $request): RedirectResponse
     {
         try {
@@ -57,6 +61,7 @@ class RolePermissionController extends Controller
         }
     }
 
+    #[Middleware('can:utility.role.view')]
     public function show(int $id): Response|RedirectResponse
     {
         try {
@@ -69,6 +74,7 @@ class RolePermissionController extends Controller
         }
     }
 
+    #[Middleware('can:utility.role.edit')]
     public function update(UpdateRoleRequest $request, int $id): RedirectResponse
     {
         if (in_array($id, $this->immutableRoleIds)) {
@@ -85,6 +91,7 @@ class RolePermissionController extends Controller
         }
     }
 
+    #[Middleware('can:utility.role.delete')]
     public function delete(int $id): RedirectResponse
     {
         if (in_array($id, $this->immutableRoleIds)) {

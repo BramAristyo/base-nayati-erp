@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Purchasing;
 
 use App\Http\Controllers\Controller;
@@ -7,6 +6,7 @@ use App\Http\Requests\Common\BasicPaginateRequest;
 use App\Services\Purchasing\PurchaseRequestService;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -17,12 +17,12 @@ class PurchaseRequestController extends Controller
         protected PurchaseRequestService $service
     ) {}
 
-    public function paginate(BasicPaginateRequest $request): Response | JsonResponse
+    #[Middleware('can:purchasing.purchase-request.view')]
+    public function paginate(BasicPaginateRequest $request): Response
     {
         try {
             $data = $this->service->paginate($request->validated());
 
-            return response()->json($data);
             return Inertia::render('Purchasing/PurchaseRequest/Index', [
                 'data' => $data,
                 'filters' => $request->only(['search', 'sort_by', 'sort_order', 'per_page']),
@@ -60,6 +60,7 @@ class PurchaseRequestController extends Controller
         }
     }
 
+    #[Middleware('can:purchasing.purchase-request.view')]
     public function show(int $id): Response
     {
         try {

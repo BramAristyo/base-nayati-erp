@@ -13,6 +13,7 @@ use App\Services\Utility\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
 use Inertia\Response;
 
@@ -22,6 +23,7 @@ class UserController extends Controller
         protected UserService $userService
     ) {}
 
+    #[Middleware('can:utility.user.view')]
     public function paginate(BasicPaginateRequest $request): Response|RedirectResponse
     {
         try {
@@ -37,6 +39,7 @@ class UserController extends Controller
         }
     }
 
+    #[Middleware('can:utility.user.create')]
     public function create(): Response|RedirectResponse
     {
         try {
@@ -47,6 +50,7 @@ class UserController extends Controller
         }
     }
 
+    
     public function store(StoreUserRequest $request): RedirectResponse
     {
         try {
