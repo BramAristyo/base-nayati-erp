@@ -1,13 +1,17 @@
 <?php
 
+use App\Http\Controllers\Purchasing\PurchaseOrderController;
 use App\Http\Controllers\Purchasing\PurchaseRequestController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->prefix('purchasing')->name('purchasing.')->group(function () {
-    Route::get('/purchase-requests', [PurchaseRequestController::class, 'paginate'])->name('purchase-requests.index');
-    Route::get('/purchase-requests/{id}', [PurchaseRequestController::class, 'show'])->name('purchase-requests.show');
+// --- Purchase Request ---
+Route::middleware('auth')->prefix('purchasing/purchase-requests')->name('purchasing.purchase-requests.')->group(function () {
+    Route::get('/', [PurchaseRequestController::class, 'paginate'])->name('index');
+    Route::get('/{id}', [PurchaseRequestController::class, 'show'])->name('show');
 });
 
-Route::middleware('auth')->prefix('api/purchasing')->name('api.purchasing.')->group(function () {
-    Route::get('/purchase-requests/{id}', [PurchaseRequestController::class, 'find'])->name('purchase-requests.show');
+// --- Purchase Order ---
+Route::middleware('auth')->prefix('purchasing/purchase-orders')->name('purchasing.purchase-orders.')->group(function () {
+    Route::get('/', [PurchaseOrderController::class, 'paginate'])->name('index');
+    Route::get('/{id}', [PurchaseOrderController::class, 'show'])->name('show');
 });

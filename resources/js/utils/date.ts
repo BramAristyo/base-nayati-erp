@@ -1,7 +1,19 @@
-export const formatDate = (dateString?: string): string => {
+export const formatDate = (dateString?: string | null): string => {
     if (!dateString) {
-return '-';
-}
+        return '-';
+    }
+
+    return new Date(dateString).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+    });
+};
+
+export const formatDateTime = (dateString?: string | null): string => {
+    if (!dateString) {
+        return '-';
+    }
 
     return new Date(dateString).toLocaleDateString('en-GB', {
         day: '2-digit',
@@ -14,8 +26,8 @@ return '-';
 
 export const formatToDateString = (date: Date | null): string | null => {
     if (!date) {
-return null;
-}
+        return null;
+    }
 
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');

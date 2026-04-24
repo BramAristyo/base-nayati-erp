@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
-import Button from 'primevue/button';
 import Column from 'primevue/column';
 import DatePicker from 'primevue/datepicker';
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
+import type { DataTableRowClickEvent } from 'primevue/datatable';
 import { ref, watch, onMounted } from 'vue';
 import { route } from 'ziggy-js';
 import StandardDataTable from '@/components/common/table/StandardDataTable.vue';
@@ -14,7 +14,7 @@ import { useMonitoring } from '@/composables/utility/useMonitoring';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { PaginateFilter } from '@/types/common/paginate.types';
 import type { PaginatedAuditTrails } from '@/types/utility/audit-trail.types';
-import { formatDate, formatToDateString } from '@/utils/date';
+import { formatDate, formatDateTime, formatToDateString } from '@/utils/date';
 
 const props = defineProps<{
     auditTrails: PaginatedAuditTrails;
@@ -37,6 +37,12 @@ const { search, onPage, onSort, updateRoute } = useDataTable({
         fetchStats(params);
     },
 });
+
+const onRowClick = (event: DataTableRowClickEvent) => {
+    if (event.data.detail_route) {
+        router.get(route(event.data.detail_route, { id: event.data.subject_id }));
+    }
+};
 
 watch([startDate, endDate], () => {
     updateRoute({ page: 1 });
@@ -192,8 +198,10 @@ return 'success';
                 <StandardDataTable
                     :data="auditTrails"
                     :filters="filters"
+                    class="cursor-pointer"
                     @page="onPage"
                     @sort="onSort"
+                    @row-click="onRowClick"
                 >
                     <template #empty>
                         <div class="p-8 text-center text-sm font-medium text-muted-foreground">
@@ -204,7 +212,7 @@ return 'success';
                     <Column field="created_at" header="TIMESTAMP" sortable class="w-48">
                         <template #body="slotProps">
                             <span class="text-[11px] font-bold tracking-tight text-muted-foreground">
-                                {{ formatDate(slotProps.data.created_at) }}
+                                {{ formatDateTime(slotProps.data.created_at) }}
                             </span>
                         </template>
                     </Column>
@@ -254,21 +262,6 @@ return 'success';
                                 }}</span>
                             </div>
                             <span v-else class="text-[10px] font-bold italic text-muted-foreground">SYSTEM / GUEST</span>
-                        </template>
-                    </Column>
-
-                    <Column class="w-16 text-center">
-                        <template #body="slotProps">
-                            <Button
-                                v-if="slotProps.data.detail_route"
-                                icon="pi pi-external-link"
-                                size="small"
-                                severity="info"
-                                variant="text"
-                                @click="
-                                    router.get(route(slotProps.data.detail_route, { id: slotProps.data.subject_id }))
-                                "
-                            />
                         </template>
                     </Column>
                 </StandardDataTable>
