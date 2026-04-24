@@ -37,6 +37,7 @@ const menus = ref<MenuItem[]>([
         isOpen: false,
         items: [
             { label: 'Purchase Request', route: 'purchasing.purchase-requests.index', permission: 'purchasing.purchase-request.view' },
+            { label: 'Purchase Order', route: 'purchasing.purchase-orders.index', permission: 'purchasing.purchase-order.view' },
         ]
     },
     {
@@ -219,7 +220,7 @@ onMounted(() => {
                                     :class="[menu.icon, 'text-base text-muted-foreground group-hover:text-foreground']"></i>
                                 <span v-if="!collapsed" class="text-sm font-semibold tracking-wide whitespace-nowrap">{{
                                     menu.label
-                                }}</span>
+                                    }}</span>
                             </div>
                             <i v-if="!collapsed"
                                 class="pi pi-chevron-down text-[10px] text-muted-foreground transition-transform duration-200"

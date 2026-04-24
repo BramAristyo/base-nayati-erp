@@ -14,8 +14,8 @@ export const useRolePermissionStore = defineStore('rolePermission', () => {
 
     const fetchAllRoles = async (force: boolean = false) => {
         if (!force && roles.value.length > 0) {
-return;
-}
+        return;
+    }
 
         isFetchingRoles.value = true;
 
@@ -39,8 +39,8 @@ return;
 
     const fetchAllPermissions = async (force: boolean = false) => {
         if (!force && permissions.value.length > 0) {
-return;
-}
+    return;
+    }
 
         isFetchingPermissions.value = true;
 
