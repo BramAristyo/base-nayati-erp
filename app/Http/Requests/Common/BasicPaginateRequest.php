@@ -25,6 +25,15 @@ class BasicPaginateRequest extends FormRequest
 
     public function rules(): array
     {
-        return [];
+        return [
+            'search' => ['nullable', 'string'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'sort_by' => ['nullable', 'string'],
+            'sort_order' => ['nullable', 'string', 'in:asc,desc'],
+            'sortField' => ['nullable', 'string'],
+            'sortOrder' => ['nullable'],
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date'],
+        ];
     }
 }
