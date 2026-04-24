@@ -88,7 +88,7 @@ createInertiaApp({
                     },
                     datatable: {
                         paginator: {
-                            root: { class: 'py-1! border-t! border-gray-100! bg-white!' }
+                            root: { class: 'py-1! border-t! border-border! bg-background!' }
                         }
                     },
                     paginator: {
@@ -101,12 +101,12 @@ createInertiaApp({
                             root: ({ context }: any) => ({ 
                                 class: [
                                     'w-6! h-6! text-[9px]! font-bold! rounded-full!',
-                                    context.active ? 'bg-black! text-white!' : 'text-gray-800! hover:bg-gray-100!'
+                                    context.active ? 'bg-primary! text-primary-foreground!' : 'text-foreground! hover:bg-accent!'
                                 ] 
                             }) 
                         },
                         pcRowPerPageDropdown: {
-                            root: { class: 'h-6! text-[9px]! font-bold! border-gray-100! shadow-none! bg-gray-50/50! rounded-md!' },
+                            root: { class: 'h-6! text-[9px]! font-bold! border-border! shadow-none! bg-muted/50! rounded-md!' },
                             label: { class: 'px-2! py-0!' }
                         }
                     }

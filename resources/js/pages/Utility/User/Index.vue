@@ -49,12 +49,12 @@ const onRowClick = (event: DataTableRowClickEvent) => {
 
                 <div class="flex items-center gap-3">
                     <IconField>
-                        <InputIcon class="pi pi-search text-gray-400!" style="font-size: 14px" />
+                        <InputIcon class="pi pi-search text-muted-foreground!" style="font-size: 14px" />
                         <InputText
                             v-model="search"
                             placeholder="Quick Search..."
                             size="small"
-                            class="w-64! bg-white border-gray-200! text-gray-900! rounded-md! focus:ring-1! focus:ring-gray-300! shadow-sm transition-all placeholder:text-gray-400!"
+                            class="w-64! bg-background border-border! text-foreground! rounded-md! focus:ring-1! focus:ring-ring! shadow-sm transition-all placeholder:text-muted-foreground!"
                         />
                     </IconField>
                     <Link v-if="authStore.hasPermission('utility.user.create')" :href="route('utility.users.create')">
@@ -62,7 +62,7 @@ const onRowClick = (event: DataTableRowClickEvent) => {
                             icon="pi pi-plus"
                             label="Create"
                             size="small"
-                            class="bg-black! border-none! text-white! px-4! font-bold! uppercase! tracking-widest! rounded-md! shadow-md!"
+                            class="bg-primary! border-none! text-primary-foreground! px-4! font-bold! uppercase! tracking-widest! rounded-md! shadow-md!"
                         />
                     </Link>
                 </div>
@@ -78,7 +78,7 @@ const onRowClick = (event: DataTableRowClickEvent) => {
                     @row-click="onRowClick"
                 >
                     <template #empty>
-                        <div class="p-8 text-center text-sm font-medium text-gray-500">
+                        <div class="p-8 text-center text-sm font-medium text-muted-foreground">
                             No users found matching your search.
                         </div>
                     </template>

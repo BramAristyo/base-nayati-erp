@@ -82,14 +82,14 @@ return 'success';
                 >
                     <div class="flex items-center justify-between">
                         <div class="bg-blue-500! flex items-center justify-center rounded-lg p-2 shadow-sm">
-                            <i class="pi pi-users text-xs text-white"></i>
+                            <i class="pi pi-users text-xs text-primary-foreground"></i>
                         </div>
                         <span class="text-[9px] font-bold leading-none uppercase tracking-widest text-blue-400"
                             >Active Users</span
                         >
                     </div>
                     <div class="flex flex-col">
-                        <span v-if="!isStatsLoading" class="text-3xl font-bold tracking-tighter text-black">{{
+                        <span v-if="!isStatsLoading" class="text-3xl font-bold tracking-tighter text-foreground">{{
                             stats?.active_user_count ?? 0
                         }}</span>
                         <div v-else class="h-9 w-16 animate-pulse rounded-md bg-blue-100/50"></div>
@@ -105,14 +105,14 @@ return 'success';
                 >
                     <div class="flex items-center justify-between">
                         <div class="bg-emerald-500! flex items-center justify-center rounded-lg p-2 shadow-sm">
-                            <i class="pi pi-history text-xs text-white"></i>
+                            <i class="pi pi-history text-xs text-primary-foreground"></i>
                         </div>
                         <span class="text-[9px] font-bold leading-none uppercase tracking-widest text-emerald-400"
                             >Total Activities</span
                         >
                     </div>
                     <div class="flex flex-col">
-                        <span v-if="!isStatsLoading" class="text-3xl font-bold tracking-tighter text-black">{{
+                        <span v-if="!isStatsLoading" class="text-3xl font-bold tracking-tighter text-foreground">{{
                             stats?.activity_count ?? 0
                         }}</span>
                         <div v-else class="h-9 w-24 animate-pulse rounded-md bg-emerald-100/50"></div>
@@ -128,14 +128,14 @@ return 'success';
                 >
                     <div class="flex items-center justify-between">
                         <div class="bg-violet-500! flex items-center justify-center rounded-lg p-2 shadow-sm">
-                            <i class="pi pi-desktop text-xs text-white"></i>
+                            <i class="pi pi-desktop text-xs text-primary-foreground"></i>
                         </div>
                         <span class="text-[9px] font-bold leading-none uppercase tracking-widest text-violet-400"
                             >Active Sessions</span
                         >
                     </div>
                     <div class="flex flex-col">
-                        <span v-if="!isStatsLoading" class="text-3xl font-bold tracking-tighter text-black">{{
+                        <span v-if="!isStatsLoading" class="text-3xl font-bold tracking-tighter text-foreground">{{
                             stats?.active_sessions_count ?? 0
                         }}</span>
                         <div v-else class="h-9 w-12 animate-pulse rounded-md bg-violet-100/50"></div>
@@ -149,15 +149,15 @@ return 'success';
             <!-- Header & Filters -->
             <div class="flex flex-col gap-4 md:flex-row md:items-center justify-between">
                 <div class="flex flex-col gap-0.5">
-                    <h1 class="text-xl font-bold uppercase tracking-tight text-black">Audit Trail</h1>
-                    <p class="text-xs font-medium italic text-gray-500">
+                    <h1 class="text-xl font-bold uppercase tracking-tight text-foreground">Audit Trail</h1>
+                    <p class="text-xs font-medium italic text-muted-foreground">
                         Track system activities, user actions, and historical modifications.
                     </p>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3">
                     <IconField>
-                        <InputIcon class="pi pi-search text-gray-400!" style="font-size: 14px" />
+                        <InputIcon class="pi pi-search text-muted-foreground!" style="font-size: 14px" />
                         <InputText v-model="search" placeholder="Quick Search..." size="small" class="w-64!" />
                     </IconField>
 
@@ -172,7 +172,7 @@ return 'success';
                             class="w-36!"
                             inputClass="py-2! text-sm!"
                         />
-                        <span class="text-gray-300">/</span>
+                        <span class="text-border">/</span>
                         <DatePicker
                             v-model="endDate"
                             placeholder="End Date"
@@ -196,14 +196,14 @@ return 'success';
                     @sort="onSort"
                 >
                     <template #empty>
-                        <div class="p-8 text-center text-sm font-medium text-gray-500">
+                        <div class="p-8 text-center text-sm font-medium text-muted-foreground">
                             No activity logs found for the current filters.
                         </div>
                     </template>
 
                     <Column field="created_at" header="TIMESTAMP" sortable class="w-48">
                         <template #body="slotProps">
-                            <span class="text-[11px] font-bold tracking-tight text-gray-600">
+                            <span class="text-[11px] font-bold tracking-tight text-muted-foreground">
                                 {{ formatDate(slotProps.data.created_at) }}
                             </span>
                         </template>
@@ -218,9 +218,9 @@ return 'success';
                                         getActionSeverity(slotProps.data.action) === 'success',
                                     'bg-blue-50 text-blue-700 border-blue-100':
                                         getActionSeverity(slotProps.data.action) === 'info',
-                                    'bg-red-50 text-red-700 border-red-100':
+                                    'bg-destructive/10 text-destructive border-destructive/20':
                                         getActionSeverity(slotProps.data.action) === 'danger',
-                                    'bg-gray-50 text-gray-700 border-gray-100':
+                                    'bg-muted text-muted-foreground border-border':
                                         getActionSeverity(slotProps.data.action) === 'secondary',
                                 }"
                             >
@@ -231,7 +231,7 @@ return 'success';
 
                     <Column field="subject_type" header="MODULE" sortable class="w-40">
                         <template #body="slotProps">
-                            <span class="text-xs font-semibold uppercase tracking-tight text-gray-900">{{
+                            <span class="text-xs font-semibold uppercase tracking-tight text-foreground">{{
                                 slotProps.data.subject_type
                             }}</span>
                         </template>
@@ -239,21 +239,21 @@ return 'success';
 
                     <Column field="description" header="DESCRIPTION" sortable>
                         <template #body="slotProps">
-                            <span class="text-xs font-medium text-gray-700">{{ slotProps.data.description }}</span>
+                            <span class="text-xs font-medium text-muted-foreground">{{ slotProps.data.description }}</span>
                         </template>
                     </Column>
 
                     <Column field="causer.name" header="PERFORMED BY" class="w-56">
                         <template #body="slotProps">
                             <div v-if="slotProps.data.causer" class="flex flex-col gap-0.5">
-                                <span class="text-xs font-bold leading-none text-black">{{
+                                <span class="text-xs font-bold leading-none text-foreground">{{
                                     slotProps.data.causer.name
                                 }}</span>
-                                <span class="text-[10px] font-medium text-gray-500">{{
+                                <span class="text-[10px] font-medium text-muted-foreground">{{
                                     slotProps.data.causer.email
                                 }}</span>
                             </div>
-                            <span v-else class="text-[10px] font-bold italic text-gray-400">SYSTEM / GUEST</span>
+                            <span v-else class="text-[10px] font-bold italic text-muted-foreground">SYSTEM / GUEST</span>
                         </template>
                     </Column>
 

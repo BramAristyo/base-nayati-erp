@@ -11,4 +11,15 @@
 5. **STRICTLY TAILWIND:** Absolutely no custom CSS or `<style>` blocks. Use 100% Tailwind CSS utility classes.
 6. **PRIMEVUE STANDARDS:** Always use the `size="small"` attribute for all PrimeVue input and button components to maintain a dense, professional UI. Keep other component properties as default as possible to maximize code readability.
 7. **ZIGGY ROUTING:** Always use Ziggy's `route()` helper for all navigation and endpoint calls within Vue components. Strictly verify the route names against `routes/web.php`.
-8. **CONCISE & DIRECT:** Keep explanations brief and strictly focused on the technical implementation.
+8. **CENTRALIZED THEMING:** Never use hardcoded color utilities (e.g., `bg-white`, `text-gray-950`, `bg-gray-100`). Always map them to the semantic CSS variables defined in the provided `app.css` (e.g., `bg-background`, `text-foreground`, `bg-muted`) to ensure global UI consistency and automatic dark mode support.
+9. **CONCISE & DIRECT:** Keep explanations brief and strictly focused on the technical implementation.
+
+**Task:**
+Please refactor the provided Vue component based on the strict guidelines above. Ensure all hardcoded colors are replaced with the correct centralized CSS variables.
+
+**Context (app.css):**
+D:\laravel\nayati-inox-erp\resources\css\app.css
+
+**Target File:**
+resources\js\components\AppSidebar.vue
+D:\laravel\nayati-inox-erp\resources\js\Layouts\AppLayout.vue
