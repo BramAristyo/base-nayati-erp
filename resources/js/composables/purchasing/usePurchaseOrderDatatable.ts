@@ -2,9 +2,8 @@ import { ref, watch } from 'vue';
 import { useDataTable } from '@/composables/common/useDataTable';
 import { formatToDateString } from '@/utils/date';
 import type { PaginatedResponse } from '@/types/common/paginate.types';
-import { route } from 'ziggy-js';
 
-export function usePurchaseRequestDatatable(props: { data: PaginatedResponse<any>; filters: any }) {
+export function usePurchaseOrderDatatable(props: { data: PaginatedResponse<any>; filters: any }) {
     const today = new Date();
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(today.getDate() - 30);
@@ -13,7 +12,7 @@ export function usePurchaseRequestDatatable(props: { data: PaginatedResponse<any
     const endDate = ref(props.filters?.end_date ? new Date(props.filters.end_date) : today);
 
     const { search, onPage, onSort, updateRoute } = useDataTable({
-        routeName: 'purchasing.purchase-requests.index',
+        routeName: 'purchasing.purchase-orders.index',
         filters: props.filters,
         pagination: props.data,
         extraParams: () => ({
@@ -42,10 +41,7 @@ export function usePurchaseRequestDatatable(props: { data: PaginatedResponse<any
             end_date: formatToDateString(endDate.value) || undefined,
         };
 
-        console.log('Exporting with params:', params);
-
-        const url = route('purchasing.purchase-requests.export', params);
-        window.location.assign(url);
+        window.location.assign(route('purchasing.purchase-orders.export', params));
     };
 
     return {

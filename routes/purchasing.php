@@ -14,5 +14,7 @@ Route::middleware('auth')->prefix('purchasing/purchase-requests')->name('purchas
 // --- Purchase Order ---
 Route::middleware('auth')->prefix('purchasing/purchase-orders')->name('purchasing.purchase-orders.')->group(function () {
     Route::get('/', [PurchaseOrderController::class, 'paginate'])->name('index');
+    Route::get('/export', [PurchaseOrderController::class, 'export'])->name('export');
+    Route::get('/print/{id}', [PurchaseOrderController::class, 'print'])->name('print');
     Route::get('/{id}', [PurchaseOrderController::class, 'show'])->name('show');
 });

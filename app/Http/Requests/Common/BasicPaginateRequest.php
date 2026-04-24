@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Common;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Carbon\Carbon;
 
 class BasicPaginateRequest extends FormRequest
 {
@@ -16,10 +17,20 @@ class BasicPaginateRequest extends FormRequest
         $sortOrderRaw = $this->input('sortOrder');
         $parsedOrder = $sortOrderRaw == 1 ? 'asc' : 'desc';
 
+        $startDate = $this->input('start_date');
+        $endDate = $this->input('end_date');
+
+        if (!$startDate && !$endDate) {
+            $startDate = Carbon::now()->subDays(30)->toDateString();
+            $endDate = Carbon::now()->toDateString();
+        }
+
         $this->merge([
             'per_page'   => (int) $this->input('per_page', 25),
             'sort_by'    => $this->input('sortField', 'created_at'),
             'sort_order' => $parsedOrder,
+            'start_date' => $startDate,
+            'end_date'   => $endDate,
         ]);
     }
 
