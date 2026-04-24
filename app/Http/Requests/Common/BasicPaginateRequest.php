@@ -15,7 +15,8 @@ class BasicPaginateRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $sortOrderRaw = $this->input('sortOrder');
-        $parsedOrder = $sortOrderRaw == 1 ? 'asc' : 'desc';
+        $sortOrder = $sortOrderRaw !== null ? (int) $sortOrderRaw : -1;
+        $parsedOrder = $sortOrder == 1 ? 'asc' : 'desc';
 
         $startDate = $this->input('start_date');
         $endDate = $this->input('end_date');
@@ -29,6 +30,7 @@ class BasicPaginateRequest extends FormRequest
             'per_page'   => (int) $this->input('per_page', 25),
             'sort_by'    => $this->input('sortField', $this->input('defaultSort', 'created_at')),
             'sort_order' => $parsedOrder,
+            'sortOrder'  => $sortOrder,
             'start_date' => $startDate,
             'end_date'   => $endDate,
         ]);
