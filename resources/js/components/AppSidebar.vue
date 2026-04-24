@@ -30,6 +30,7 @@ const authStore = useAuthStore();
 const { permissions: userPermissions } = storeToRefs(authStore);
 
 const menus = ref<MenuItem[]>([
+    { label: 'Dashboard', icon: 'pi pi-objects-column', route: 'dashboard' },
     {
         label: 'Master',
         icon: 'pi pi-database',
@@ -44,7 +45,6 @@ const menus = ref<MenuItem[]>([
             { label: 'Suppliers', route: 'master.suppliers.index', permission: 'master.supplier.view' },
         ]
     },
-    { label: 'Dashboard', icon: 'pi pi-objects-column', route: 'dashboard' },
     {
         label: 'Purchasing',
         icon: 'pi pi-shopping-cart',
