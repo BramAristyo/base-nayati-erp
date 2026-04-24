@@ -32,6 +32,15 @@ class PurchaseOrderRepository
         return $paginator;
     }
 
+    public function getAllByFilter(array $filters = []): \Illuminate\Support\Collection
+    {
+        $query = $this->baseQuery();
+
+        $this->applyFilters($query, $filters);
+
+        return $query->get()->map(fn(object $item) => $this->transform($item));
+    }
+
     public function find(int $id): ?array
     {
         $item = $this->baseQuery()
@@ -121,26 +130,6 @@ class PurchaseOrderRepository
     {
         $this->applySearchFilter($query, $filters, ['hpo.nota', 's.NAMA', 'hpo.KD_SUPP', 'd.ket']);
         $this->applyDateFilter($query, $filters, 'hpo.TGLENTRY');
-
-        $query->when(isset($filters['fulfillment']), function (Builder $query) use ($filters) {
-            $fulfillment = $filters['fulfillment'];
-
-            if ($fulfillment === 'outstanding') {
-                $query->whereExists(function (Builder $subQuery) {
-                    $subQuery->select(DB::raw(1))
-                        ->from('dpo')
-                        ->whereColumn('dpo.nota', 'hpo.nota')
-                        ->whereRaw('dpo.qty > dpo.terkirim');
-                });
-            } elseif ($fulfillment === 'completed') {
-                $query->whereNotExists(function (Builder $subQuery) {
-                    $subQuery->select(DB::raw(1))
-                        ->from('dpo')
-                        ->whereColumn('dpo.nota', 'hpo.nota')
-                        ->whereRaw('dpo.qty > dpo.terkirim');
-                });
-            }
-        });
 
         if (isset($filters['sort_by'], $this->sortableFields[$filters['sort_by']])) {
             $filters['sort_by'] = $this->sortableFields[$filters['sort_by']];

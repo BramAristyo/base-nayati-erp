@@ -25,7 +25,7 @@ trait Trailable
                 'description' => $description,
                 'subject_type'=> $module->value,
                 'subject_id'  => $subjectId,
-                'detail_route' => $detailRoute->value,
+                'detail_route' => $detailRoute?->value,
             ]);
         } catch (\Throwable $e) {
             Log::error('Trail failed: ' . $e->getMessage());

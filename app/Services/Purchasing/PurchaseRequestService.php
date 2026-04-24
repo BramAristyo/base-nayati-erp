@@ -3,6 +3,7 @@
 namespace App\Services\Purchasing;
 
 use App\Enums\LogAction;
+use App\Enums\LogDetailRoute;
 use App\Enums\LogModule;
 use App\Repositories\Legacy\Purchasing\PurchaseRequestRepository;
 use App\Traits\Trailable;
@@ -24,9 +25,9 @@ class PurchaseRequestService
         );
     }
 
-    public function getAll(array $filters): \Illuminate\Support\Collection
+    public function getAllByFilter(array $filters): \Illuminate\Support\Collection
     {
-        return $this->repository->getAll($filters);
+        return $this->repository->getAllByFilter($filters);
     }
 
     public function find(int $id): ?array
@@ -36,11 +37,13 @@ class PurchaseRequestService
 
     public function logExport(array $filters): void
     {
-        $count = $this->repository->getAll($filters)->count();
+        $count = $this->repository->getAllByFilter($filters)->count();
         $this->trail(
             LogModule::PURCHASING,
             LogAction::EXPORT,
-            "Exported {$count} purchase requests to Excel"
+            "Exported {$count} purchase requests to Excel",
+            null,
+            LogDetailRoute::PURCHASE_REQUEST_INDEX
         );
     }
 }

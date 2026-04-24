@@ -38,8 +38,6 @@ export function usePurchaseRequestDatatable(props: { data: PaginatedResponse<any
             end_date: formatToDateString(endDate.value) || undefined,
         };
 
-        console.log('Exporting with params:', params);
-
         const url = route('purchasing.purchase-requests.export', params);
         window.location.assign(url);
     };

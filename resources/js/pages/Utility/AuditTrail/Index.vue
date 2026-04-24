@@ -40,7 +40,11 @@ const { search, onPage, onSort, updateRoute } = useDataTable({
 
 const onRowClick = (event: DataTableRowClickEvent) => {
     if (event.data.detail_route) {
-        router.get(route(event.data.detail_route, { id: event.data.subject_id }));
+        if (event.data.subject_id) {
+            router.get(route(event.data.detail_route, { id: event.data.subject_id }));
+        } else {
+            router.get(route(event.data.detail_route));
+        }
     }
 };
 

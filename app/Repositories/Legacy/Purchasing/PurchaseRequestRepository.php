@@ -33,7 +33,7 @@ class PurchaseRequestRepository
         return $paginator;
     }
 
-    public function getAll(array $filters = []): \Illuminate\Support\Collection
+    public function getAllByFilter(array $filters = []): \Illuminate\Support\Collection
     {
         $query = $this->baseQuery();
 

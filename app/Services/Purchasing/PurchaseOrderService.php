@@ -3,6 +3,7 @@
 namespace App\Services\Purchasing;
 
 use App\Enums\LogAction;
+use App\Enums\LogDetailRoute;
 use App\Enums\LogModule;
 use App\Repositories\Legacy\Purchasing\PurchaseOrderRepository;
 use App\Traits\Trailable;
@@ -24,29 +25,25 @@ class PurchaseOrderService
         );
     }
 
+    public function getAllByFilter(array $filters): \Illuminate\Support\Collection
+    {
+        return $this->repository->getAllByFilter($filters);
+    }
+
     public function find(int $id): ?array
     {
         return $this->repository->find($id);
     }
 
-    public function logPrint(int $id): void
-    {
-        $po = $this->repository->find($id);
-        $this->trail(
-            LogModule::PURCHASING,
-            LogAction::PRINT,
-            "Printed Purchase Order: " . ($po['purchase_order_number'] ?? $id),
-            $id
-        );
-    }
-
     public function logExport(array $filters): void
     {
-        $count = $this->repository->getAll($filters)->count();
+        $count = $this->repository->getAllByFilter($filters)->count();
         $this->trail(
             LogModule::PURCHASING,
             LogAction::EXPORT,
-            "Exported {$count} purchase orders to Excel"
+            "Exported {$count} purchase orders to Excel",
+            null,
+            LogDetailRoute::PURCHASE_ORDER_INDEX
         );
     }
 }

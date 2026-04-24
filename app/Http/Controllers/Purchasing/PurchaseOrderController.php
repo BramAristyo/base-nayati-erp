@@ -69,7 +69,7 @@ class PurchaseOrderController extends Controller
     public function export(BasicPaginateRequest $request)
     {
         try {
-            $data = $this->service->getAll($request->validated());
+            $data = $this->service->getAllByFilter($request->validated());
             
             $this->service->logExport($request->validated());
 

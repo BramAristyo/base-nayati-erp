@@ -68,14 +68,9 @@ class PurchaseRequestController extends Controller
     public function export(BasicPaginateRequest $request)
     {
         try {
-            $data = $this->service->getAll($request->validated());
+            $data = $this->service->getAllByFilter($request->validated());
             
             $this->service->logExport($request->validated());
-
-            Log::info('Exporting Purchase Requests', [
-                'count' => $data->count(),
-                'filters' => $request->validated()
-            ]);
 
             return Excel::download(
                 new PurchaseRequestExport($data),
@@ -87,7 +82,7 @@ class PurchaseRequestController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return back()->with('error', 'Failed to export purchase requests: ' . $e->getMessage());
+            return back()->with('error', 'Failed to export purchase requests.');
         }
     }
 }
