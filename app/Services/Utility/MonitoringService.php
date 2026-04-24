@@ -6,14 +6,10 @@ use App\Models\Utility\AuditTrail;
 use App\Models\Utility\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Builder;
 
 class MonitoringService
 {
-    /**
-     * Get combined monitoring statistics.
-     */
-    public function getMonitoringStats(array $filters): array
+    public function stats(array $filters): array
     {
         return [
             'active_user_count' => User::where('is_active', 1)->count(),
@@ -22,30 +18,24 @@ class MonitoringService
         ];
     }
 
-    /**
-     * Get total activity count based on audit trails.
-     */
     private function getActivityCount(array $filters): int
     {
         $query = AuditTrail::query();
-        
+
         $this->applyDateFilter($query, $filters, 'created_at');
 
         if (!empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('description', 'like', "%{$search}%")
-                  ->orWhere('action', 'like', "%{$search}%")
-                  ->orWhere('subject_type', 'like', "%{$search}%");
+                    ->orWhere('action', 'like', "%{$search}%")
+                    ->orWhere('subject_type', 'like', "%{$search}%");
             });
         }
 
         return $query->count();
     }
 
-    /**
-     * Get active sessions count from the database sessions table.
-     */
     private function getActiveSessionsCount(array $filters): int
     {
         $start = $filters['start_date'] ?? null;
@@ -64,9 +54,6 @@ class MonitoringService
         return $query->count();
     }
 
-    /**
-     * Generic date filter applier.
-     */
     private function applyDateFilter($query, array $filters, string $column): void
     {
         $start = $filters['start_date'] ?? null;

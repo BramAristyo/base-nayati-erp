@@ -8,13 +8,15 @@ use App\Http\Controllers\Utility\UserController;
 use App\Http\Controllers\Utility\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
+// Guest Routes
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth', 'check_password_changed'])->get('/dashboard', function () {
-    return inertia('Utility/Dashboard');
-})->name('dashboard');
+// Authenticated Routes
+Route::middleware(['auth', 'check_password_changed'])->group(function () {
+    Route::get('/dashboard', fn() => inertia('Utility/Dashboard'))->name('dashboard');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/change-password', [UserController::class, 'showChangePasswordForm'])->name('user.change-password');
@@ -24,12 +26,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/settings', [UserController::class, 'updateSetting'])->name('user.settings.post');
 });
 
-Route::middleware('auth')->prefix('auth')->name('auth.')->group(function (){
+// Auth Utility Routes
+Route::middleware('auth')->prefix('auth')->name('auth.')->group(function () {
     Route::post('/change-password', [AuthController::class, 'changePassword'])->name('change-password');
     Route::post('/is-password-changed', [AuthController::class, 'isPasswordChanged'])->name('is-password-changed');
 });
 
-Route::middleware('auth')->prefix('utility')->name('utility.')->group(function (){
+// Utility Module Routes
+Route::middleware('auth')->prefix('utility')->name('utility.')->group(function () {
     Route::get('/users', [UserController::class, 'paginate'])->name('users.paginate');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
@@ -46,16 +50,15 @@ Route::middleware('auth')->prefix('utility')->name('utility.')->group(function (
     Route::get('/audit-trails', [AuditTrailController::class, 'paginate'])->name('audit-trails.paginate');
 });
 
-
-// ---------------- API ----------------
-Route::middleware('auth')->prefix('api')->name('api.')->group(function (){
+// API Routes
+Route::middleware('auth')->prefix('api')->name('api.')->group(function () {
     Route::get('/me', [AuthController::class, 'me'])->name('me');
     Route::get('/me/permissions', [AuthController::class, 'getMePermissions'])->name('me.permissions');
 
-    Route::prefix('utility')->name('utility.')->group(function (){
+    Route::prefix('utility')->name('utility.')->group(function () {
         Route::get('/warehouses/all', [WarehouseController::class, 'getAll'])->name('warehouses.all');
-        Route::get('/roles/all', [RolePermissionController::class, 'getAllRoles'])->name('roles.all');
-        Route::get('/permissions/all', [RolePermissionController::class, 'getAllPermissions'])->name('permissions.all');
-        Route::get('/monitoring/stats', [MonitoringController::class, 'getStats'])->name('monitoring.stats');
+        Route::get('/roles/all', [RolePermissionController::class, 'getAll'])->name('roles.all');
+        Route::get('/permissions/all', [RolePermissionController::class, 'permissions'])->name('permissions.all');
+        Route::get('/monitoring/stats', [MonitoringController::class, 'show'])->name('monitoring.stats');
     });
 });

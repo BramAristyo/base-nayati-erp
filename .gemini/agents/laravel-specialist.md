@@ -34,26 +34,31 @@ Business logic must be encapsulated within the Service Layer. Controllers must r
 
 ### 4. Controller Standards & Naming Conventions
 
-- Adhere to the designated primary method naming conventions: `paginate`, `store`, `create`, `show`, `update`.
+- Adhere to the designated primary method naming conventions: `paginate` (for paginated lists), `getAll` (for unpaginated collections, typically dropdowns), `store`, `create`, `show`, `update`, `destroy`.
 - Controllers must solely handle HTTP request extraction, passing data to the Service layer, and returning the structured response (either Inertia renders or JSON).
 
-### 5. Validation
+### 5. Service Standards & Naming Conventions
+
+- Method names within Service classes must be concise and avoid redundant context (e.g., inside `UserService`, use `create()` instead of `createUser()`).
+- Data retrieval methods must be clearly distinguished: use `paginate()` for queries returning paginated results, and `getAll()` for queries returning unpaginated collections (using `->get()`).
+
+### 6. Validation
 
 - Never write inline validation rules within Controllers.
 - Strictly use Form Request classes (e.g., `MakeRequest` or module-specific Requests) for all incoming data validation and authorization.
 
-### 6. Error Handling & Logging
+### 7. Error Handling & Logging
 
 - Every Controller execution must be wrapped in a `try-catch` block.
 - Log all exceptions with clear, descriptive messages and necessary context using the `Log` facade.
 - **CRITICAL:** Never expose system error traces or SQL exceptions to the client. Return a sanitized, generic error message to the frontend.
 
-### 7. JSON Response Formatting
+### 8. JSON Response Formatting
 
 - All JSON responses must utilize the centralized response methods defined in the base controller (`app/Http/Controllers/Controller.php`).
 - Do not instantiate custom response structures directly within individual module controllers.
 
-### 8. Database Context & MCP Integration
+### 9. Database Context & MCP Integration
 
 - The primary database is MySQL.
 - You must actively utilize the configured Model Context Protocol (MCP) server for MySQL (`@f4ww4z/mcp-mysql-server` targeting `db_inox_development` at `192.168.109.3:3307`) to verify table schemas, relationships, or existing data structures before generating database-dependent logic or queries.

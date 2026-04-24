@@ -5,35 +5,25 @@ namespace App\Http\Controllers\Utility;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\PaginateFilterRequest;
 use App\Services\Utility\MonitoringService;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
 
-#[Middleware('can:utility.audit-trail.view')]
 class MonitoringController extends Controller
 {
-    protected $monitoringService;
+    public function __construct(
+        protected MonitoringService $monitoringService
+    ) {}
 
-    public function __construct(MonitoringService $monitoringService)
-    {
-        $this->monitoringService = $monitoringService;
-    }
-
-    /**
-     * Get combined monitoring statistics.
-     */
-    public function getStats(PaginateFilterRequest $request)
+    #[Middleware('can:utility.audit-trail.view')]
+    public function show(PaginateFilterRequest $request): JsonResponse
     {
         try {
-            $stats = $this->monitoringService->getMonitoringStats([
-                'start_date' => $request->start_date,
-                'end_date' => $request->end_date,
-                'search' => $request->search,
-            ]);
-
-            return $this->successResponse($stats, 'Monitoring stats fetched successfully');
-        } catch (\Throwable $th) {
-            Log::error($th->getMessage());
-            return $this->errorResponse("Something went wrong: " . $th->getMessage(), 500);
+            return $this->successResponse($this->monitoringService->stats($request->all()), 'Monitoring statistics fetched successfully.');
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return $this->errorResponse('An error occurred while fetching monitoring statistics.', 500);
         }
     }
 }

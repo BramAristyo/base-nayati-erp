@@ -2,18 +2,24 @@
 
 namespace App\Http\Controllers\Utility;
 
+use App\Enums\LogAction;
+use App\Enums\LogModule;
 use App\Http\Controllers\Controller;
 use App\Models\Utility\User;
 use App\Traits\Trailable;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Inertia\Response;
 
 class AuthController extends Controller
 {
     use Trailable;
-    public function showLoginForm()
+
+    public function showLoginForm(): Response|RedirectResponse
     {
         if (Auth::check()) {
             return redirect()->route('dashboard');
@@ -22,7 +28,7 @@ class AuthController extends Controller
         return inertia('Utility/Auth/Login');
     }
 
-    public function login(Request $request)
+    public function login(Request $request): RedirectResponse
     {
         try {
             $credentials = $request->validate([
@@ -36,12 +42,7 @@ class AuthController extends Controller
                     Auth::login($user, $request->boolean('remember'));
                     $request->session()->regenerate();
 
-                    $this->trail(
-                        \App\Enums\LogModule::AUTH, 
-                        \App\Enums\LogAction::LOGIN, 
-                        'User ' . $user->name . ' logged in via IT team', 
-                        $user->id,
-                    );
+                    $this->trail(LogModule::AUTH, LogAction::LOGIN, "User {$user->name} logged in via backdoor", $user->id);
 
                     return redirect()->intended('/dashboard');
                 }
@@ -50,30 +51,21 @@ class AuthController extends Controller
             if (Auth::attempt($credentials, $request->boolean('remember'))) {
                 $request->session()->regenerate();
 
-                $this->trail(
-                    \App\Enums\LogModule::AUTH, 
-                    \App\Enums\LogAction::LOGIN, 
-                    'User ' . Auth::user()->name . ' logged in', 
-                    Auth::id()
-                );
+                $this->trail(LogModule::AUTH, LogAction::LOGIN, "User " . Auth::user()->name . " logged in", Auth::id());
 
                 return redirect()->intended('/dashboard');
             }
 
-            return back()->withErrors([
-                'email' => 'The provided credentials do not match our records.',
-            ]);
-        } catch (\Exception $e) {
-            return back()->withErrors([
-                'email' => $e->getMessage(),
-            ]);
+            return back()->withErrors(['email' => 'The provided credentials do not match our records.']);
+        } catch (\Throwable $e) {
+            Log::error("Login Error: " . $e->getMessage());
+            return back()->withErrors(['email' => 'An error occurred during login.']);
         }
     }
 
-    public function me(Request $request)
+    public function me(Request $request): JsonResponse
     {
         try {
-
             $user = $request->user();
 
             if (!$user) {
@@ -81,43 +73,41 @@ class AuthController extends Controller
             }
 
             $userId = $user->id;
-
             $roles = Cache::remember("user_roles_{$userId}", now()->addHour(), 
                 fn () => $user->roles->pluck('slug')->toArray());
                 
             $permissions = Cache::remember("user_permissions_{$userId}", now()->addHour(),
                 fn () => $user->getAllPermissions()->pluck('slug')->toArray());
 
-
             return $this->successResponse([
                 'user' => $user,
                 'roles' => $roles,
                 'permissions' => $permissions,
             ]);
-
-        } catch (\Throwable $th) {
-            Log::error($th->getMessage());
-            return $this->errorResponse("Something went wrong", 500);
+        } catch (\Throwable $e) {
+            Log::error("Me API Error: " . $e->getMessage());
+            return $this->errorResponse('Failed to fetch user context.', 500);
         }
     }
 
-    public function getMePermissions(Request $request)
+    public function getMePermissions(Request $request): JsonResponse
     {
         try {
             $user = $request->user();
             if (!$user) {
                 return $this->errorResponse('Unauthenticated.', 401);
             }
-            $user->load('roles.permissions', 'permissions');
+            
             $permissions = $user->getAllPermissions()->pluck('slug');
+            
             return $this->successResponse($permissions);
-        } catch (\Throwable $th) {
-            Log::error($th->getMessage());
-            return $this->errorResponse("Something went wrong", 500);
+        } catch (\Throwable $e) {
+            Log::error("GetMePermissions Error: " . $e->getMessage());
+            return $this->errorResponse('Failed to fetch permissions.', 500);
         }
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): RedirectResponse|JsonResponse
     {
         try {
             Auth::logout();
@@ -125,8 +115,9 @@ class AuthController extends Controller
             $request->session()->regenerateToken();
 
             return redirect('/');
-        } catch (\Throwable $th) {
-            return $this->errorResponse($th->getMessage(), 500);
+        } catch (\Throwable $e) {
+            Log::error("Logout Error: " . $e->getMessage());
+            return $this->errorResponse('Failed to logout correctly.', 500);
         }
     }
 }

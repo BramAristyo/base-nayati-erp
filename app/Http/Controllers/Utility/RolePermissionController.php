@@ -4,182 +4,120 @@ namespace App\Http\Controllers\Utility;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\BasicPaginateRequest;
-use App\Models\Utility\Permission;
-use App\Models\Utility\Role;
-use Illuminate\Http\Request;
+use App\Http\Requests\Utility\Role\StoreRoleRequest;
+use App\Http\Requests\Utility\Role\UpdateRoleRequest;
+use App\Services\Utility\RolePermissionService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Routing\Attributes\Controllers\Middleware;
-use Inertia\Inertia;
+use Inertia\Response;
 
 class RolePermissionController extends Controller
 {
-    private array $defaultIds = [1,2];
-    
-    #[Middleware('can:utility.role.view')]
-    public function getAllRoles()
+    private array $immutableRoleIds = [1, 2];
+
+    public function __construct(
+        protected RolePermissionService $rolePermissionService
+    ) {}
+
+    public function paginate(BasicPaginateRequest $request): Response|RedirectResponse
     {
         try {
-            $roles = Role::all();
-
-            return $this->successResponse(
-                $roles,
-                'Roles fetched successfully',
-                200
-            );
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return $this->errorResponse('Failed to fetch roles', 500);
-        }
-    }
-
-    #[Middleware('can:utility.role.view')]
-    public function getAllPermissions()
-    {
-        try {
-            $permissions = Permission::all();
-
-            return $this->successResponse(
-                $permissions,
-                'Permissions fetched successfully',
-                200
-            );
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return $this->errorResponse('Failed to fetch permissions', 500);
-        }
-    }
-
-    #[Middleware('can:utility.role.view')]
-    public function paginate(BasicPaginateRequest $request)
-    {
-        try {
-            $roles = Role::query()
-                ->withCount('permissions')
-                ->when($request->search, function ($query) use ($request) {
-                    $query->where('name', 'like', "%{$request->search}%")
-                          ->orWhere('slug', 'like', "%{$request->search}%");
-                })
-                ->orderBy($request->sort_by ?? 'created_at', $request->sort_order ?? 'desc')
-                ->paginate($request->per_page)
-                ->withQueryString();
+            $roles = $this->rolePermissionService->paginate($request->validated());
 
             return inertia('Utility/RolePermission/Index', [
                 'roles' => $roles,
-                'filters' => [
-                    'search' => $request->search,
-                    'sortField' => $request->input('sortField', 'created_at'),
-                    'sortOrder' => (int) $request->input('sortOrder', 1),
-                ]
+                'filters' => $request->only(['search', 'sort_by', 'sort_order']),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error($e->getMessage());
-            return back()->with('error', 'Error while loading roles.');
+            return back()->with('error', 'Failed to load roles list.');
         }
     }
 
-    #[Middleware('can:utility.role.create')]
-    public function store(Request $request)
+    public function create(): Response|RedirectResponse
     {
         try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'slug' => 'required|string|max:255|unique:roles,slug',
-                'description' => 'nullable|string',
-                'permission_ids' => 'required|array',
-                'permission_ids.*' => 'exists:permissions,id',
-            ]);
+            return inertia('Utility/RolePermission/Create');
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+            return back()->with('error', 'Failed to load create form.');
+        }
+    }
 
-            $role = Role::create([
-                'name' => $validated['name'],
-                'slug' => $validated['slug'],
-                'description' => $validated['description'],
-            ]);
-
-            $role->permissions()->sync($validated['permission_ids']);
+    public function store(StoreRoleRequest $request): RedirectResponse
+    {
+        try {
+            $this->rolePermissionService->store($request->validated());
 
             return redirect()->route('utility.roles.paginate')->with('success', 'Role created successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error($e->getMessage());
             return back()->with('error', 'Failed to create role.')->withInput();
         }
     }
 
-    #[Middleware('can:utility.role.create')]
-    public function create()
+    public function show(int $id): Response|RedirectResponse
     {
         try {
-            return inertia('Utility/RolePermission/Create');
-        } catch (\Exception $e) {
+            $role = $this->rolePermissionService->find($id);
+
+            return inertia('Utility/RolePermission/Show', ['role' => $role]);
+        } catch (\Throwable $e) {
             Log::error($e->getMessage());
-            return back()->with('error', 'Error while loading roles.');
+            return back()->with('error', 'Failed to load role details.');
         }
     }
 
-    #[Middleware('can:utility.role.view')]
-    public function show($id)
+    public function update(UpdateRoleRequest $request, int $id): RedirectResponse
     {
-        try {
-            $role = Role::query()
-                ->with('permissions')
-                ->findOrFail($id);
-
-            return inertia('Utility/RolePermission/Show', [
-                'role' => $role
-            ]);
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return back()->with('error', 'Error while loading role.');
-        }
-    }
-
-    #[Middleware('can:utility.role.edit')]
-    public function update(Request $request, $id)
-    {
-        if (in_array((int) $id, $this->defaultIds)) {
-            return back()->with('error', 'Default roles cannot be modified.');
+        if (in_array($id, $this->immutableRoleIds)) {
+            return back()->with('error', 'System roles cannot be modified.');
         }
 
         try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'slug' => 'required|string|max:255|unique:roles,slug,' . $id,
-                'description' => 'nullable|string',
-                'permission_ids' => 'required|array',
-                'permission_ids.*' => 'exists:permissions,id',
-            ]);
-
-            $role = Role::findOrFail($id);
-            $role->update([
-                'name' => $validated['name'],
-                'slug' => $validated['slug'],
-                'description' => $validated['description'],
-            ]);
-
-            // Sync by ID
-            $role->permissions()->sync($validated['permission_ids']);
+            $this->rolePermissionService->update($id, $request->validated());
 
             return redirect()->route('utility.roles.paginate')->with('success', 'Role updated successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error($e->getMessage());
             return back()->with('error', 'Failed to update role.');
         }
     }
 
-    #[Middleware('can:utility.role.delete')]
-    public function delete($id)
+    public function delete(int $id): RedirectResponse
     {
-        if (in_array((int) $id, $this->defaultIds)) {
-            return back()->with('error', 'Default roles cannot be deleted.');
+        if (in_array($id, $this->immutableRoleIds)) {
+            return back()->with('error', 'System roles cannot be deleted.');
         }
 
         try {
-            $role = Role::findOrFail($id);
-            $role->delete();
+            $this->rolePermissionService->delete($id);
 
             return redirect()->route('utility.roles.paginate')->with('success', 'Role deleted successfully.');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error($e->getMessage());
             return back()->with('error', 'Failed to delete role.');
+        }
+    }
+
+    public function getAll(): JsonResponse
+    {
+        try {
+            return $this->successResponse($this->rolePermissionService->getAll(), 'Roles fetched successfully.');
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+            return $this->errorResponse('Failed to fetch roles.', 500);
+        }
+    }
+
+    public function permissions(): JsonResponse
+    {
+        try {
+            return $this->successResponse($this->rolePermissionService->permissions(), 'Permissions fetched successfully.');
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+            return $this->errorResponse('Failed to fetch permissions.', 500);
         }
     }
 }

@@ -2,58 +2,90 @@
 
 namespace App\Http\Controllers\Utility;
 
-use App\Enums\LogAction;
-use App\Enums\LogDetailRoute;
-use App\Enums\LogModule;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\BasicPaginateRequest;
-use App\Models\Utility\Role;
+use App\Http\Requests\Utility\User\ChangePasswordRequest;
+use App\Http\Requests\Utility\User\StoreUserRequest;
+use App\Http\Requests\Utility\User\UpdateSettingRequest;
+use App\Http\Requests\Utility\User\UpdateUserRequest;
 use App\Models\Utility\User;
-use App\Traits\Trailable;
+use App\Services\Utility\UserService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Attributes\Controllers\Middleware;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Inertia\Response;
 
 class UserController extends Controller
 {
-    use Trailable;
-    public function showChangePasswordForm(Request $request)
+    public function __construct(
+        protected UserService $userService
+    ) {}
+
+    public function paginate(BasicPaginateRequest $request): Response|RedirectResponse
     {
         try {
-            $user = $request->user();
+            $users = $this->userService->paginate($request->validated());
 
-            if (!$user) {
-                return redirect()->route('login');
-            }
-
-            return inertia('Utility/Auth/ChangePassword');
-        } catch (\Throwable $th) {
-            return back()->with('error', $th->getMessage());
+            return inertia('Utility/User/Index', [
+                'users' => $users,
+                'filters' => $request->only(['search', 'sort_by', 'sort_order']),
+            ]);
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+            return back()->with('error', 'Failed to load user list.');
         }
     }
 
-    public function changePassword(Request $request)
+    public function create(): Response|RedirectResponse
     {
-        $user = $request->user();
-
-        if (!$user) {
-            return redirect()->route('login');
+        try {
+            return inertia('Utility/User/Create');
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+            return back()->with('error', 'Failed to load create form.');
         }
-
-        $credentials = $request->validate([
-            'password' => ['required', 'confirmed', 'min:8'],
-            'password_confirmation' => ['required'],
-        ]);
-
-        $user->password = bcrypt($credentials['password']);
-        $user->is_password_changed = true;
-        $user->save();
-
-        return redirect()->route('dashboard')->with('success', 'Password updated successfully.');
     }
 
-    public function isPasswordChanged(Request $request)
+    public function store(StoreUserRequest $request): RedirectResponse
+    {
+        try {
+            $this->userService->store($request->validated());
+
+            return redirect()->route('utility.users.paginate')->with('success', 'User created successfully.');
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+            return back()->with('error', 'Failed to create user.')->withInput();
+        }
+    }
+
+    public function show(int $id): Response|RedirectResponse
+    {
+        try {
+            $user = User::with(['roles', 'warehouses'])->findOrFail($id);
+
+            return inertia('Utility/User/Show', [
+                'user' => $user,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+            return back()->with('error', 'Failed to load user details.');
+        }
+    }
+
+    public function update(UpdateUserRequest $request, int $id): RedirectResponse
+    {
+        try {
+            $this->userService->update($id, $request->validated());
+
+            return redirect()->route('utility.users.paginate')->with('success', 'User updated successfully.');
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+            return back()->with('error', 'Failed to update user.');
+        }
+    }
+
+    public function isPasswordChanged(Request $request): JsonResponse
     {
         try {
             $user = $request->user();
@@ -62,192 +94,61 @@ class UserController extends Controller
                 return $this->errorResponse('Unauthenticated.', 401);
             }
 
-            return $this->successResponse([
-                'is_password_changed' => $user->isPasswordChanged(),
-            ]);
-        } catch (\Throwable $th) {
-            return $this->errorResponse($th->getMessage(), 500);
+            return $this->successResponse(['is_password_changed' => (bool) $user->is_password_changed]);
+        } catch (\Throwable $e) {
+            Log::error($e->getMessage());
+            return $this->errorResponse('Failed to verify password status.', 500);
         }
     }
 
-    public function showSettingForm(Request $request)
-    {
-        return inertia('Utility/Auth/Setting', [
-            'user' => $request->user()
-        ]);
-    }
-
-    public function updateSetting(Request $request)
-    {
-        $user = $request->user();
-
-        $rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-        ];
-
-        if ($request->filled('password')) {
-            $rules['current_password'] = ['required', 'current_password'];
-            $rules['password'] = ['required', 'confirmed', 'min:8'];
-        }
-
-        $validated = $request->validate($rules);
-
-        $user->name = $validated['name'];
-        $user->email = $validated['email'];
-
-        if ($request->filled('password')) {
-            $user->password = Hash::make($validated['password']);
-        }
-
-        $user->save();
-
-        return redirect()->back()->with('success', 'Profile updated successfully.');
-    }
-
-    #[Middleware('can:utility.user.view')]
-    public function paginate(BasicPaginateRequest $request)
+    public function showChangePasswordForm(): Response|RedirectResponse
     {
         try {
-            $users = User::query()
-                ->search($request->search)
-                ->orderBy($request->sort_by, $request->sort_order)
-                ->paginate($request->per_page)
-                ->withQueryString();
-
-            return inertia('Utility/User/Index', [
-                'users' => $users,
-                'filters' => [
-                    'search' => $request->search,
-                    'sortField' => $request->input('sortField', 'name'),
-                    'sortOrder' => (int) $request->input('sortOrder', 1),
-                ]
-            ]);
-        } catch (\Exception $e) {
+            return inertia('Utility/Auth/ChangePassword');
+        } catch (\Throwable $e) {
             Log::error($e->getMessage());
-            return back()->with('error', 'Error while loading user data.');
+            return back()->with('error', 'Failed to load change password form.');
         }
     }
 
-    #[Middleware('can:utility.user.create')]
-    public function create()
+    public function changePassword(ChangePasswordRequest $request): RedirectResponse
     {
         try {
-            return inertia('Utility/User/Create');
-        } catch (\Exception $e) {
+            $this->userService->updatePassword($request->user(), $request->password);
+
+            return redirect()->route('dashboard')->with('success', 'Password updated successfully.');
+        } catch (\Throwable $e) {
             Log::error($e->getMessage());
-            return back()->with('error', 'Error while loading user data.');
+            return back()->with('error', 'Failed to update password.');
         }
     }
 
-    #[Middleware('can:utility.user.create')]
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'approver_name' => 'string|max:255',
-            'approver_title' => 'string|max:255',
-            'branch_code' => 'required|string|max:5',
-            'position' => 'required|string|max:255',
-            'is_active' => 'required|boolean',
-            'roles' => 'required|array',
-            'warehouses' => 'array',
-        ]);
-
-        try {
-            $user = User::create([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'approver_name' => $validated['approver_name'],
-                'approver_title' => $validated['approver_title'],
-                'branch_code' => $validated['branch_code'],
-                'position' => $validated['position'],
-                'is_active' => $validated['is_active'],
-                'password' => Hash::make('password'),
-                'is_password_changed' => false,
-            ]);
-
-            $user->roles()->sync(Role::whereIn('slug', $validated['roles'])->pluck('id'));
-            $user->warehouses()->sync($validated['warehouses']);
-
-            $this->trail(
-                LogModule::UTILITY,
-                LogAction::CREATE,
-                'User created successfully. User: ' . $user->name,
-                $user->id,
-                LogDetailRoute::USER
-            );
-
-            return redirect()->route('utility.users.paginate')->with('success', 'User created successfully.');
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return back()->with('error', 'Failed to create user.')->withInput();
-        }
-    }
-
-    #[Middleware('can:utility.user.view')]
-    public function show($id)
+    public function showSettingForm(Request $request): Response|RedirectResponse
     {
         try {
-            $user = User::with(['roles', 'warehouses', 'permissions'])->findOrFail($id);
-            return inertia('Utility/User/Show', [
-                'user' => $user,
-            ]);
-        } catch (\Exception $e) {
+            return inertia('Utility/Auth/Setting', ['user' => $request->user()]);
+        } catch (\Throwable $e) {
             Log::error($e->getMessage());
-            return back()->with('error', 'Error while loading user data.');
+            return back()->with('error', 'Failed to load setting form.');
         }
     }
 
-    #[Middleware('can:utility.user.edit')]
-    public function update(Request $request, $id)
+    public function updateSetting(UpdateSettingRequest $request): RedirectResponse
     {
-        $user = User::findOrFail($id);
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'approver_name' => 'string|max:255',
-            'approver_title' => 'string|max:255',
-            'branch_code' => 'required|string|max:50',
-            'position' => 'required|string|max:255',
-            'is_active' => 'required|boolean',
-            'roles' => 'required|array',
-            'warehouses' => 'array',
-        ]);
-
         try {
-            $user->update([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'approver_name' => $validated['approver_name'],
-                'approver_title' => $validated['approver_title'],
-                'branch_code' => $validated['branch_code'],
-                'position' => $validated['position'],
-                'is_active' => $validated['is_active'],
-            ]);
+            $user = $request->user();
 
-            if ($request->filled('password')) {
-                $user->update(['password' => Hash::make($request->password)]);
-            }
+            $this->userService->update($user->id, array_merge($request->validated(), [
+                'branch_code' => $user->branch_code,
+                'position' => $user->position,
+                'is_active' => $user->is_active,
+                'roles' => $user->roles->pluck('slug')->toArray()
+            ]));
 
-            $user->roles()->sync(Role::whereIn('slug', $validated['roles'])->pluck('id'));
-            $user->warehouses()->sync($validated['warehouses']);
-
-            $this->trail(
-                LogModule::UTILITY,
-                LogAction::UPDATE,
-                'User updated successfully. User: ' . $user->name,
-                $user->id,
-                LogDetailRoute::USER
-            );
-
-            return redirect()->route('utility.users.paginate')->with('success', 'User updated successfully.');
-        } catch (\Exception $e) {
+            return back()->with('success', 'Profile updated successfully.');
+        } catch (\Throwable $e) {
             Log::error($e->getMessage());
-            return back()->with('error', 'Failed to update user.');
+            return back()->with('error', 'Failed to update settings.');
         }
     }
-
 }
