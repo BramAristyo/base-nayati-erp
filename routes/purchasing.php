@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 // --- Purchase Request ---
 Route::middleware('auth')->prefix('purchasing/purchase-requests')->name('purchasing.purchase-requests.')->group(function () {
     Route::get('/', [PurchaseRequestController::class, 'paginate'])->name('index');
+    Route::get('/export', [PurchaseRequestController::class, 'export'])->name('export');
     Route::get('/{id}', [PurchaseRequestController::class, 'show'])->name('show');
 });
 

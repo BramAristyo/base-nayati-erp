@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\BasicPaginateRequest;
 use App\Services\Purchasing\PurchaseOrderService;
 use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -19,15 +18,14 @@ class PurchaseOrderController extends Controller
     ) {}
 
     #[Middleware('can:purchasing.purchase-order.view')]
-    public function paginate(BasicPaginateRequest $request): Response|JsonResponse
+    public function paginate(BasicPaginateRequest $request): Response
     {
         try {
             $data = $this->service->paginate($request->validated());
-            return response()->json($data);
 
             return Inertia::render('Purchasing/PurchaseOrder/Index', [
                 'data' => $data,
-                'filters' => $request->only(['search', 'sort_by', 'sort_order', 'per_page']),
+                'filters' => $request->only(['search', 'sortField', 'sortOrder', 'per_page', 'start_date', 'end_date']),
             ]);
         } catch (Exception $e) {
             Log::error('Purchase Order Paginate Error: ' . $e->getMessage(), [

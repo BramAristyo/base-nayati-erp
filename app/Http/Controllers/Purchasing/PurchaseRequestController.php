@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Purchasing;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\BasicPaginateRequest;
 use App\Services\Purchasing\PurchaseRequestService;
+use App\Exports\Purchasing\PurchaseRequestExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -25,7 +26,7 @@ class PurchaseRequestController extends Controller
 
             return Inertia::render('Purchasing/PurchaseRequest/Index', [
                 'data' => $data,
-                'filters' => $request->only(['search', 'sort_by', 'sort_order', 'per_page']),
+                'filters' => $request->only(['search', 'sortField', 'sortOrder', 'per_page', 'start_date', 'end_date']),
             ]);
         } catch (Exception $e) {
             Log::error('Purchase Request Paginate Error: ' . $e->getMessage(), [
@@ -60,6 +61,33 @@ class PurchaseRequestController extends Controller
             ]);
 
             abort(500, 'Internal Server Error');
+        }
+    }
+
+    #[Middleware('can:purchasing.purchase-request.export')]
+    public function export(BasicPaginateRequest $request)
+    {
+        try {
+            $data = $this->service->getAll($request->validated());
+            
+            $this->service->logExport($request->validated());
+
+            Log::info('Exporting Purchase Requests', [
+                'count' => $data->count(),
+                'filters' => $request->validated()
+            ]);
+
+            return Excel::download(
+                new PurchaseRequestExport($data),
+                'purchase-requests-' . now()->format('Y-m-d') . '.xlsx'
+            );
+        } catch (Exception $e) {
+            Log::error('Purchase Request Export Error: ' . $e->getMessage(), [
+                'request' => $request->all(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return back()->with('error', 'Failed to export purchase requests: ' . $e->getMessage());
         }
     }
 }

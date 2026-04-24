@@ -29,12 +29,28 @@ export function usePurchaseRequestDatatable(props: { data: PaginatedResponse<any
         updateRoute({ page: 1 });
     };
 
+    const onExport = () => {
+        const params = {
+            search: search.value || undefined,
+            sortField: props.filters.sortField || undefined,
+            sortOrder: props.filters.sortOrder || undefined,
+            start_date: formatToDateString(startDate.value) || undefined,
+            end_date: formatToDateString(endDate.value) || undefined,
+        };
+
+        console.log('Exporting with params:', params);
+
+        const url = route('purchasing.purchase-requests.export', params);
+        window.location.assign(url);
+    };
+
     return {
         search,
         startDate,
         endDate,
         onPage,
         onSort,
-        resetFilters
+        resetFilters,
+        onExport
     };
 }

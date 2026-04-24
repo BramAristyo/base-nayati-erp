@@ -23,7 +23,7 @@ const props = defineProps<{
 }>();
 
 const authStore = useAuthStore();
-const { search, startDate, endDate, onPage, onSort, resetFilters } = usePurchaseRequestDatatable(props);
+const { search, startDate, endDate, onPage, onSort, resetFilters, onExport } = usePurchaseRequestDatatable(props);
 
 const onRowClick = (event: any) => {
     if (authStore.hasPermission('purchasing.purchase-request.view')) {
@@ -58,6 +58,11 @@ const onRowClick = (event: any) => {
 
                     <Button icon="pi pi-refresh" size="small" variant="outlined" severity="secondary"
                         class="rounded-md!" v-tooltip.top="'Reset Filters'" @click="resetFilters" />
+
+                    <Button v-if="authStore.hasPermission('purchasing.purchase-request.export')" icon="pi pi-file-excel"
+                        label="Export" size="small" severity="success" variant="outlined"
+                        class="border-green-600! text-green-600! hover:bg-green-50! rounded-md! shadow-sm!"
+                        @click="onExport" />
 
                     <Button v-if="authStore.hasPermission('purchasing.purchase-request.create')" icon="pi pi-plus"
                         label="Create" size="small"

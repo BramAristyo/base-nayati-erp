@@ -33,6 +33,15 @@ class PurchaseRequestRepository
         return $paginator;
     }
 
+    public function getAll(array $filters = []): \Illuminate\Support\Collection
+    {
+        $query = $this->baseQuery();
+
+        $this->applyFilters($query, $filters);
+
+        return $query->get()->map(fn(object $item) => $this->transform($item));
+    }
+
     public function find(int $id): ?array
     {
         $item = $this->baseQuery()
