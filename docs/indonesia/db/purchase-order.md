@@ -30,6 +30,19 @@ Pemetaan ini melibatkan tabel-tabel berikut:
 | `hpo` | `IPPN` | `is_inclusive_tax` | `'Y'` → `true` (Boolean) |
 | `hpo` | `PPN` | `tax_percentage` | Persentase PPN |
 | `hpo` | `TOTAL` | `grand_total` | Total keseluruhan (Mata uang asli) |
+| `hpo` | `TOTALRP` | `grand_total_rupiah` | Total keseluruhan dalam IDR |
+| `hpo` | `JUMLAH` | `sub_total` | Total sebelum diskon & pajak |
+| `hpo` | `JUMLAHRP` | `sub_total_rupiah` | Sub total dalam IDR |
+| `hpo` | `DPP` | `tax_base_amount` | Dasar Pengenaan Pajak |
+| `hpo` | `DPPRP` | `tax_base_amount_rupiah` | Dasar Pengenaan Pajak dalam IDR |
+| `hpo` | `TPPN` | `tax_amount` | Nominal PPN |
+| `hpo` | `TPPNRP` | `tax_amount_rupiah` | Nominal PPN dalam IDR |
+| `hpo` | `DISC1` | `discount_percentage_1` | Persentase diskon 1 |
+| `hpo` | `DISCRP1` | `discount_amount_1` | Nominal diskon 1 dalam IDR |
+| `hpo` | `DISC2` | `discount_percentage_2` | Persentase diskon 2 |
+| `hpo` | `DISCRP2` | `discount_amount_2` | Nominal diskon 2 dalam IDR |
+| `hpo` | `DISC3` | `discount_percentage_3` | Persentase diskon 3 |
+| `hpo` | `DISCRP3` | `discount_amount_3` | Nominal diskon 3 dalam IDR |
 | `hpo` | `JNSPO` | `category` | `1` → `'Standard'`, else → `'Non Standard'` |
 | `hpo` | `KD_SUPP` | `supplier_code` | Kode Supplier |
 | `hpo` | `GP` | `is_general_purchase` | `'Y'` → `true` (Boolean) |
@@ -43,46 +56,22 @@ Pemetaan ini melibatkan tabel-tabel berikut:
 | `hpo` | `KONS` | `is_consignment` | `'Y'` → `true` (Boolean) |
 | `hpo` | `RATE` | `currency_rate` | Nilai tukar mata uang |
 | `hpo` | `M_UANG` | `currency_code` | Kode mata uang (e.g., IDR, USD) |
-| `hpo` | `JUMLAH` | `sub_total` | Total sebelum diskon & pajak |
-| `hpo` | `JUMLAHRP` | `sub_total_rupiah` | Sub total dalam IDR |
-| `hpo` | `TOTALRP` | `grand_total_rupiah` | Grand total dalam IDR |
-| `hpo` | `DISC1` | `disc1_percentage` | Persentase diskon 1 |
-| `hpo` | `DISCRP1` | `disc1_amount_rupiah` | Nominal diskon 1 dalam IDR |
-| `hpo` | `TPPN` | `tax_ppn_amount` | Nominal PPN |
-| `hpo` | `DPP` | `tax_base_amount` | Dasar Pengenaan Pajak |
 | `hpo` | `USER` | `created_by` | User pembuat entry |
 | `hpo` | `TGL_UPDATE` | `updated_at` | Waktu update terakhir |
 | `hpo` | `TGLENTRY` | `created_at` | Waktu pembuatan entry |
-| `hpo` | `PRICECON` | `price_condition` | Kondisi harga (Informasi Cetak) |
-| `hpo` | `PACKING` | `packing_information` | Informasi pengemasan |
-| `hpo` | `REMARK1` | `remark1` | Catatan tambahan 1 |
-| `hpo` | `biaya` | `other_expenses` | Biaya tambahan lainnya |
 | `supplier` | `NAMA` | `supplier_name` | Nama Supplier (dilakukan `trim()`) |
-| `supplier` | `ALAMAT` | `supplier_address` | Alamat lengkap supplier |
 | `mdept` | `ket` | `department_name` | Nama departemen pemesan |
-| `mdept` | `kddep` | `department_code` | Kode departemen |
 
 ## 3. Logika Transformasi (Transformation Logic)
 
-### 3.1 Status Boolean
-Beberapa field legacy menggunakan karakter `'Y'` atau `'L'` yang dikonversi menjadi tipe data boolean pada level aplikasi untuk mempermudah logika di frontend.
-- `status` (`approve`): `'Y'` menjadi `true`.
-- `is_inclusive_tax` (`IPPN`): `'Y'` menjadi `true`.
-- `is_consignment` (`KONS`): `'Y'` menjadi `true`.
-- `is_local_purchase` (`L_I`): `'L'` menjadi `true`.
+### 3.1 Konversi Boolean
+Berbagai flag string pada database legacy dikonversi menjadi boolean untuk konsistensi.
 
-### 3.2 Tipe Inventori & Kategori
-Mapping eksplisit untuk memberikan informasi yang lebih deskriptif:
-- **Inventory Type**: Jika kode adalah `'FG'`, maka ditampilkan sebagai `'Finish Goods'`. Selain itu (biasanya `'RM'`), ditampilkan sebagai `'Raw Materials'`.
-- **PO Category**: Jika `JNSPO` bernilai `1`, maka dikategorikan sebagai `'Standard'`. Nilai lainnya dikategorikan sebagai `'Non Standard'`.
+### 3.2 Pemetaan Tipe & Kategori
+Mapping eksplisit untuk memberikan informasi yang lebih deskriptif.
 
 ### 3.3 Pembersihan Data (Data Cleaning)
-Khusus untuk `supplier_name`, dilakukan pembersihan karakter kutipan ganda (`"`) dan spasi kosong di awal/akhir string yang sering terbawa dari sistem legacy.
-
-## 4. Anomali & Catatan (Anomalies & Notes)
-
-- **Sanitasi Tanggal:** Field tanggal dengan nilai `'0000-00-00'` dikonversi menjadi `null` untuk mencegah error pada parsing Carbon/Date.
-- **Unified Query:** Menggunakan `baseQuery()` untuk memastikan konsistensi field antara `paginate()` dan `find()`.
+Khusus untuk `supplier_name`, dilakukan pembersihan karakter kutipan ganda (`"`) dan spasi kosong.
 
 ---
 **Nayati Inox ERP - Technical Documentation**  

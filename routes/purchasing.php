@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Purchasing\PurchaseOrderController;
 use App\Http\Controllers\Purchasing\PurchaseRequestController;
+use App\Http\Controllers\Purchasing\ReceivingController;
 use Illuminate\Support\Facades\Route;
 
 // --- Purchase Request ---
@@ -15,6 +16,12 @@ Route::middleware('auth')->prefix('purchasing/purchase-requests')->name('purchas
 Route::middleware('auth')->prefix('purchasing/purchase-orders')->name('purchasing.purchase-orders.')->group(function () {
     Route::get('/', [PurchaseOrderController::class, 'paginate'])->name('index');
     Route::get('/export', [PurchaseOrderController::class, 'export'])->name('export');
-    Route::get('/print/{id}', [PurchaseOrderController::class, 'print'])->name('print');
     Route::get('/{id}', [PurchaseOrderController::class, 'show'])->name('show');
+});
+
+// --- Receiving ---
+Route::middleware('auth')->prefix('purchasing/receivings')->name('purchasing.receivings.')->group(function () {
+    Route::get('/', [ReceivingController::class, 'paginate'])->name('index');
+    Route::get('/export', [ReceivingController::class, 'export'])->name('export');
+    Route::get('/{id}', [ReceivingController::class, 'show'])->name('show');
 });

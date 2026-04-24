@@ -49,21 +49,21 @@ Pemetaan ini melibatkan tabel-tabel berikut:
 | `hbeli` | `m_uang` | `currency_code` | Kode Mata Uang |
 | `hbeli` | `JT_TEMPO` | `due_date` | Jatuh Tempo (Sanitized) |
 | `hbeli` | `L_I` | `is_local_purchase` | `'L'` → `true` |
-| `hbeli` | `DPP` | `total_tax_base` | Dasar Pengenaan Pajak |
-| `hbeli` | `PPNRP` | `total_tax_amount` | Nilai PPN dalam Rupiah |
+| `hbeli` | `DPP` | `tax_base_amount` | Dasar Pengenaan Pajak |
+| `hbeli` | `PPNRP` | `tax_amount_rupiah` | Nilai PPN dalam Rupiah |
 | `hbeli` | `RATE` | `currency_rate` | Nilai tukar mata uang |
 | `hbeli` | `JNSBELI` | `category` | `1` → `'Standard'`, else `'Non Standard'` |
-| `hbeli` | `DISC1` | `total_discount_global` | Diskon global (Header) |
+| `hbeli` | `DISC1` | `discount_percentage_1` | Prosentase Diskon Global 1 |
 | `hbeli` | `REPACKING` | `is_repacking` | `'Y'` → `true` |
 | `hbeli` | `USER` | `created_by` | User pembuat entry |
 | `hbeli` | `keterangan` | `remarks` | Catatan tambahan |
 | `w` | `code` | `warehouse_code` | Kode Gudang |
 | `w` | `name` | `warehouse_name` | Nama Gudang |
-| `hbeli` | `T_HARGA` | `total_price` | Total nilai transaksi |
+| `hbeli` | `T_HARGA` | `grand_total` | Total nilai transaksi |
 | `po` | `TGL_KRM` | `delivery_date` | Tanggal kirim dari PO (Sanitized) |
 | `dbeli` | `kd6` | `account_type_code` | Subquery (Item pertama) |
 | `dbeli` | `settrnket` | `account_type_name` | Subquery (Item pertama) |
-| `hbeli` | `TGL_UPDATE` | `updated_at` | Waktu update terakhir |
+| `hbeli` | `T_UPDATE` | `updated_at` | Waktu update terakhir |
 | `hbeli` | `TGLENTRY` | `created_at` | Waktu entry data |
 
 ## 3. Logika Transformasi (Transformation Logic)
@@ -83,10 +83,8 @@ Berbagai flag string pada database legacy dikonversi menjadi boolean untuk konsi
 
 ## 4. Anomali & Catatan (Anomalies & Notes)
 
-- **Sumber Nama Supplier (Anomali)**: `ReceivingRepository` mengambil nama supplier dari kolom `hbeli.ket` (Header Beli), sedangkan `PurchaseOrderRepository` mengambilnya dari master `supplier.NAMA`. Penggunaan `hbeli.ket` pada modul Receiving perlu diperhatikan karena merupakan field keterangan/snapshot.
-- **Konsistensi Flag Consignment**: Pada modul Receiving, flag consignment dipetakan dari `hbeli.STATUS`. Sebagai perbandingan, modul Purchase Order menggunakan kolom `hpo.KONS`.
-- **Representasi Akun (Subqueries)**: Properti `account_type_code` and `account_type_name` diambil menggunakan subquery ke tabel detail (`dbeli`) dengan `LIMIT 1`. Hal ini hanya merepresentasikan data akun dari item pertama dalam satu nomor transaksi.
-- **Join Purchase Order**: Menggunakan `noop` pada `hbeli` untuk join ke `nota` pada `hpo` guna mendapatkan informasi tanggal kirim dan ID PO.
+- **Standardisasi Nama Field**: Properti keuangan telah diseragamkan dengan modul Purchase Order (e.g., `tax_base_amount`, `discount_percentage_1`).
+- **Penghapusan DPPRP**: Kolom `hbeli.DPPRP` dihapus dari mapping karena terkonfirmasi tidak eksis di tabel legacy `hbeli`.
 
 ---
 **Nayati Inox ERP - Technical Documentation**  

@@ -91,7 +91,6 @@ class ReceivingRepository
                 'hbeli.JT_TEMPO as due_date',
                 'hbeli.L_I as is_local_purchase',
                 'hbeli.DPP as tax_base_amount',
-                'hbeli.DPPRP as tax_base_amount_rupiah',
                 'hbeli.PPNRP as tax_amount_rupiah',
                 'hbeli.RATE as currency_rate',
                 'hbeli.JNSBELI as category',

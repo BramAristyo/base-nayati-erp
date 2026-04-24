@@ -12,13 +12,13 @@ export interface UseDataTableOptions<TFilters extends PaginateFilter> {
 }
 
 export function useDataTable<TFilters extends PaginateFilter>(options: UseDataTableOptions<TFilters>) {
-    const search = ref(options.filters.search || '');
+    const search = ref(options.filters?.search || '');
 
     const updateRoute = (params: any = {}) => {
         const rawParams = {
             search: search.value,
-            sortField: options.filters.sortField,
-            sortOrder: options.filters.sortOrder,
+            sortField: options.filters?.sortField,
+            sortOrder: options.filters?.sortOrder,
             per_page: options.pagination.per_page,
             page: options.pagination.current_page,
             ...(options.extraParams ? options.extraParams() : {}),

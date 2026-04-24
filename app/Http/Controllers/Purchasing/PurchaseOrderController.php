@@ -36,7 +36,17 @@ class PurchaseOrderController extends Controller
             ]);
 
             return Inertia::render('Purchasing/PurchaseOrder/Index', [
-                'data' => [],
+                'data' => [
+                    'data' => [],
+                    'total' => 0,
+                    'current_page' => 1,
+                    'per_page' => 25,
+                ],
+                'filters' => [
+                    'search' => '',
+                    'sortField' => 'created_at',
+                    'sortOrder' => -1,
+                ],
                 'error' => 'Failed to load purchase orders.'
             ]);
         }
@@ -84,31 +94,6 @@ class PurchaseOrderController extends Controller
             ]);
 
             return back()->with('error', 'Failed to export purchase orders.');
-        }
-    }
-
-    #[Middleware('can:purchasing.purchase-order.print')]
-    public function print(int $id)
-    {
-        try {
-            $data = $this->service->find($id);
-
-            if (!$data) {
-                abort(404);
-            }
-
-            $this->service->logPrint($id);
-
-            return view('purchasing.purchase-order.print', [
-                'purchaseOrder' => $data
-            ]);
-        } catch (Exception $e) {
-            Log::error('Purchase Order Print Error: ' . $e->getMessage(), [
-                'id' => $id,
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            abort(500, 'Internal Server Error');
         }
     }
 }

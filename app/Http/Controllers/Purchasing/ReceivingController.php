@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Http\Controllers\Purchasing;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\BasicPaginateRequest;
-use App\Services\Purchasing\PurchaseRequestService;
-use App\Exports\Purchasing\PurchaseRequestExport;
+use App\Services\Purchasing\ReceivingService;
+use App\Exports\Purchasing\ReceivingExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Exception;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
@@ -12,29 +13,29 @@ use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class PurchaseRequestController extends Controller
+class ReceivingController extends Controller
 {
     public function __construct(
-        protected PurchaseRequestService $service
+        protected ReceivingService $service
     ) {}
 
-    #[Middleware('can:purchasing.purchase-request.view')]
+    #[Middleware('can:purchasing.receiving.view')]
     public function paginate(BasicPaginateRequest $request): Response
     {
         try {
             $data = $this->service->paginate($request->validated());
 
-            return Inertia::render('Purchasing/PurchaseRequest/Index', [
+            return Inertia::render('Purchasing/Receiving/Index', [
                 'data' => $data,
                 'filters' => $request->only(['search', 'sortField', 'sortOrder', 'per_page', 'start_date', 'end_date']),
             ]);
         } catch (Exception $e) {
-            Log::error('Purchase Request Paginate Error: ' . $e->getMessage(), [
+            Log::error('Receiving Paginate Error: ' . $e->getMessage(), [
                 'request' => $request->all(),
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return Inertia::render('Purchasing/PurchaseRequest/Index', [
+            return Inertia::render('Purchasing/Receiving/Index', [
                 'data' => [
                     'data' => [],
                     'total' => 0,
@@ -46,12 +47,12 @@ class PurchaseRequestController extends Controller
                     'sortField' => 'created_at',
                     'sortOrder' => -1,
                 ],
-                'error' => 'Failed to load purchase requests.'
+                'error' => 'Failed to load receiving records.'
             ]);
         }
     }
 
-    #[Middleware('can:purchasing.purchase-request.view')]
+    #[Middleware('can:purchasing.receiving.view')]
     public function show(int $id): Response
     {
         try {
@@ -61,11 +62,11 @@ class PurchaseRequestController extends Controller
                 abort(404);
             }
 
-            return Inertia::render('Purchasing/PurchaseRequest/Show', [
-                'purchaseRequest' => $data
+            return Inertia::render('Purchasing/Receiving/Show', [
+                'receiving' => $data
             ]);
         } catch (Exception $e) {
-            Log::error('Purchase Request Show Error: ' . $e->getMessage(), [
+            Log::error('Receiving Show Error: ' . $e->getMessage(), [
                 'id' => $id,
                 'trace' => $e->getTraceAsString()
             ]);
@@ -74,7 +75,7 @@ class PurchaseRequestController extends Controller
         }
     }
 
-    #[Middleware('can:purchasing.purchase-request.export')]
+    #[Middleware('can:purchasing.receiving.export')]
     public function export(BasicPaginateRequest $request)
     {
         try {
@@ -83,16 +84,16 @@ class PurchaseRequestController extends Controller
             $this->service->logExport($request->validated());
 
             return Excel::download(
-                new PurchaseRequestExport($data),
-                'purchase-requests-' . now()->format('Y-m-d') . '.xlsx'
+                new ReceivingExport($data),
+                'receiving-records-' . now()->format('Y-m-d') . '.xlsx'
             );
         } catch (Exception $e) {
-            Log::error('Purchase Request Export Error: ' . $e->getMessage(), [
+            Log::error('Receiving Export Error: ' . $e->getMessage(), [
                 'request' => $request->all(),
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return back()->with('error', 'Failed to export purchase requests.');
+            return back()->with('error', 'Failed to export receiving records.');
         }
     }
 }
