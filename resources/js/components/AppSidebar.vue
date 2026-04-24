@@ -202,7 +202,7 @@ onMounted(() => {
                         <Link v-tooltip.right="collapsed ? menu.label : ''" :href="menu.route ? route(menu.route) : '#'"
                             class="flex items-center gap-3 px-2.5 py-2 rounded-md transition-all group relative border border-transparent"
                             :class="[
-                                isRouteActive(menu.route) ? 'bg-background shadow-sm border-border text-foreground font-bold' : 'text-foreground hover:text-foreground hover:bg-accent/50',
+                                isRouteActive(menu.route) ? 'bg-background shadow-sm border-border text-foreground font-bold pointer-events-none' : 'text-foreground hover:text-foreground hover:bg-accent/50',
                                 collapsed ? 'justify-center' : ''
                             ]">
                             <i
@@ -233,7 +233,7 @@ onMounted(() => {
                             <Link v-for="child in menu.items" :key="child.label"
                                 :href="child.route ? route(child.route) : '#'"
                                 class="block px-2 py-1.5 rounded-md transition-all group"
-                                :class="isRouteActive(child.route) ? 'text-foreground font-bold bg-background/50 shadow-sm' : 'text-muted-foreground hover:text-foreground font-medium'">
+                                :class="isRouteActive(child.route) ? 'text-foreground font-bold bg-background/50 shadow-sm pointer-events-none' : 'text-muted-foreground hover:text-foreground font-medium'">
                                 <span class="text-sm whitespace-nowrap">{{ child.label }}</span>
                             </Link>
                         </div>
