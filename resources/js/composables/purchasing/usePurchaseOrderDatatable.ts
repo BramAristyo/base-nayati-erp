@@ -4,12 +4,8 @@ import { formatToDateString } from '@/utils/date';
 import type { PaginatedResponse } from '@/types/common/paginate.types';
 
 export function usePurchaseOrderDatatable(props: { data: PaginatedResponse<any>; filters: any }) {
-    const today = new Date();
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(today.getDate() - 30);
-
-    const startDate = ref(props.filters?.start_date ? new Date(props.filters.start_date) : thirtyDaysAgo);
-    const endDate = ref(props.filters?.end_date ? new Date(props.filters.end_date) : today);
+    const startDate = ref(props.filters?.start_date ? new Date(props.filters.start_date) : null);
+    const endDate = ref(props.filters?.end_date ? new Date(props.filters.end_date) : null);
 
     const { search, onPage, onSort, updateRoute } = useDataTable({
         routeName: 'purchasing.purchase-orders.index',
@@ -27,8 +23,8 @@ export function usePurchaseOrderDatatable(props: { data: PaginatedResponse<any>;
 
     const resetFilters = () => {
         search.value = '';
-        startDate.value = thirtyDaysAgo;
-        endDate.value = today;
+        startDate.value = null;
+        endDate.value = null;
         updateRoute({ page: 1 });
     };
 

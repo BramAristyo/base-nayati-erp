@@ -15,7 +15,9 @@ use Inertia\Response;
 
 class RolePermissionController extends Controller
 {
-    private array $immutableRoleIds = [1, 2];
+    // Administrator ID is 1. 
+    // Can't update or delete the administrator role.
+    private array $immutableRoleIds = [1];
 
     public function __construct(
         protected RolePermissionService $rolePermissionService

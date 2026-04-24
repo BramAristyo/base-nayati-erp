@@ -15,7 +15,7 @@ export function useDataTable<TFilters extends PaginateFilter>(options: UseDataTa
     const search = ref(options.filters.search || '');
 
     const updateRoute = (params: any = {}) => {
-        const finalParams = {
+        const rawParams = {
             search: search.value,
             sortField: options.filters.sortField,
             sortOrder: options.filters.sortOrder,
@@ -24,6 +24,14 @@ export function useDataTable<TFilters extends PaginateFilter>(options: UseDataTa
             ...(options.extraParams ? options.extraParams() : {}),
             ...params
         };
+
+        // Filter out empty strings, nulls, and undefined values
+        const finalParams = Object.entries(rawParams).reduce((acc: any, [key, value]) => {
+            if (value !== null && value !== undefined && value !== '') {
+                acc[key] = value;
+            }
+            return acc;
+        }, {});
 
         router.get(route(options.routeName), finalParams, {
             preserveState: true,
