@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Purchasing\PurchaseRequestController;
 use App\Http\Controllers\Utility\AuditTrailController;
 use App\Http\Controllers\Utility\AuthController;
 use App\Http\Controllers\Utility\MonitoringController;
@@ -50,6 +51,12 @@ Route::middleware('auth')->prefix('utility')->name('utility.')->group(function (
     Route::get('/audit-trails', [AuditTrailController::class, 'paginate'])->name('audit-trails.paginate');
 });
 
+// Purchasing Module Router
+Route::middleware('auth')->prefix('purchasing')->name('purchasing.')->group(function () {
+    Route::get('/purchase-requests', [PurchaseRequestController::class, 'paginate'])->name('purchase-requests.index');
+    Route::get('/purchase-requests/{id}', [PurchaseRequestController::class, 'show'])->name('purchase-requests.show');
+});
+
 // API Routes
 Route::middleware('auth')->prefix('api')->name('api.')->group(function () {
     Route::get('/me', [AuthController::class, 'me'])->name('me');
@@ -60,5 +67,9 @@ Route::middleware('auth')->prefix('api')->name('api.')->group(function () {
         Route::get('/roles/all', [RolePermissionController::class, 'getAll'])->name('roles.all');
         Route::get('/permissions/all', [RolePermissionController::class, 'permissions'])->name('permissions.all');
         Route::get('/monitoring/stats', [MonitoringController::class, 'show'])->name('monitoring.stats');
+    });
+
+    Route::prefix('purchasing')->name('purchasing.')->group(function () {
+        Route::get('/purchase-requests/{id}', [PurchaseRequestController::class, 'find'])->name('purchase-requests.show');
     });
 });

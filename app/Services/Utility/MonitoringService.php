@@ -4,11 +4,14 @@ namespace App\Services\Utility;
 
 use App\Models\Utility\AuditTrail;
 use App\Models\Utility\User;
+use App\Traits\HasFilterableQuery;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class MonitoringService
 {
+    use HasFilterableQuery;
+
     public function stats(array $filters): array
     {
         return [
@@ -22,16 +25,8 @@ class MonitoringService
     {
         $query = AuditTrail::query();
 
+        $this->applySearchFilter($query, $filters, ['description', 'action', 'subject_type']);
         $this->applyDateFilter($query, $filters, 'created_at');
-
-        if (!empty($filters['search'])) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('description', 'like', "%{$search}%")
-                    ->orWhere('action', 'like', "%{$search}%")
-                    ->orWhere('subject_type', 'like', "%{$search}%");
-            });
-        }
 
         return $query->count();
     }
@@ -52,19 +47,5 @@ class MonitoringService
         }
 
         return $query->count();
-    }
-
-    private function applyDateFilter($query, array $filters, string $column): void
-    {
-        $start = $filters['start_date'] ?? null;
-        $end = $filters['end_date'] ?? null;
-
-        if ($start && $end) {
-            $query->whereBetween($column, [$start . ' 00:00:00', $end . ' 23:59:59']);
-        } elseif ($start) {
-            $query->where($column, '>=', $start . ' 00:00:00');
-        } elseif ($end) {
-            $query->where($column, '<=', $end . ' 23:59:59');
-        }
     }
 }

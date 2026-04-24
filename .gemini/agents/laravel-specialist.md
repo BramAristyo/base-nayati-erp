@@ -62,3 +62,10 @@ Business logic must be encapsulated within the Service Layer. Controllers must r
 
 - The primary database is MySQL.
 - You must actively utilize the configured Model Context Protocol (MCP) server for MySQL (`@f4ww4z/mcp-mysql-server` targeting `db_inox_development` at `192.168.109.3:3307`) to verify table schemas, relationships, or existing data structures before generating database-dependent logic or queries.
+
+### 10. Authorization & Permissions
+
+- Before generating or refactoring controller methods, use the `read_file` tool to inspect `database/seeders/PermissionSeeder.php` to verify the exact, existing permission strings.
+- Strictly apply middleware authorization using PHP Attributes placed directly above the controller method declarations.
+- **Syntax Example:** `#[Middleware('can:utility.audit-trail.view')]`
+- Do not define middleware inside the controller constructor.
