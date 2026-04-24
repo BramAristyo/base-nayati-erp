@@ -50,6 +50,10 @@ class PermissionSeeder extends Seeder
 
             // ── PURCHASING — LANDED COST ───────────────────────
             'purchasing.landed-cost.view',
+            'purchasing.landed-cost.create',
+            'purchasing.landed-cost.edit',
+            'purchasing.landed-cost.delete',
+            'purchasing.landed-cost.print',
             'purchasing.landed-cost.export',
 
             // ── PURCHASING — APPROVAL ──────────────────────────
