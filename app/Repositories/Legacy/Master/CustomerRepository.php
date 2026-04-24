@@ -62,6 +62,8 @@ class CustomerRepository
 
         if (isset($filters['sort_by'], $this->sortableFields[$filters['sort_by']])) {
             $filters['sort_by'] = $this->sortableFields[$filters['sort_by']];
+        } else {
+            $filters['sort_by'] = 'IDCUST';
         }
 
         $this->applySortFilter($query, $filters, 'IDCUST', 'desc');

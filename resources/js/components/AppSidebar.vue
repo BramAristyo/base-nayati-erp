@@ -30,6 +30,20 @@ const authStore = useAuthStore();
 const { permissions: userPermissions } = storeToRefs(authStore);
 
 const menus = ref<MenuItem[]>([
+    {
+        label: 'Master',
+        icon: 'pi pi-database',
+        isOpen: false,
+        items: [
+            { label: 'Branches', route: 'master.branches.index', permission: 'master.branch.view' },
+            { label: 'Currencies', route: 'master.currencies.index', permission: 'master.currency.view' },
+            { label: 'Customers', route: 'master.customers.index', permission: 'master.customer.view' },
+            { label: 'Delivery Terms', route: 'master.delivery-terms.index', permission: 'master.delivery-term.view' },
+            { label: 'Departments', route: 'master.departments.index', permission: 'master.department.view' },
+            { label: 'Employees', route: 'master.employees.index', permission: 'master.employee.view' },
+            { label: 'Suppliers', route: 'master.suppliers.index', permission: 'master.supplier.view' },
+        ]
+    },
     { label: 'Dashboard', icon: 'pi pi-objects-column', route: 'dashboard' },
     {
         label: 'Purchasing',
@@ -39,7 +53,7 @@ const menus = ref<MenuItem[]>([
             { label: 'Purchase Request', route: 'purchasing.purchase-requests.index', permission: 'purchasing.purchase-request.view' },
             { label: 'Purchase Order', route: 'purchasing.purchase-orders.index', permission: 'purchasing.purchase-order.view' },
             { label: 'Receiving', route: 'purchasing.receivings.index', permission: 'purchasing.receiving.view' },
-            { label: 'Landed Cost', route: 'purchasing.landed-costs.index', permission: 'purchasing.receiving.view' },
+            { label: 'Landed Cost', route: 'purchasing.landed-costs.index', permission: 'purchasing.landed-cost.view' },
         ]
     },
     {
@@ -222,7 +236,7 @@ onMounted(() => {
                                     :class="[menu.icon, 'text-base text-muted-foreground group-hover:text-foreground']"></i>
                                 <span v-if="!collapsed" class="text-sm font-semibold tracking-wide whitespace-nowrap">{{
                                     menu.label
-                                }}</span>
+                                    }}</span>
                             </div>
                             <i v-if="!collapsed"
                                 class="pi pi-chevron-down text-[10px] text-muted-foreground transition-transform duration-200"

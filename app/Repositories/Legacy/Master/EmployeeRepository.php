@@ -54,6 +54,8 @@ class EmployeeRepository
 
         if (isset($filters['sort_by'], $this->sortableFields[$filters['sort_by']])) {
             $filters['sort_by'] = $this->sortableFields[$filters['sort_by']];
+        } else {
+            $filters['sort_by'] = 'nik';
         }
 
         $this->applySortFilter($query, $filters, 'nik', 'asc');

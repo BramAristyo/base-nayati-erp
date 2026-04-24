@@ -6,32 +6,32 @@ namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\BasicPaginateRequest;
-use App\Services\Master\EmployeeService;
+use App\Services\Master\CustomerService;
 use Exception;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class EmployeeController extends Controller
+class CustomerController extends Controller
 {
     public function __construct(
-        protected EmployeeService $service
+        protected CustomerService $service
     ) {}
 
-    #[Middleware('can:master.employee.view')]
+    #[Middleware('can:master.customer.view')]
     public function paginate(BasicPaginateRequest $request): Response
     {
         try {
             $data = $this->service->paginate($request->validated());
 
-            return Inertia::render('Master/Employee/Index', [
+            return Inertia::render('Master/Customer/Index', [
                 'data' => $data,
                 'filters' => $request->only(['search', 'sortField', 'sortOrder', 'per_page']),
             ]);
         } catch (Exception $e) {
-            Log::error('Employee Paginate Error: ' . $e->getMessage());
-            return Inertia::render('Master/Employee/Index', [
+            Log::error('Customer Paginate Error: ' . $e->getMessage());
+            return Inertia::render('Master/Customer/Index', [
                 'data' => [
                     'data' => [],
                     'total' => 0,
@@ -39,7 +39,7 @@ class EmployeeController extends Controller
                     'per_page' => 25,
                 ],
                 'filters' => [],
-                'error' => 'Failed to load employee records.'
+                'error' => 'Failed to load customer records.'
             ]);
         }
     }

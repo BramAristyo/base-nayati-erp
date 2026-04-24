@@ -14,5 +14,6 @@ Route::middleware(['auth', 'check_password_changed'])->group(function () {
 });
 
 // Module Routes
+require __DIR__ . '/master.php';
 require __DIR__ . '/utility.php';
 require __DIR__ . '/purchasing.php';

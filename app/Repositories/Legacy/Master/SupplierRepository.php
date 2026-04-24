@@ -61,6 +61,8 @@ class SupplierRepository
 
         if (isset($filters['sort_by'], $this->sortableFields[$filters['sort_by']])) {
             $filters['sort_by'] = $this->sortableFields[$filters['sort_by']];
+        } else {
+            $filters['sort_by'] = 'tglupdate';
         }
 
         $this->applySortFilter($query, $filters, 'tglupdate', 'desc');

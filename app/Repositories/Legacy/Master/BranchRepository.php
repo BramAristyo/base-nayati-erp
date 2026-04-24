@@ -65,6 +65,8 @@ class BranchRepository
 
         if (isset($filters['sort_by'], $this->sortableFields[$filters['sort_by']])) {
             $filters['sort_by'] = $this->sortableFields[$filters['sort_by']];
+        } else {
+            $filters['sort_by'] = 'kd_cab';
         }
 
         $this->applySortFilter($query, $filters, 'kd_cab', 'asc');
