@@ -40,26 +40,6 @@ class PurchaseRequestController extends Controller
         }
     }
 
-    public function find(int $id): JsonResponse
-    {
-        try {
-            $data = $this->service->find($id);
-
-            if (!$data) {
-                return $this->errorResponse('Purchase request not found.', 404);
-            }
-
-            return $this->successResponse($data);
-        } catch (Exception $e) {
-            Log::error('Purchase Request Find Error: ' . $e->getMessage(), [
-                'id' => $id,
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            return $this->errorResponse('An error occurred while retrieving the purchase request.');
-        }
-    }
-
     #[Middleware('can:purchasing.purchase-request.view')]
     public function show(int $id): Response
     {
