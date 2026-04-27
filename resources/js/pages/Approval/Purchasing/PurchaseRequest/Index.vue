@@ -356,14 +356,3 @@ const handleRevoke = (items: PurchaseRequest[]) => {
         </div>
     </AppLayout>
 </template>
-
-<style scoped>
-:deep(.approval-status-toggle .p-togglebutton) {
-    font-size: 10px !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-    padding: 0.35rem 1rem !important;
-    border-color: var(--border) !important;
-}
-</style>

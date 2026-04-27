@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Utility\AccountTypeController;
 use App\Http\Controllers\Utility\AuditTrailController;
 use App\Http\Controllers\Utility\AuthController;
 use App\Http\Controllers\Utility\MonitoringController;
@@ -47,5 +48,6 @@ Route::middleware('auth')->prefix('api')->name('api.')->group(function () {
         Route::get('/roles/all', [RolePermissionController::class, 'getAll'])->name('roles.all');
         Route::get('/permissions/all', [RolePermissionController::class, 'permissions'])->name('permissions.all');
         Route::get('/monitoring/stats', [MonitoringController::class, 'show'])->name('monitoring.stats');
+        Route::get('/account-types', [AccountTypeController::class, 'index'])->name('account-types.index');
     });
 });
