@@ -46,4 +46,16 @@ class PurchaseOrderService
             LogDetailRoute::PURCHASE_ORDER_INDEX
         );
     }
+
+    public function getApprovalList(array $filters): LengthAwarePaginator
+    {
+        $status = $filters['approval_status'] ?? 'pending';
+
+        $filters['approval_status'] = $status === 'processed' ? 'processed' : 'pending';
+
+        return $this->repository->paginate(
+            $filters['per_page'] ?? 25,
+            $filters
+        );
+    }
 }

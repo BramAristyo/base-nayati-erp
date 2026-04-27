@@ -135,6 +135,16 @@ class PurchaseOrderRepository
             $filters['sort_by'] = $this->sortableFields[$filters['sort_by']];
         }
 
+        $approvalStatus = $filters['approval_status'] ?? null;
+        $query->when($approvalStatus, function ($q) use ($approvalStatus) {
+            if ($approvalStatus === 'pending') {
+                $q->where('hpo.approve', '!=', 'Y');
+            } elseif ($approvalStatus === 'processed') {
+                $q->where('hpo.approve', 'Y')->where('hpo.terkirim', 0);
+            }
+        });
+
+
         $this->applySortFilter($query, $filters, 'hpo.id', 'desc');
     }
 
