@@ -83,11 +83,13 @@ const detailTotal = computed(() =>
 );
 
 const handleApprove = (items: PurchaseRequest[]) => {
-    console.log('Approve', items);
+    const purchase_request_ids = items.map((item) => item.id);
+    console.log('Approve IDs:', purchase_request_ids);
 };
 
 const handleRevoke = (items: PurchaseRequest[]) => {
-    console.log('Revoke', items);
+    const purchase_request_ids = items.map((item) => item.id);
+    console.log('Revoke IDs:', purchase_request_ids);
 };
 </script>
 
