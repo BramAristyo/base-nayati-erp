@@ -28,7 +28,7 @@ const menus: ApprovalMenuGroup[] = [
         label: 'Purchasing',
         items: [
             { key: 'purchase-request', label: 'Purchase Request', icon: 'pi pi-file-edit', route: 'approval.purchasing.purchase-requests.pending', permission: 'approval.purchase-request.view' },
-            { key: 'purchase-order', label: 'Purchase Order', icon: 'pi pi-file-check', route: 'dashboard', permission: 'approval.purchase-order.view' },
+            { key: 'purchase-order', label: 'Purchase Order', icon: 'pi pi-file-check', route: 'approval.purchasing.purchase-orders.pending', permission: 'approval.purchase-order.view' },
             { key: 'receiving', label: 'Receiving', icon: 'pi pi-truck', route: 'dashboard', permission: 'approval.receiving.view' },
         ],
     },

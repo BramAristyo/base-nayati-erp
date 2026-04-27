@@ -140,7 +140,7 @@ class PurchaseOrderRepository
             if ($approvalStatus === 'pending') {
                 $q->where('hpo.approve', '!=', 'Y');
             } elseif ($approvalStatus === 'processed') {
-                $q->where('hpo.approve', 'Y')->where('hpo.terkirim', 0);
+                $q->where('hpo.approve', 'Y');
             }
         });
 
