@@ -61,8 +61,6 @@ const statusOptions = [
     { label: 'Processed', value: 'processed' },
 ];
 
-
-
 const handleRowClick = async (event: any) => {
     const target = event.originalEvent?.target as HTMLElement;
     if (target?.closest('.p-checkbox') || target?.closest('.p-datatable-selection-column')) return;
@@ -89,15 +87,12 @@ const detailTotal = computed(() =>
     <AppLayout>
         <div class="flex gap-6 h-[calc(100vh-8rem)]">
 
-            <!-- Left: Approval Navigation Menu -->
             <aside class="w-56 shrink-0 flex flex-col">
                 <ApprovalMenu active="purchase-request" />
             </aside>
 
-            <!-- Right: Content Area -->
             <div class="flex-1 flex flex-col gap-2 min-w-0">
 
-                <!-- Header -->
                 <div class="flex flex-col gap-4 md:flex-row md:items-center justify-between shrink-0">
                     <AppPageHeader title="Purchase Request"
                         description="Authorize pending purchase requests and track processing history." />
@@ -126,16 +121,15 @@ const detailTotal = computed(() =>
 
                 <Divider class="my-1!" />
 
-                <!-- Filter Strip -->
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0">
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3 flex-1">
                         <SelectButton v-model="currentStatus" :options="statusOptions" optionLabel="label"
                             optionValue="value" :allowEmpty="false" class="approval-status-toggle" />
 
-                        <IconField>
+                        <IconField class="w-full!">
                             <InputIcon class="pi pi-search text-muted-foreground!" style="font-size: 14px" />
                             <InputText v-model="search" placeholder="Quick Search..." size="small"
-                                class="w-80! bg-background border-border! text-foreground! rounded-md! focus:ring-1! focus:ring-ring! shadow-sm transition-all placeholder:text-muted-foreground!" />
+                                class="w-full! bg-background border-border! text-foreground! rounded-md! focus:ring-1! focus:ring-ring! shadow-sm transition-all placeholder:text-muted-foreground!" />
                         </IconField>
                     </div>
 
@@ -150,12 +144,9 @@ const detailTotal = computed(() =>
                     </div>
                 </div>
 
-                <!-- Master-Detail Splitter -->
                 <div class="flex-1 min-h-0 overflow-hidden">
                     <Splitter stateKey="pr-approval-splitter" layout="vertical"
-                        class="!h-full !border-none !bg-transparent">
-
-                        <!-- Master: PR List -->
+                        class="h-full! border-none! bg-transparent!">
                         <SplitterPanel :size="55" :minSize="30"
                             class="flex flex-col overflow-hidden bg-card rounded-xl border border-border shadow-xs">
                             <DataTable :key="routeName" :value="data.data" v-model:selection="selectedItems"
@@ -299,7 +290,7 @@ const detailTotal = computed(() =>
 
                                     <Column field="product_code" header="CODE" class="w-32">
                                         <template #body="slotProps">
-                                            <span class="text-[11px] font-mono font-bold text-foreground">
+                                            <span class="text-[11px] ">
                                                 {{ slotProps.data.product_code }}
                                             </span>
                                         </template>
