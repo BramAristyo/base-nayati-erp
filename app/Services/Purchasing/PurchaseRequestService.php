@@ -46,4 +46,24 @@ class PurchaseRequestService
             LogDetailRoute::PURCHASE_REQUEST_INDEX
         );
     }
+
+    public function getPending(array $filters): LengthAwarePaginator
+    {
+        $filters['approval_status'] = 'pending';
+
+        return $this->repository->paginate(
+            $filters['per_page'] ?? 25,
+            $filters
+        );
+    }
+
+    public function getProcessed(array $filters): LengthAwarePaginator
+    {
+        $filters['approval_status'] = 'processed';
+
+        return $this->repository->paginate(
+            $filters['per_page'] ?? 25,
+            $filters
+        );
+    }
 }

@@ -20,11 +20,6 @@ class PurchaseRequestRepository
         'employee_name' => 'e.ket',
     ];
 
-    private array $inventoryTypes = [
-        'Finish Goods' => 'FG',
-        'Raw Materials' => 'RM',
-    ];
-
     public function paginate(int $perPage = 25, array $filters = []): LengthAwarePaginator
     {
         $query = $this->baseQuery();
