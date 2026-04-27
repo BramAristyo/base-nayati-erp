@@ -4,6 +4,12 @@ import AppPageHeader from '@/components/common/AppPageHeader.vue';
 import UserForm from '@/components/Users/UserForm.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { StoreUserRequest } from '@/types/utility/user.types';
+import type { Branch } from '@/types/master/master.types';
+
+defineProps<{
+    groupedPermissions: any;
+    branches: Branch[];
+}>();
 
 const form = useForm<StoreUserRequest>({
     name: '',
@@ -14,6 +20,7 @@ const form = useForm<StoreUserRequest>({
     position: '',
     roles: [],
     warehouses: [],
+    permissions: [],
     is_active: 1
 });
 
@@ -32,7 +39,12 @@ const submit = () => {
                 description="Register a new system user and assign permissions."
             />
 
-            <UserForm :form="form" @submit="submit" />
+            <UserForm 
+                :form="form" 
+                :grouped-permissions="groupedPermissions"
+                :branches="branches"
+                @submit="submit" 
+            />
         </div>
     </AppLayout>
 </template>

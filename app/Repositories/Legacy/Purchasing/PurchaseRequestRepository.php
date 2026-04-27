@@ -104,7 +104,8 @@ class PurchaseRequestRepository
         }
 
         // Index Filter
-        $query->when($filters['status'] ?? null, function ($q, $status) {
+        $status = $filters['status'] ?? null;
+        $query->when($status, function ($q) use ($status) {
             if ($status === 'approved') {
                 $q->where('hpr.approve', 'Y');
             } elseif ($status === 'not_approved') {
@@ -113,10 +114,11 @@ class PurchaseRequestRepository
         });
 
         // Approval History Filter
-        $query->when($filters['approval_status'] ?? null, function ($q, $status) {
-            if ($status === 'pending') {
+        $approvalStatus = $filters['approval_status'] ?? null;
+        $query->when($approvalStatus, function ($q) use ($approvalStatus) {
+            if ($approvalStatus === 'pending') {
                 $q->where('hpr.approve', '!=', 'Y');
-            } elseif ($status === 'processed') {
+            } elseif ($approvalStatus === 'processed') {
                 $q->where('hpr.approve', 'Y')
                     ->whereNotExists(function ($subquery) {
                         $subquery->select(DB::raw(1))

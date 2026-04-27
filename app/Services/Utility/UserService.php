@@ -9,6 +9,7 @@ use App\Models\Utility\Role;
 use App\Models\Utility\User;
 use App\Traits\Trailable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserService
@@ -24,61 +25,88 @@ class UserService
             ->withQueryString();
     }
 
+    public function find(int $id): User
+    {
+        return User::with(['roles.permissions', 'permissions', 'warehouses'])->findOrFail($id);
+    }
+
     public function store(array $data): User
     {
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'approver_name' => $data['approver_name'] ?? null,
-            'approver_title' => $data['approver_title'] ?? null,
-            'branch_code' => $data['branch_code'],
-            'position' => $data['position'],
-            'is_active' => $data['is_active'],
-            'password' => Hash::make('password'),
-            'is_password_changed' => false,
-        ]);
+        return DB::transaction(function () use ($data) {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'approver_name' => $data['approver_name'] ?? null,
+                'approver_title' => $data['approver_title'] ?? null,
+                'branch_code' => $data['branch_code'],
+                'position' => $data['position'],
+                'is_active' => $data['is_active'],
+                'password' => Hash::make('password'),
+                'is_password_changed' => false,
+            ]);
 
-        if (isset($data['roles'])) {
-            $user->roles()->sync(Role::whereIn('slug', $data['roles'])->pluck('id'));
-        }
+            if (isset($data['roles'])) {
+                $user->roles()->sync(Role::whereIn('slug', $data['roles'])->pluck('id'));
+            }
 
-        if (isset($data['warehouses'])) {
-            $user->warehouses()->sync($data['warehouses']);
-        }
+            if (isset($data['warehouses'])) {
+                $user->warehouses()->sync($data['warehouses']);
+            }
 
-        $this->trail(LogModule::UTILITY, LogAction::CREATE, "User created: {$user->name}", $user->id, LogDetailRoute::USER);
+            if (isset($data['permissions'])) {
+                $syncData = [];
+                foreach ($data['permissions'] as $p) {
+                    $syncData[$p['permission_id']] = ['is_denied' => $p['is_denied']];
+                }
+                $user->permissions()->sync($syncData);
+            }
 
-        return $user;
+            $this->trail(LogModule::UTILITY, LogAction::CREATE, "User created: {$user->name}", $user->id, LogDetailRoute::USER);
+
+            return $user;
+        });
     }
 
     public function update(int $id, array $data): User
     {
-        $user = User::findOrFail($id);
-        $user->update([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'approver_name' => $data['approver_name'] ?? null,
-            'approver_title' => $data['approver_title'] ?? null,
-            'branch_code' => $data['branch_code'],
-            'position' => $data['position'],
-            'is_active' => $data['is_active'],
-        ]);
+        return DB::transaction(function () use ($id, $data) {
+            $user = User::findOrFail($id);
+            $user->update([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'approver_name' => $data['approver_name'] ?? null,
+                'approver_title' => $data['approver_title'] ?? null,
+                'branch_code' => $data['branch_code'],
+                'position' => $data['position'],
+                'is_active' => $data['is_active'],
+            ]);
 
-        if (!empty($data['password'])) {
-            $user->update(['password' => Hash::make($data['password'])]);
-        }
+            if (!empty($data['password'])) {
+                $user->update(['password' => Hash::make($data['password'])]);
+            }
 
-        if (isset($data['roles'])) {
-            $user->roles()->sync(Role::whereIn('slug', $data['roles'])->pluck('id'));
-        }
+            if (isset($data['roles'])) {
+                $user->roles()->sync(Role::whereIn('slug', $data['roles'])->pluck('id'));
+            }
 
-        if (isset($data['warehouses'])) {
-            $user->warehouses()->sync($data['warehouses']);
-        }
+            if (isset($data['warehouses'])) {
+                $user->warehouses()->sync($data['warehouses']);
+            }
 
-        $this->trail(LogModule::UTILITY, LogAction::UPDATE, "User updated: {$user->name}", $user->id, LogDetailRoute::USER);
+            if (isset($data['permissions'])) {
+                $syncData = [];
+                foreach ($data['permissions'] as $p) {
+                    $syncData[$p['permission_id']] = ['is_denied' => $p['is_denied']];
+                }
+                $user->permissions()->sync($syncData);
+            }
 
-        return $user;
+            $user->clearPermissionCache();
+
+            $this->trail(LogModule::UTILITY, LogAction::UPDATE, "User updated: {$user->name}", $user->id, LogDetailRoute::USER);
+
+            return $user;
+        });
     }
 
     public function updatePassword(User $user, string $password): void

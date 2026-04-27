@@ -2,6 +2,11 @@ import type { PaginatedResponse } from '../common/paginate.types';
 import type { Role, Permission } from './role-permissions.types';
 import type { Warehouse } from './warehouse.types';
 
+export interface UserPermissionOverride {
+    permission_id: number;
+    is_denied: boolean;
+}
+
 export interface User {
     id: number;
     name: string;
@@ -36,6 +41,7 @@ export interface StoreUserRequest {
     roles: string[]; // Role slugs
     warehouses: number[]; // Warehouse IDs
     is_active: number;
+    permissions: UserPermissionOverride[];
 }
 
 export interface UpdateUserRequest extends Partial<StoreUserRequest> {

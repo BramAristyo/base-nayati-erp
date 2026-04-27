@@ -9,6 +9,7 @@ use App\Models\Utility\Role;
 use App\Traits\Trailable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 class RolePermissionService
 {
@@ -28,7 +29,7 @@ class RolePermissionService
 
     public function getAll(): Collection
     {
-        return Role::all();
+        return Role::with('permissions')->get();
     }
 
     public function permissions(): Collection
@@ -39,6 +40,13 @@ class RolePermissionService
     public function find(int $id): Role
     {
         return Role::with('permissions')->findOrFail($id);
+    }
+
+    public function getGroupedPermissions(): \Illuminate\Support\Collection
+    {
+        return Permission::all()->groupBy('module')->map(function ($module) {
+            return $module->groupBy('sub_module');
+        });
     }
 
     public function store(array $data): Role

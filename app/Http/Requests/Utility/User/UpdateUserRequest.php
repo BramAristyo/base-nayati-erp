@@ -26,6 +26,9 @@ class UpdateUserRequest extends FormRequest
             'warehouses' => ['nullable', 'array'],
             'warehouses.*' => ['integer', 'exists:warehouses,id'],
             'password' => ['nullable', 'string', 'min:8'],
+            'permissions' => ['nullable', 'array'],
+            'permissions.*.permission_id' => ['required', 'integer', 'exists:permissions,id'],
+            'permissions.*.is_denied' => ['required', 'boolean'],
         ];
     }
 }

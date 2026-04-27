@@ -18,13 +18,16 @@ class StoreUserRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'approver_name' => ['nullable', 'string', 'max:255'],
             'approver_title' => ['nullable', 'string', 'max:255'],
-            'branch_code' => ['required', 'string', 'max:5'],
+            'branch_code' => ['required', 'string', 'max:10'],
             'position' => ['required', 'string', 'max:255'],
             'is_active' => ['required', 'boolean'],
             'roles' => ['required', 'array'],
             'roles.*' => ['string', 'exists:roles,slug'],
             'warehouses' => ['nullable', 'array'],
             'warehouses.*' => ['integer', 'exists:warehouses,id'],
+            'permissions' => ['nullable', 'array'],
+            'permissions.*.permission_id' => ['required', 'integer', 'exists:permissions,id'],
+            'permissions.*.is_denied' => ['required', 'boolean'],
         ];
     }
 }

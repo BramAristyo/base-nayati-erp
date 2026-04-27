@@ -4,10 +4,12 @@ import AppPageHeader from '@/components/common/AppPageHeader.vue';
 import UserForm from '@/components/Users/UserForm.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { ShowUser, UpdateUserRequest } from '@/types/utility/user.types';
-import { useToast } from 'primevue/usetoast';
+import type { Branch } from '@/types/master/master.types';
 
 const props = defineProps<{
     user: ShowUser;
+    groupedPermissions: any;
+    branches: Branch[];
 }>();
 
 const form = useForm<UpdateUserRequest>({
@@ -20,11 +22,14 @@ const form = useForm<UpdateUserRequest>({
     position: props.user.position,
     roles: props.user.roles?.map(r => r.slug) || [],
     warehouses: props.user.warehouses?.map(w => w.id) || [],
+    permissions: props.user.permissions?.map(p => ({
+        permission_id: p.id,
+        is_denied: p.pivot.is_denied
+    })) || [],
     is_active: props.user.is_active,
     password: '',
     password_confirmation: ''
 });
-const toast = useToast();
 
 const submit = () => {
     form.post(route('utility.users.update', { id: props.user.id }));
@@ -32,14 +37,19 @@ const submit = () => {
 </script>
 
 <template>
-
     <Head :title="`User: ${user.name}`" />
 
     <AppLayout>
         <div class="space-y-10">
             <AppPageHeader title="Edit User" description="Update user credentials, permissions, and account status." />
 
-            <UserForm :form="form" :is-edit="true" @submit="submit" />
+            <UserForm 
+                :form="form" 
+                :is-edit="true" 
+                :grouped-permissions="groupedPermissions"
+                :branches="branches"
+                @submit="submit" 
+            />
         </div>
     </AppLayout>
 </template>
