@@ -255,25 +255,6 @@ onMounted(() => {
                     </template>
                 </div>
             </nav>
-
-            <div class="pt-4 border-t border-border mt-auto space-y-0.5">
-                <Link v-tooltip.right="collapsed ? 'Settings' : ''" :href="route('user.settings')"
-                    class="flex items-center gap-3 px-2.5 py-2 rounded-md transition-all group text-foreground hover:text-foreground hover:bg-accent/50"
-                    :class="[
-                        isRouteActive('user.settings') ? 'bg-background shadow-sm border-border text-foreground font-bold' : '',
-                        collapsed ? 'justify-center' : ''
-                    ]">
-                    <i
-                        :class="['pi pi-cog text-base', isRouteActive('user.settings') ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground']"></i>
-                    <span v-if="!collapsed" class="text-sm font-semibold tracking-wide">Settings</span>
-                </Link>
-                <Link v-tooltip.right="collapsed ? 'Log out' : ''" :href="route('logout')" method="post" as="button"
-                    class="w-full flex items-center gap-3 px-2.5 py-2 rounded-md transition-all group text-destructive hover:text-destructive hover:bg-destructive/10"
-                    :class="[collapsed ? 'justify-center' : '']">
-                    <i class="pi pi-power-off text-base"></i>
-                    <span v-if="!collapsed" class="text-sm tracking-wide font-bold">Log out</span>
-                </Link>
-            </div>
         </div>
     </aside>
 </template>

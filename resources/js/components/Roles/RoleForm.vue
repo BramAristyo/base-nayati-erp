@@ -95,7 +95,8 @@ onMounted(() => {
             <div class="flex flex-col gap-8">
                 <div class="flex flex-col gap-1">
                     <h2 class="text-sm font-bold text-foreground uppercase tracking-widest">Role Identity</h2>
-                    <p class="text-[11px] text-muted-foreground font-medium italic">Basic identification and definition of the
+                    <p class="text-[11px] text-muted-foreground font-medium italic">Basic identification and definition
+                        of the
                         role.</p>
                 </div>
 
@@ -107,7 +108,7 @@ onMounted(() => {
                             :class="{ 'border-destructive!': form.errors.name }" />
                         <small v-if="form.errors.name" class="text-[10px] text-destructive font-bold italic">{{
                             form.errors.name
-                        }}</small>
+                            }}</small>
                     </div>
 
                     <div class="flex flex-col gap-2">
@@ -118,7 +119,8 @@ onMounted(() => {
                     </div>
 
                     <div class="flex flex-col gap-2">
-                        <label class="text-[10px] font-bold text-foreground uppercase tracking-widest">Description</label>
+                        <label
+                            class="text-[10px] font-bold text-foreground uppercase tracking-widest">Description</label>
                         <Textarea v-model="form.description" rows="4"
                             placeholder="Briefly describe this role's purpose..." size="small"
                             class="w-full! bg-background border-input! text-foreground! rounded-md! focus:ring-1! focus:ring-ring! transition-all shadow-sm placeholder:text-muted-foreground!" />
@@ -130,11 +132,14 @@ onMounted(() => {
             <div class="flex flex-col gap-8">
                 <div class="flex flex-col gap-1">
                     <div class="flex items-center justify-between">
-                        <h2 class="text-sm font-bold text-foreground uppercase tracking-widest">Access Control Policies</h2>
-                        <span class="text-[10px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full shadow-sm">{{
-                            form.permission_ids.length }} SELECTED</span>
+                        <h2 class="text-sm font-bold text-foreground uppercase tracking-widest">Access Control Policies
+                        </h2>
+                        <span
+                            class="text-[10px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full shadow-sm">{{
+                                form.permission_ids.length }} SELECTED</span>
                     </div>
-                    <p class="text-[11px] text-muted-foreground font-medium italic">Define which actions this role is authorized
+                    <p class="text-[11px] text-muted-foreground font-medium italic">Define which actions this role is
+                        authorized
                         to
                         perform.</p>
                 </div>
@@ -159,8 +164,9 @@ onMounted(() => {
                             <AccordionHeader class="bg-muted/50! py-3! px-4!">
                                 <div class="flex items-center gap-3">
                                     <i class="pi pi-shield text-muted-foreground text-xs"></i>
-                                    <span class="text-[11px] font-bold text-foreground uppercase tracking-widest">{{ module
-                                    }}</span>
+                                    <span class="text-[11px] font-bold text-foreground uppercase tracking-widest">{{
+                                        module
+                                        }}</span>
                                 </div>
                             </AccordionHeader>
                             <AccordionContent class="p-0!">
@@ -181,7 +187,7 @@ onMounted(() => {
                                                         permission.action }}</span>
                                                     <span class="text-[10px] text-muted-foreground font-medium">{{
                                                         permission.slug
-                                                    }}</span>
+                                                        }}</span>
                                                 </div>
                                             </div>
                                         </div>

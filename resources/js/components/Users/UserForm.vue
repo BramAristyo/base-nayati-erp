@@ -155,6 +155,19 @@ onMounted(() => {
                         </div>
                     </div>
 
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-[10px] font-bold text-foreground uppercase tracking-widest">Approver Name</label>
+                            <InputText v-model="form.approver_name" placeholder="Name of approver" size="small"
+                                class="w-full! bg-background border-input! text-foreground! rounded-md! shadow-sm" />
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-[10px] font-bold text-foreground uppercase tracking-widest">Approver Title</label>
+                            <InputText v-model="form.approver_title" placeholder="e.g. Finance Manager" size="small"
+                                class="w-full! bg-background border-input! text-foreground! rounded-md! shadow-sm" />
+                        </div>
+                    </div>
+
                     <div class="flex flex-col gap-2">
                         <label class="text-[10px] font-bold text-foreground uppercase tracking-widest">Security Roles</label>
                         <MultiSelect v-model="form.roles" :options="roleStore.roles" filter optionLabel="name"
