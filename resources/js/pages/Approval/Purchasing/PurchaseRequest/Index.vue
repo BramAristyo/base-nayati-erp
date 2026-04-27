@@ -91,7 +91,7 @@ const detailTotal = computed(() =>
 
             <!-- Left: Approval Navigation Menu -->
             <aside class="w-56 shrink-0 flex flex-col">
-                <ApprovalMenu />
+                <ApprovalMenu active="purchase-request" />
             </aside>
 
             <!-- Right: Content Area -->
@@ -134,8 +134,7 @@ const detailTotal = computed(() =>
 
                         <IconField>
                             <InputIcon class="pi pi-search text-muted-foreground!" style="font-size: 14px" />
-                            <InputText v-model="search" placeholder="Search PR number, requester, or department..."
-                                size="small"
+                            <InputText v-model="search" placeholder="Quick Search..." size="small"
                                 class="w-80! bg-background border-border! text-foreground! rounded-md! focus:ring-1! focus:ring-ring! shadow-sm transition-all placeholder:text-muted-foreground!" />
                         </IconField>
                     </div>
