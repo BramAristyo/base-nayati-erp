@@ -8,6 +8,7 @@ use App\Services\Purchasing\PurchaseOrderService;
 use App\Exports\Purchasing\PurchaseOrderExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -49,6 +50,26 @@ class PurchaseOrderController extends Controller
                 ],
                 'error' => 'Failed to load purchase orders.'
             ]);
+        }
+    }
+
+    /**
+     * API Method to find PO with items.
+     */
+    #[Middleware('can:purchasing.purchase-order.view')]
+    public function find(int $id): JsonResponse
+    {
+        try {
+            $data = $this->service->find($id);
+
+            if (!$data) {
+                return $this->errorResponse('Purchase order not found.', 404);
+            }
+
+            return $this->successResponse($data);
+        } catch (Exception $e) {
+            Log::error('Purchase Order Find API Error: ' . $e->getMessage(), ['id' => $id]);
+            return $this->errorResponse('An error occurred while fetching the purchase order.');
         }
     }
 

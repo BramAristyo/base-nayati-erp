@@ -5,6 +5,7 @@ namespace App\Services\Purchasing;
 use App\Enums\LogAction;
 use App\Enums\LogDetailRoute;
 use App\Enums\LogModule;
+use App\Repositories\Legacy\Purchasing\PurchaseOrderItemRepository;
 use App\Repositories\Legacy\Purchasing\PurchaseOrderRepository;
 use App\Traits\Trailable;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -14,7 +15,8 @@ class PurchaseOrderService
     use Trailable;
 
     public function __construct(
-        protected PurchaseOrderRepository $repository
+        protected PurchaseOrderRepository $repository,
+        protected PurchaseOrderItemRepository $itemRepository
     ) {}
 
     public function paginate(array $filters): LengthAwarePaginator
@@ -32,7 +34,15 @@ class PurchaseOrderService
 
     public function find(int $id): ?array
     {
-        return $this->repository->find($id);
+        $order = $this->repository->find($id);
+
+        if (!$order) {
+            return null;
+        }
+
+        $order['items'] = $this->itemRepository->getByHeaderNumber($order['purchase_order_number']);
+
+        return $order;
     }
 
     public function logExport(array $filters): void
