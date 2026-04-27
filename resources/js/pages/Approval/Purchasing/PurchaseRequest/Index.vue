@@ -6,6 +6,9 @@ import { route } from 'ziggy-js';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import AppPageHeader from '@/components/common/AppPageHeader.vue';
 import ApprovalMenu from '@/components/Approvals/ApprovalMenu.vue';
+import ApprovalDataTable from '@/components/common/table/ApprovalDataTable.vue';
+import ApproveAllButton from '@/components/common/buttons/ApproveAllButton.vue';
+import RevokeButton from '@/components/common/buttons/RevokeButton.vue';
 import ApproveBadge from '@/components/common/badges/ApproveBadge.vue';
 import { usePurchaseRequestApproval } from '@/composables/approval/usePurchaseRequestApproval';
 import { formatDate } from '@/utils/date';
@@ -78,6 +81,14 @@ const formatCurrency = (val: number) =>
 const detailTotal = computed(() =>
     detailItems.value.reduce((sum, item) => sum + item.quantity * item.price, 0)
 );
+
+const handleApprove = (items: PurchaseRequest[]) => {
+    console.log('Approve', items);
+};
+
+const handleRevoke = (items: PurchaseRequest[]) => {
+    console.log('Revoke', items);
+};
 </script>
 
 <template>
@@ -98,24 +109,17 @@ const detailTotal = computed(() =>
                         description="Authorize pending purchase requests and track processing history." />
 
                     <div class="flex items-center gap-3 h-10">
-                        <Transition enter-active-class="transition duration-200 ease-out"
-                            enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100"
-                            leave-active-class="transition duration-150 ease-in"
-                            leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
-                            <div v-if="selectedItems.length > 0"
-                                class="flex items-center gap-3 bg-card px-4 py-2 rounded-lg border border-border shadow-sm">
-                                <span
-                                    class="text-[10px] font-bold uppercase tracking-widest text-primary flex items-center gap-2">
-                                    <Badge :value="selectedItems.length" severity="info" />
-                                    Selected
-                                </span>
-                                <Button v-if="currentStatus === 'pending'" label="Approve All" icon="pi pi-check"
-                                    size="small" severity="success"
-                                    class="!font-bold !uppercase !text-[10px] !tracking-wider" />
-                                <Button v-else label="Revoke" icon="pi pi-undo" size="small" severity="danger"
-                                    class="!font-bold !uppercase !text-[10px] !tracking-wider" />
-                            </div>
-                        </Transition>
+                        <div v-if="selectedItems.length > 0"
+                            class="flex items-center gap-3 bg-card px-4 py-2 rounded-lg border border-border">
+                            <span
+                                class="text-[10px] font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                                <Badge :value="selectedItems.length" severity="info" />
+                                Selected
+                            </span>
+                            <ApproveAllButton v-if="currentStatus === 'pending'"
+                                @click="handleApprove(selectedItems)" />
+                            <RevokeButton v-else @click="handleRevoke(selectedItems)" />
+                        </div>
                     </div>
                 </div>
 
@@ -147,19 +151,11 @@ const detailTotal = computed(() =>
                 <div class="flex-1 min-h-0 overflow-hidden">
                     <Splitter stateKey="pr-approval-splitter" layout="vertical"
                         class="h-full! border-none! bg-transparent!">
-                        <SplitterPanel :size="55" :minSize="30"
-                            class="flex flex-col overflow-hidden bg-card rounded-xl border border-border shadow-xs">
-                            <DataTable :key="routeName" :value="data.data" v-model:selection="selectedItems"
-                                dataKey="id" lazy paginator :rows="data.per_page"
-                                :rowsPerPageOptions="[10, 25, 50, 100]" :totalRecords="data.total"
-                                :first="(data.current_page - 1) * data.per_page" :sortField="filters.sortField"
-                                :sortOrder="Number(filters.sortOrder) || -1" @page="onPage" @sort="onSort"
-                                @row-click="handleRowClick"
-                                :rowClass="(d: any) => activeRow?.id === d.id ? 'bg-primary/5!' : ''" size="small"
-                                stripedRows showGridlines responsiveLayout="scroll" class="flex-1 cursor-pointer"
-                                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown CurrentPageReport"
-                                currentPageReportTemplate="Showing {first} to {last} of {totalRecords}">
-
+                        <SplitterPanel :size="55" :minSize="30">
+                            <ApprovalDataTable :data="data" :filters="filters" v-model:selection="selectedItems"
+                                :status="currentStatus" :activeRowId="activeRow?.id" :routeName="routeName"
+                                @page="onPage" @sort="onSort" @row-click="handleRowClick" @approve="handleApprove"
+                                @revoke="handleRevoke">
                                 <Column selectionMode="multiple" headerStyle="width: 3rem" />
 
                                 <Column field="purchase_request_number" header="PR NUM" sortable class="w-48">
@@ -258,7 +254,7 @@ const detailTotal = computed(() =>
                                         </span>
                                     </div>
                                 </template>
-                            </DataTable>
+                            </ApprovalDataTable>
                         </SplitterPanel>
 
                         <!-- Detail: Line Items -->
@@ -273,15 +269,6 @@ const detailTotal = computed(() =>
                                         Line Items
                                     </span>
                                     <Badge v-if="detailItems.length" :value="detailItems.length" severity="secondary" />
-                                </div>
-                                <div v-if="activeRow" class="flex items-center gap-3">
-                                    <span class="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                                        {{ activeRow.purchase_request_number }}
-                                    </span>
-                                    <span v-if="detailItems.length"
-                                        class="text-[10px] font-bold text-primary tracking-wider">
-                                        Total: {{ formatCurrency(detailTotal) }}
-                                    </span>
                                 </div>
                             </div>
 
@@ -375,14 +362,3 @@ const detailTotal = computed(() =>
         </div>
     </AppLayout>
 </template>
-
-<style scoped>
-:deep(.approval-status-toggle .p-togglebutton) {
-    font-size: 10px !important;
-    font-weight: 700 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-    padding: 0.35rem 1rem !important;
-    border-color: var(--border) !important;
-}
-</style>
