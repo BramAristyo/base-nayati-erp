@@ -9,7 +9,7 @@ import ApprovalDataTable from '@/components/common/table/ApprovalDataTable.vue';
 import ApproveAllButton from '@/components/common/buttons/ApproveAllButton.vue';
 import RevokeButton from '@/components/common/buttons/RevokeButton.vue';
 import ApproveBadge from '@/components/common/badges/ApproveBadge.vue';
-import { usePurchaseOrderApproval } from '@/composables/approval/usePurchaseOrderApproval';
+import { useReceivingApproval } from '@/composables/approval/useReceivingApproval';
 import { formatDate } from '@/utils/date';
 import { useAuthStore } from '@/stores/utility/useAuthStore';
 
@@ -29,11 +29,11 @@ import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import { useToast } from 'primevue/usetoast';
 
-import type { PurchaseOrder } from '@/types/purchasing/purchase-order.types';
+import type { Receiving } from '@/types/purchasing/receiving.types';
 import type { PaginatedResponse, PaginateFilter } from '@/types/common/paginate.types';
 
 const props = defineProps<{
-    data: PaginatedResponse<PurchaseOrder>;
+    data: PaginatedResponse<Receiving>;
     filters: PaginateFilter & {
         approval_status?: 'pending' | 'processed';
         start_date?: string;
@@ -56,8 +56,9 @@ const {
     routeName,
     onPage,
     onSort,
+    resetFilters,
     loadDetail,
-} = usePurchaseOrderApproval(props);
+} = useReceivingApproval(props);
 
 const statusOptions = [
     { label: 'Pending', value: 'pending' },
@@ -69,7 +70,7 @@ const handleRowClick = async (event: any) => {
     if (target?.closest('.p-checkbox') || target?.closest('.p-datatable-selection-column')) return;
 
     try {
-        await loadDetail(event.data as PurchaseOrder);
+        await loadDetail(event.data as Receiving);
     } catch {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load line items.', life: 3000 });
     }
@@ -79,11 +80,11 @@ const formatCurrency = (val: number) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val);
 
 const detailTotal = computed(() =>
-    detailItems.value.reduce((sum, item) => sum + item.sub_total, 0)
+    detailItems.value.reduce((sum, item) => sum + item.price, 0)
 );
 
-const canApprove = computed(() => authStore.hasPermission('approval.purchase-order.approve'));
-const canReject = computed(() => authStore.hasPermission('approval.purchase-order.reject'));
+const canApprove = computed(() => authStore.hasPermission('approval.receiving.approve'));
+const canReject = computed(() => authStore.hasPermission('approval.receiving.reject'));
 
 const canPerformAction = computed(() => {
     if (currentStatus.value === 'pending') return canApprove.value;
@@ -91,33 +92,33 @@ const canPerformAction = computed(() => {
     return false;
 });
 
-const handleApprove = (items: PurchaseOrder[]) => {
-    const purchase_order_ids = items.map((item) => item.id);
-    console.log('Approve PO IDs:', purchase_order_ids);
+const handleApprove = (items: Receiving[]) => {
+    const receiving_ids = items.map((item) => item.id);
+    console.log('Approve Receiving IDs:', receiving_ids);
 };
 
-const handleRevoke = (items: PurchaseOrder[]) => {
-    const purchase_order_ids = items.map((item) => item.id);
-    console.log('Revoke PO IDs:', purchase_order_ids);
+const handleRevoke = (items: Receiving[]) => {
+    const receiving_ids = items.map((item) => item.id);
+    console.log('Revoke Receiving IDs:', receiving_ids);
 };
 </script>
 
 <template>
 
-    <Head title="Purchase Order Approval" />
+    <Head title="Receiving Approval" />
 
     <AppLayout>
         <div class="flex gap-6 h-[calc(100vh-8rem)]">
 
             <aside class="w-56 shrink-0 flex flex-col">
-                <ApprovalMenu active="purchase-order" />
+                <ApprovalMenu active="receiving" />
             </aside>
 
             <div class="flex-1 flex flex-col gap-2 min-w-0">
 
                 <div class="flex flex-col gap-4 md:flex-row md:items-center justify-between shrink-0">
-                    <AppPageHeader title="Purchase Order"
-                        description="Authorize pending purchase orders and track processing history." />
+                    <AppPageHeader title="Receiving"
+                        description="Authorize pending receiving records and track processing history." />
 
                     <div class="flex items-center gap-3 h-10">
                         <div v-if="selectedItems.length > 0 && canPerformAction"
@@ -144,7 +145,7 @@ const handleRevoke = (items: PurchaseOrder[]) => {
                         <IconField class="w-full!">
                             <InputIcon class="pi pi-search text-muted-foreground!" style="font-size: 14px" />
                             <InputText v-model="search" placeholder="Quick Search..." size="small"
-                                class="w-full! bg-background border-border! text-foreground! rounded-md! focus:ring-1! focus:ring-ring! placeholder:text-muted-foreground!" />
+                                class="w-full! bg-background border-border! text-foreground! rounded-md! focus:ring-1! focus:ring-ring! shadow-sm transition-all placeholder:text-muted-foreground!" />
                         </IconField>
                     </div>
 
@@ -154,11 +155,13 @@ const handleRevoke = (items: PurchaseOrder[]) => {
                         <span class="text-border px-1">/</span>
                         <DatePicker v-model="endDate" placeholder="End Date" size="small" showIcon iconDisplay="input"
                             dateFormat="yy-mm-dd" class="w-36!" inputClass="py-2! text-sm!" />
+                        <Button icon="pi pi-refresh" size="small" variant="outlined" severity="secondary"
+                            class="rounded-md! border-border!" v-tooltip.top="'Reset Filters'" @click="resetFilters" />
                     </div>
                 </div>
 
                 <div class="flex-1 min-h-0 overflow-hidden">
-                    <Splitter stateKey="po-approval-splitter" layout="vertical"
+                    <Splitter stateKey="rc-approval-splitter" layout="vertical"
                         class="h-full! border-none! bg-transparent!">
                         <SplitterPanel :size="55" :minSize="30">
                             <ApprovalDataTable :data="data" :filters="filters" v-model:selection="selectedItems"
@@ -167,10 +170,10 @@ const handleRevoke = (items: PurchaseOrder[]) => {
                                 @revoke="handleRevoke">
                                 <Column v-if="canPerformAction" selectionMode="multiple" headerStyle="width: 3rem" />
 
-                                <Column field="purchase_order_number" header="PO NUM" sortable class="w-48">
+                                <Column field="receiving_number" header="RC NUM" sortable class="w-48">
                                     <template #body="slotProps">
                                         <span class="text-xs font-bold text-foreground">
-                                            {{ slotProps.data.purchase_order_number }}
+                                            {{ slotProps.data.receiving_number }}
                                         </span>
                                     </template>
                                 </Column>
@@ -183,10 +186,18 @@ const handleRevoke = (items: PurchaseOrder[]) => {
                                     </template>
                                 </Column>
 
-                                <Column field="delivery_date" header="DELIVERY DATE" sortable class="w-32">
+                                <Column field="supplier_invoice_number" header="INV NUM" sortable class="w-40">
                                     <template #body="slotProps">
-                                        <span class="text-[11px] font-medium text-muted-foreground">
-                                            {{ formatDate(slotProps.data.delivery_date) }}
+                                        <span class="text-xs font-medium text-foreground">
+                                            {{ slotProps.data.supplier_invoice_number || '-' }}
+                                        </span>
+                                    </template>
+                                </Column>
+
+                                <Column field="purchase_order_number" header="PO NUM" sortable class="w-40">
+                                    <template #body="slotProps">
+                                        <span class="text-xs font-medium text-primary hover:underline">
+                                            {{ slotProps.data.purchase_order_number || '-' }}
                                         </span>
                                     </template>
                                 </Column>
@@ -241,7 +252,7 @@ const handleRevoke = (items: PurchaseOrder[]) => {
                                     <div class="flex flex-col items-center justify-center py-12 gap-2">
                                         <i class="pi pi-inbox text-3xl text-muted-foreground/40"></i>
                                         <span class="text-[11px] font-medium text-muted-foreground">
-                                            No purchase orders found.
+                                            No receiving records found.
                                         </span>
                                     </div>
                                 </template>
@@ -263,7 +274,7 @@ const handleRevoke = (items: PurchaseOrder[]) => {
                                 </div>
                                 <div v-if="activeRow" class="flex items-center gap-3">
                                     <span class="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                                        {{ activeRow.purchase_order_number }}
+                                        {{ activeRow.receiving_number }}
                                     </span>
                                     <span v-if="detailItems.length"
                                         class="text-[10px] font-bold text-primary tracking-wider">
@@ -289,10 +300,10 @@ const handleRevoke = (items: PurchaseOrder[]) => {
                                         </template>
                                     </Column>
 
-                                    <Column field="purchase_request_number" header="PR NUM" class="w-40">
+                                    <Column field="purchase_order_number" header="PO NUM" class="w-40">
                                         <template #body="slotProps">
                                             <span class="text-[11px] font-medium text-muted-foreground">
-                                                {{ slotProps.data.purchase_request_number || '-' }}
+                                                {{ slotProps.data.purchase_order_number || '-' }}
                                             </span>
                                         </template>
                                     </Column>
@@ -316,10 +327,10 @@ const handleRevoke = (items: PurchaseOrder[]) => {
                                         </template>
                                     </Column>
 
-                                    <Column field="sub_total" header="SUB TOTAL" class="w-32 text-right">
+                                    <Column field="price" header="SUB TOTAL" class="w-32 text-right">
                                         <template #body="slotProps">
                                             <span class="text-xs font-bold text-foreground">
-                                                {{ formatCurrency(slotProps.data.sub_total) }}
+                                                {{ formatCurrency(slotProps.data.price) }}
                                             </span>
                                         </template>
                                     </Column>
@@ -328,7 +339,7 @@ const handleRevoke = (items: PurchaseOrder[]) => {
                                         <div class="flex flex-col items-center justify-center py-8 gap-2">
                                             <i class="pi pi-arrow-up text-xl text-muted-foreground/30"></i>
                                             <span class="text-[11px] font-medium text-muted-foreground">
-                                                Select a purchase order above to view its line items.
+                                                Select a receiving record above to view its line items.
                                             </span>
                                         </div>
                                     </template>

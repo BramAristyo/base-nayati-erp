@@ -119,6 +119,15 @@ class ReceivingRepository
             $filters['sort_by'] = $this->sortableFields[$filters['sort_by']];
         }
 
+        $approvalStatus = $filters['approval_status'] ?? null;
+        $query->when($approvalStatus, function ($q) use ($approvalStatus) {
+            if ($approvalStatus === 'pending') {
+                $q->where('hbeli.approve', '!=', 'Y');
+            } elseif ($approvalStatus === 'processed') {
+                $q->where('hbeli.approve', 'Y');
+            }
+        });
+
         $this->applySortFilter($query, $filters, 'hbeli.idhbeli', 'desc');
     }
 

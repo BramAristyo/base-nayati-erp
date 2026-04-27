@@ -121,22 +121,17 @@ const handleRevoke = (items: PurchaseRequest[]) => {
                         description="Authorize pending purchase requests and track processing history." />
 
                     <div class="flex items-center gap-3 h-10">
-                        <Transition enter-active-class="transition duration-200 ease-out"
-                            enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100"
-                            leave-active-class="transition duration-150 ease-in"
-                            leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
-                            <div v-if="selectedItems.length > 0 && canPerformAction"
-                                class="flex items-center gap-3 bg-card px-4 py-2 rounded-lg border border-border shadow-sm">
-                                <span
-                                    class="text-[10px] font-bold uppercase tracking-widest text-primary flex items-center gap-2">
-                                    <Badge :value="selectedItems.length" severity="info" />
-                                    Selected
-                                </span>
-                                <ApproveAllButton v-if="currentStatus === 'pending'"
-                                    @click="handleApprove(selectedItems)" />
-                                <RevokeButton v-else @click="handleRevoke(selectedItems)" />
-                            </div>
-                        </Transition>
+                        <div v-if="selectedItems.length > 0 && canPerformAction"
+                            class="flex items-center gap-3 bg-card px-4 py-2 rounded-lg border border-border">
+                            <span
+                                class="text-[10px] font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                                <Badge :value="selectedItems.length" severity="info" />
+                                Selected
+                            </span>
+                            <ApproveAllButton v-if="currentStatus === 'pending'"
+                                @click="handleApprove(selectedItems)" />
+                            <RevokeButton v-else @click="handleRevoke(selectedItems)" />
+                        </div>
                     </div>
                 </div>
 
@@ -150,7 +145,7 @@ const handleRevoke = (items: PurchaseRequest[]) => {
                         <IconField class="w-full!">
                             <InputIcon class="pi pi-search text-muted-foreground!" style="font-size: 14px" />
                             <InputText v-model="search" placeholder="Quick Search..." size="small"
-                                class="w-full! bg-background border-border! text-foreground! rounded-md! focus:ring-1! focus:ring-ring! shadow-sm transition-all placeholder:text-muted-foreground!" />
+                                class="w-full! bg-background border-border! text-foreground! rounded-md! focus:ring-1! focus:ring-ring! placeholder:text-muted-foreground!" />
                         </IconField>
                     </div>
 

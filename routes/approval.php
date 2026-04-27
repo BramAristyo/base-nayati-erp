@@ -22,6 +22,13 @@ Route::middleware('auth')->prefix('approval')->name('approval.')->group(function
         Route::get('/purchase-orders', function() {
             return redirect()->route('approval.purchasing.purchase-orders.pending');
         })->name('purchase-orders.index');
+
+        Route::get('/receivings/pending', [PurchasingApprovalController::class, 'pendingReceiving'])->name('receivings.pending');
+        Route::get('/receivings/processed', [PurchasingApprovalController::class, 'processedReceiving'])->name('receivings.processed');
+
+        Route::get('/receivings', function() {
+            return redirect()->route('approval.purchasing.receivings.pending');
+        })->name('receivings.index');
     });
 
 });

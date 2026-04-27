@@ -31,6 +31,7 @@ Route::middleware('auth')->prefix('purchasing/receivings')->name('purchasing.rec
 Route::middleware('auth')->prefix('api/purchasing')->name('api.purchasing.')->group(function () {
     Route::get('/purchase-requests/{id}', [PurchaseRequestController::class, 'find'])->name('purchase-requests.show');
     Route::get('/purchase-orders/{id}/find', [PurchaseOrderController::class, 'find'])->name('purchase-orders.show');
+    Route::get('/receivings/{id}/find', [ReceivingController::class, 'find'])->name('receivings.show');
 });
 
 // --- Landed Cost ---

@@ -8,6 +8,7 @@ use App\Services\Purchasing\ReceivingService;
 use App\Exports\Purchasing\ReceivingExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -49,6 +50,26 @@ class ReceivingController extends Controller
                 ],
                 'error' => 'Failed to load receiving records.'
             ]);
+        }
+    }
+
+    /**
+     * API Method to find Receiving with items.
+     */
+    #[Middleware('can:purchasing.receiving.view')]
+    public function find(int $id): JsonResponse
+    {
+        try {
+            $data = $this->service->find($id);
+
+            if (!$data) {
+                return $this->errorResponse('Receiving not found.', 404);
+            }
+
+            return $this->successResponse($data);
+        } catch (Exception $e) {
+            Log::error('Receiving Find API Error: ' . $e->getMessage(), ['id' => $id]);
+            return $this->errorResponse('An error occurred while fetching the receiving record.');
         }
     }
 
