@@ -7,6 +7,7 @@ use App\Services\Purchasing\PurchaseRequestService;
 use App\Exports\Purchasing\PurchaseRequestExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -48,6 +49,26 @@ class PurchaseRequestController extends Controller
                 ],
                 'error' => 'Failed to load purchase requests.'
             ]);
+        }
+    }
+
+    /**
+     * API Method to find PR with items.
+     */
+    #[Middleware('can:purchasing.purchase-request.view')]
+    public function find(int $id): JsonResponse
+    {
+        try {
+            $data = $this->service->find($id);
+
+            if (!$data) {
+                return $this->errorResponse('Purchase request not found.', 404);
+            }
+
+            return $this->successResponse($data);
+        } catch (Exception $e) {
+            Log::error('Purchase Request Find API Error: ' . $e->getMessage(), ['id' => $id]);
+            return $this->errorResponse('An error occurred while fetching the purchase request.');
         }
     }
 
