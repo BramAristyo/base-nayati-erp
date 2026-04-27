@@ -56,7 +56,6 @@ const {
     routeName,
     onPage,
     onSort,
-    resetFilters,
     loadDetail,
 } = usePurchaseOrderApproval(props);
 
@@ -160,8 +159,6 @@ const handleRevoke = (items: PurchaseOrder[]) => {
                         <span class="text-border px-1">/</span>
                         <DatePicker v-model="endDate" placeholder="End Date" size="small" showIcon iconDisplay="input"
                             dateFormat="yy-mm-dd" class="w-36!" inputClass="py-2! text-sm!" />
-                        <Button icon="pi pi-refresh" size="small" variant="outlined" severity="secondary"
-                            class="rounded-md! border-border!" v-tooltip.top="'Reset Filters'" @click="resetFilters" />
                     </div>
                 </div>
 
