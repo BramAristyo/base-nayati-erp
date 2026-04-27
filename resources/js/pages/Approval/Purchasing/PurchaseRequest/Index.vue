@@ -12,6 +12,7 @@ import RevokeButton from '@/components/common/buttons/RevokeButton.vue';
 import ApproveBadge from '@/components/common/badges/ApproveBadge.vue';
 import { usePurchaseRequestApproval } from '@/composables/approval/usePurchaseRequestApproval';
 import { formatDate } from '@/utils/date';
+import { useAuthStore } from '@/stores/utility/useAuthStore';
 
 import Badge from 'primevue/badge';
 import Button from 'primevue/button';
@@ -42,6 +43,7 @@ const props = defineProps<{
 }>();
 
 const toast = useToast();
+const authStore = useAuthStore();
 
 const {
     currentStatus,
@@ -82,6 +84,15 @@ const detailTotal = computed(() =>
     detailItems.value.reduce((sum, item) => sum + item.quantity * item.price, 0)
 );
 
+const canApprove = computed(() => authStore.hasPermission('approval.purchase-request.approve'));
+const canReject = computed(() => authStore.hasPermission('approval.purchase-request.reject'));
+
+const canPerformAction = computed(() => {
+    if (currentStatus.value === 'pending') return canApprove.value;
+    if (currentStatus.value === 'processed') return canReject.value;
+    return false;
+});
+
 const handleApprove = (items: PurchaseRequest[]) => {
     const purchase_request_ids = items.map((item) => item.id);
     console.log('Approve IDs:', purchase_request_ids);
@@ -111,17 +122,22 @@ const handleRevoke = (items: PurchaseRequest[]) => {
                         description="Authorize pending purchase requests and track processing history." />
 
                     <div class="flex items-center gap-3 h-10">
-                        <div v-if="selectedItems.length > 0"
-                            class="flex items-center gap-3 bg-card px-4 py-2 rounded-lg border border-border">
-                            <span
-                                class="text-[10px] font-bold uppercase tracking-widest text-primary flex items-center gap-2">
-                                <Badge :value="selectedItems.length" severity="info" />
-                                Selected
-                            </span>
-                            <ApproveAllButton v-if="currentStatus === 'pending'"
-                                @click="handleApprove(selectedItems)" />
-                            <RevokeButton v-else @click="handleRevoke(selectedItems)" />
-                        </div>
+                        <Transition enter-active-class="transition duration-200 ease-out"
+                            enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100"
+                            leave-active-class="transition duration-150 ease-in"
+                            leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
+                            <div v-if="selectedItems.length > 0 && canPerformAction"
+                                class="flex items-center gap-3 bg-card px-4 py-2 rounded-lg border border-border shadow-sm">
+                                <span
+                                    class="text-[10px] font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                                    <Badge :value="selectedItems.length" severity="info" />
+                                    Selected
+                                </span>
+                                <ApproveAllButton v-if="currentStatus === 'pending'"
+                                    @click="handleApprove(selectedItems)" />
+                                <RevokeButton v-else @click="handleRevoke(selectedItems)" />
+                            </div>
+                        </Transition>
                     </div>
                 </div>
 
@@ -158,7 +174,7 @@ const handleRevoke = (items: PurchaseRequest[]) => {
                                 :status="currentStatus" :activeRowId="activeRow?.id" :routeName="routeName"
                                 @page="onPage" @sort="onSort" @row-click="handleRowClick" @approve="handleApprove"
                                 @revoke="handleRevoke">
-                                <Column selectionMode="multiple" headerStyle="width: 3rem" />
+                                <Column v-if="canPerformAction" selectionMode="multiple" headerStyle="width: 3rem" />
 
                                 <Column field="purchase_request_number" header="PR NUM" sortable class="w-48">
                                     <template #body="slotProps">
@@ -200,14 +216,6 @@ const handleRevoke = (items: PurchaseRequest[]) => {
                                     </template>
                                 </Column>
 
-                                <Column field="branch_code" header="BRANCH" class="w-24">
-                                    <template #body="slotProps">
-                                        <span class="text-xs font-semibold text-foreground">
-                                            {{ slotProps.data.branch_code }}
-                                        </span>
-                                    </template>
-                                </Column>
-
                                 <Column field="budget_type" header="BUDGET" class="w-28">
                                     <template #body="slotProps">
                                         <span
@@ -222,22 +230,6 @@ const handleRevoke = (items: PurchaseRequest[]) => {
                                         <span
                                             class="text-[10px] font-bold uppercase tracking-tight text-muted-foreground">
                                             {{ slotProps.data.inventory_type }}
-                                        </span>
-                                    </template>
-                                </Column>
-
-                                <Column field="approved_by" header="APPROVED BY" sortable>
-                                    <template #body="slotProps">
-                                        <span class="text-xs font-medium text-muted-foreground">
-                                            {{ slotProps.data.approved_by || '-' }}
-                                        </span>
-                                    </template>
-                                </Column>
-
-                                <Column field="approval_date" header="APPROVAL DATE" sortable class="w-32">
-                                    <template #body="slotProps">
-                                        <span class="text-[11px] font-medium text-muted-foreground">
-                                            {{ formatDate(slotProps.data.approval_date) }}
                                         </span>
                                     </template>
                                 </Column>
@@ -364,3 +356,14 @@ const handleRevoke = (items: PurchaseRequest[]) => {
         </div>
     </AppLayout>
 </template>
+
+<style scoped>
+:deep(.approval-status-toggle .p-togglebutton) {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    padding: 0.35rem 1rem !important;
+    border-color: var(--border) !important;
+}
+</style>
