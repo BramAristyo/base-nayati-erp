@@ -57,6 +57,8 @@ class PermissionSeeder extends Seeder
             'purchasing.landed-cost.export',
 
             // ── PURCHASING — APPROVAL ──────────────────────────
+            'approval.approval.view',
+            
             'approval.purchase-request.view',
             'approval.purchase-request.approve',
             'approval.purchase-request.reject',

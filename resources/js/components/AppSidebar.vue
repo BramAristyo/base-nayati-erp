@@ -57,6 +57,13 @@ const menus = ref<MenuItem[]>([
         ]
     },
     {
+        label: 'Approval',
+        icon: 'pi pi-check-circle',
+        isOpen: false,
+        permission: 'approval.approval.view',
+        route: 'approval.index',
+    },
+    {
         label: 'System',
         icon: 'pi pi-cog',
         isOpen: false,
@@ -83,8 +90,8 @@ const isRouteActive = (routeName?: string) => {
         return true;
     }
 
-    if (routeName.endsWith('.paginate')) {
-        const base = routeName.replace('.paginate', '');
+    if (routeName.endsWith('.paginate') || routeName.endsWith('.index')) {
+        const base = routeName.replace(/\.(paginate|index)$/, '');
 
         return current.startsWith(base);
     }
