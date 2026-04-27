@@ -20,13 +20,12 @@ class PurchasingApprovalController extends Controller
     ) {}
 
     /**
-     * Display the Purchase Request approval list.
+     * Display the Pending Purchase Request list.
      */
     #[Middleware('can:approval.purchase-request.view')]
-    public function purchaseRequest(BasicPaginateRequest $request): Response
+    public function pendingPurchaseRequest(BasicPaginateRequest $request): Response
     {
         try {
-            // We reuse the paginate method but likely need to add a 'pending' filter
             $filters = array_merge($request->validated(), [
                 'approval_status' => 'pending'
             ]);
@@ -35,23 +34,47 @@ class PurchasingApprovalController extends Controller
 
             return Inertia::render('Approval/Purchasing/PurchaseRequest/Index', [
                 'data' => $data,
-                'filters' => $request->only(['search', 'sortField', 'sortOrder', 'per_page', 'start_date', 'end_date']),
+                'filters' => array_merge($request->only(['search', 'sortField', 'sortOrder', 'per_page', 'start_date', 'end_date']), [
+                    'approval_status' => 'pending'
+                ]),
             ]);
         } catch (Exception $e) {
-            Log::error('Purchasing Approval PR Paginate Error: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
+            Log::error('Purchasing Approval Pending PR Error: ' . $e->getMessage());
+            return $this->errorInertia();
+        }
+    }
+
+    /**
+     * Display the Processed Purchase Request list (Dummy for now).
+     */
+    #[Middleware('can:approval.purchase-request.view')]
+    public function processedPurchaseRequest(BasicPaginateRequest $request): Response
+    {
+        try {
+            $filters = array_merge($request->validated(), [
+                'approval_status' => 'processed'
             ]);
+            
+            $data = $this->purchaseRequestService->paginate($filters);
 
             return Inertia::render('Approval/Purchasing/PurchaseRequest/Index', [
-                'data' => [
-                    'data' => [],
-                    'total' => 0,
-                    'current_page' => 1,
-                    'per_page' => 25,
-                ],
-                'filters' => [],
-                'error' => 'Failed to load pending purchase requests.'
+                'data' => $data,
+                'filters' => array_merge($request->only(['search', 'sortField', 'sortOrder', 'per_page', 'start_date', 'end_date']), [
+                    'approval_status' => 'processed'
+                ]),
             ]);
+        } catch (Exception $e) {
+            Log::error('Purchasing Approval Processed PR Error: ' . $e->getMessage());
+            return $this->errorInertia();
         }
+    }
+
+    protected function errorInertia(): Response
+    {
+        return Inertia::render('Approval/Purchasing/PurchaseRequest/Index', [
+            'data' => ['data' => [], 'total' => 0, 'current_page' => 1, 'per_page' => 25],
+            'filters' => [],
+            'error' => 'Failed to load requests.'
+        ]);
     }
 }
