@@ -18,3 +18,4 @@ require __DIR__ . '/master.php';
 require __DIR__ . '/utility.php';
 require __DIR__ . '/purchasing.php';
 require __DIR__ . '/approval.php';
+require __DIR__ . '/sales.php';
