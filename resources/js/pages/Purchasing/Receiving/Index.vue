@@ -52,9 +52,9 @@ const onListingDummy = () => {
                 <AppPageHeader title="Receiving" description="Manage and track incoming goods and supplier invoices." />
 
                 <div class="flex items-center gap-2">
-                    <Button icon="pi pi-list" severity="secondary" variant="outlined" rounded size="small"
+                    <!-- <Button icon="pi pi-list" severity="secondary" variant="outlined" rounded size="small"
                         class="border-border! text-foreground! hover:bg-accent! rounded-md!"
-                        v-tooltip.bottom="'Listing View'" @click="onListingDummy" />
+                        v-tooltip.bottom="'Listing View'" @click="onListingDummy" /> -->
 
                     <Button v-if="authStore.hasPermission('purchasing.receiving.export')" icon="pi pi-file-excel"
                         severity="success" rounded size="small"
@@ -160,14 +160,14 @@ const onListingDummy = () => {
                     <Column field="supplier_name" header="SUPPLIER" sortable>
                         <template #body="slotProps">
                             <span class="text-xs font-semibold text-foreground">{{ slotProps.data.supplier_name
-                                }}</span>
+                            }}</span>
                         </template>
                     </Column>
 
                     <Column field="warehouse_name" header="WAREHOUSE" sortable>
                         <template #body="slotProps">
                             <span class="text-xs font-medium text-muted-foreground">{{ slotProps.data.warehouse_name
-                                }}</span>
+                            }}</span>
                         </template>
                     </Column>
 
@@ -181,7 +181,7 @@ const onListingDummy = () => {
                     <Column field="approved_by" header="APPROVED BY" sortable>
                         <template #body="slotProps">
                             <span class="text-xs font-medium text-muted-foreground">{{ slotProps.data.approved_by || '-'
-                                }}</span>
+                            }}</span>
                         </template>
                     </Column>
 
@@ -196,7 +196,7 @@ const onListingDummy = () => {
                     <Column field="created_by" header="CREATED BY" sortable>
                         <template #body="slotProps">
                             <span class="text-xs font-medium text-muted-foreground">{{ slotProps.data.created_by
-                                }}</span>
+                            }}</span>
                         </template>
                     </Column>
 

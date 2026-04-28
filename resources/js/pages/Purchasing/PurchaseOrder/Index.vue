@@ -42,19 +42,17 @@ const onListingDummy = () => {
 </script>
 
 <template>
+
     <Head title="Purchase Order" />
 
     <AppLayout>
         <div class="flex flex-col gap-2">
             <!-- Level 1 Header: Title and Primary Actions -->
             <div class="flex flex-col gap-4 md:flex-row md:items-center justify-between px-1">
-                <AppPageHeader
-                    title="Purchase Order"
-                    description="Manage and track outgoing purchase orders."
-                />
+                <AppPageHeader title="Purchase Order" description="Manage and track outgoing purchase orders." />
 
                 <div class="flex items-center gap-2">
-                    <Button 
+                    <!-- <Button 
                         icon="pi pi-list" 
                         severity="secondary" 
                         variant="outlined"
@@ -63,27 +61,17 @@ const onListingDummy = () => {
                         class="border-border! text-foreground! hover:bg-accent! rounded-md!"
                         v-tooltip.bottom="'Listing View'"
                         @click="onListingDummy"
-                    />
+                    /> -->
 
-                    <Button 
-                        v-if="authStore.hasPermission('purchasing.purchase-order.export')" 
-                        icon="pi pi-file-excel"
-                        severity="success" 
-                        rounded
-                        size="small"
+                    <Button v-if="authStore.hasPermission('purchasing.purchase-order.export')" icon="pi pi-file-excel"
+                        severity="success" rounded size="small"
                         class="bg-success-green! border-none! text-success-green-foreground! rounded-md! shadow-sm!"
-                        v-tooltip.bottom="'Export to Excel'"
-                        @click="onExport" 
-                    />
+                        v-tooltip.bottom="'Export to Excel'" @click="onExport" />
 
-                    <Button
-                        v-if="authStore.hasPermission('purchasing.purchase-order.create')"
-                        icon="pi pi-plus"
-                        label="Create"
-                        size="small"
+                    <Button v-if="authStore.hasPermission('purchasing.purchase-order.create')" icon="pi pi-plus"
+                        label="Create" size="small"
                         class="bg-primary! border-none! text-primary-foreground! px-4! font-bold! uppercase! tracking-widest! rounded-md! shadow-md!"
-                        @click="router.get(route('dashboard'))" 
-                    />
+                        @click="router.get(route('dashboard'))" />
                 </div>
             </div>
 
@@ -94,59 +82,26 @@ const onListingDummy = () => {
                 <div class="flex-1">
                     <IconField>
                         <InputIcon class="pi pi-search text-muted-foreground!" style="font-size: 14px" />
-                        <InputText
-                            v-model="search"
-                            placeholder="Quick Search..."
-                            size="small"
-                            class="w-full! bg-background border-border! text-foreground! rounded-md! focus:ring-1! focus:ring-ring! shadow-sm transition-all placeholder:text-muted-foreground!"
-                        />
+                        <InputText v-model="search" placeholder="Quick Search..." size="small"
+                            class="w-full! bg-background border-border! text-foreground! rounded-md! focus:ring-1! focus:ring-ring! shadow-sm transition-all placeholder:text-muted-foreground!" />
                     </IconField>
                 </div>
 
                 <div class="flex items-center gap-2 self-end md:self-auto">
-                    <DatePicker
-                        v-model="startDate"
-                        placeholder="Start Date"
-                        size="small"
-                        dateFormat="yy-mm-dd"
-                        showIcon
-                        iconDisplay="input"
-                        class="w-36!"
-                        inputClass="py-2! text-sm!"
-                    />
+                    <DatePicker v-model="startDate" placeholder="Start Date" size="small" dateFormat="yy-mm-dd" showIcon
+                        iconDisplay="input" class="w-36!" inputClass="py-2! text-sm!" />
                     <span class="text-border px-1">/</span>
-                    <DatePicker
-                        v-model="endDate"
-                        placeholder="End Date"
-                        size="small"
-                        dateFormat="yy-mm-dd"
-                        showIcon
-                        iconDisplay="input"
-                        class="w-36!"
-                        inputClass="py-2! text-sm!"
-                    />
+                    <DatePicker v-model="endDate" placeholder="End Date" size="small" dateFormat="yy-mm-dd" showIcon
+                        iconDisplay="input" class="w-36!" inputClass="py-2! text-sm!" />
 
-                    <Button 
-                        icon="pi pi-refresh" 
-                        size="small" 
-                        variant="outlined"
-                        severity="secondary"
-                        class="rounded-md! border-border!"
-                        v-tooltip.top="'Reset Filters'"
-                        @click="resetFilters"
-                    />
+                    <Button icon="pi pi-refresh" size="small" variant="outlined" severity="secondary"
+                        class="rounded-md! border-border!" v-tooltip.top="'Reset Filters'" @click="resetFilters" />
                 </div>
             </div>
 
             <div class="overflow-hidden">
-                <StandardDataTable
-                    :data="data"
-                    :filters="filters"
-                    class="cursor-pointer"
-                    @page="onPage"
-                    @sort="onSort"
-                    @row-click="onRowClick"
-                >
+                <StandardDataTable :data="data" :filters="filters" class="cursor-pointer" @page="onPage" @sort="onSort"
+                    @row-click="onRowClick">
                     <template #empty>
                         <div class="p-8 text-center text-sm font-medium text-muted-foreground">
                             No purchase orders found matching your search.
@@ -155,7 +110,8 @@ const onListingDummy = () => {
 
                     <Column field="purchase_order_number" header="PO NUM" sortable class="w-48">
                         <template #body="slotProps">
-                            <span class="text-xs font-bold text-foreground">{{ slotProps.data.purchase_order_number }}</span>
+                            <span class="text-xs font-bold text-foreground">{{ slotProps.data.purchase_order_number
+                                }}</span>
                         </template>
                     </Column>
 
@@ -209,13 +165,15 @@ const onListingDummy = () => {
 
                     <Column field="grand_total" header="GRAND TOTAL" sortable class="text-right">
                         <template #body="slotProps">
-                            <span class="text-xs font-bold text-foreground">{{ formatCurrency(slotProps.data.grand_total) }}</span>
+                            <span class="text-xs font-bold text-foreground">{{
+                                formatCurrency(slotProps.data.grand_total) }}</span>
                         </template>
                     </Column>
 
                     <Column field="approved_by" header="APPROVED BY" sortable>
                         <template #body="slotProps">
-                            <span class="text-xs font-medium text-muted-foreground">{{ slotProps.data.approved_by || '-' }}</span>
+                            <span class="text-xs font-medium text-muted-foreground">{{ slotProps.data.approved_by || '-'
+                                }}</span>
                         </template>
                     </Column>
 
@@ -229,19 +187,22 @@ const onListingDummy = () => {
 
                     <Column field="category" header="CATEGORY" class="w-32">
                         <template #body="slotProps">
-                            <span class="text-[10px] font-bold uppercase tracking-tight text-muted-foreground">{{ slotProps.data.category }}</span>
+                            <span class="text-[10px] font-bold uppercase tracking-tight text-muted-foreground">{{
+                                slotProps.data.category }}</span>
                         </template>
                     </Column>
 
                     <Column field="inventory_type" header="INVENTORY TYPE" class="w-32">
                         <template #body="slotProps">
-                            <span class="text-[10px] font-bold uppercase tracking-tight text-muted-foreground">{{ slotProps.data.inventory_type }}</span>
+                            <span class="text-[10px] font-bold uppercase tracking-tight text-muted-foreground">{{
+                                slotProps.data.inventory_type }}</span>
                         </template>
                     </Column>
 
                     <Column field="department_name" header="DEPARTMENT">
                         <template #body="slotProps">
-                            <span class="text-xs font-medium text-foreground">{{ slotProps.data.department_name }}</span>
+                            <span class="text-xs font-medium text-foreground">{{ slotProps.data.department_name
+                                }}</span>
                         </template>
                     </Column>
 
