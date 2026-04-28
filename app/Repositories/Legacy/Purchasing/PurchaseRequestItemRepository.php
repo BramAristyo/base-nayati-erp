@@ -18,7 +18,7 @@ class PurchaseRequestItemRepository
         'product_name' => 'dpr.nama',
         'usage_date' => 'dpr.tglpakai',
         'supplier_name' => 'dpr.nmsupplier',
-        'created_at' => 'dpr.iddpr',
+        'created_at' => 'dpr.tglentry',
     ];
 
     public function getByHeaderNumber(string $number): Collection
@@ -86,6 +86,7 @@ class PurchaseRequestItemRepository
         }
 
         $this->applySortFilter($query, $filters, 'dpr.iddpr', 'desc');
+        $this->applyDateFilter($query, $filters, 'dpr.tglentry');
     }
 
     protected function transform(object $item): object
