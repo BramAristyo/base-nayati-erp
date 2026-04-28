@@ -34,6 +34,8 @@ class PurchaseRequestItemRepository
     {
         $query = $this->baseQuery();
 
+        $query->where('dpr.qty_op', '>', 0);
+
         $this->applyFilters($query, $filters);
 
         $paginator = $query->paginate($perPage)->withQueryString();

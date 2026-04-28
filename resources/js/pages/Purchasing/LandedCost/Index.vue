@@ -30,10 +30,6 @@ const onRowClick = (event: any) => {
         router.get(route('purchasing.landed-costs.show', { id: event.data.id }));
     }
 };
-
-const onListingDummy = () => {
-    alert('Listing dummy action clicked');
-};
 </script>
 
 <template>
@@ -48,10 +44,6 @@ const onListingDummy = () => {
                     description="Manage and track import costs and additional charges." />
 
                 <div class="flex items-center gap-2">
-                    <Button icon="pi pi-list" severity="secondary" variant="outlined" rounded size="small"
-                        class="border-border! text-foreground! hover:bg-accent! rounded-md!"
-                        v-tooltip.bottom="'Listing View'" @click="onListingDummy" />
-
                     <Button v-if="authStore.hasPermission('purchasing.landed-cost.export')" icon="pi pi-file-excel"
                         severity="success" rounded size="small"
                         class="bg-success-green! border-none! text-success-green-foreground! rounded-md! shadow-sm!"
