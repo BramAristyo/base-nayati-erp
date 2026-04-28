@@ -116,4 +116,37 @@ class PurchaseRequestController extends Controller
             return back()->with('error', 'Failed to export purchase requests.');
         }
     }
+
+    #[Middleware('can:purchasing.purchase-request.view')]
+    public function listingItems(BasicPaginateRequest $request): Response
+    {
+        try {
+            $data = $this->service->getListingItems($request->validated());
+
+            return Inertia::render('Purchasing/PurchaseRequest/Listing', [
+                'data' => $data,
+                'filters' => $request->only(['search', 'sortField', 'sortOrder', 'per_page', 'start_date', 'end_date']),
+            ]);
+        } catch (Exception $e) {
+            Log::error('Purchase Request Listing Items Error: ' . $e->getMessage(), [
+                'request' => $request->all(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return Inertia::render('Purchasing/PurchaseRequest/Listing', [
+                'data' => [
+                    'data' => [],
+                    'total' => 0,
+                    'current_page' => 1,
+                    'per_page' => 25,
+                ],
+                'filters' => [
+                    'search' => '',
+                    'sortField' => 'created_at',
+                    'sortOrder' => -1,
+                ],
+                'error' => 'Failed to load purchase request items.'
+            ]);
+        }
+    }
 }

@@ -18,6 +18,7 @@ class PurchaseRequestItemRepository
         'product_name' => 'dpr.nama',
         'usage_date' => 'dpr.tglpakai',
         'supplier_name' => 'dpr.nmsupplier',
+        'created_at' => 'dpr.iddpr',
     ];
 
     public function getByHeaderNumber(string $number): Collection
@@ -89,9 +90,12 @@ class PurchaseRequestItemRepository
 
     protected function transform(object $item): object
     {
+        $item->date = $this->sanitizeDate($item->date);
         $item->usage_date = $this->sanitizeDate($item->usage_date);
 
         $item->quantity = (float) ($item->quantity ?? 0);
+        $item->adjusted_quantity = (float) ($item->adjusted_quantity ?? 0);
+        $item->ordered_quantity = (float) ($item->ordered_quantity ?? 0);
         $item->price = (float) ($item->price ?? 0);
 
         $item->purchase_request_number = trim($item->purchase_request_number ?? '');

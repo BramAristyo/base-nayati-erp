@@ -64,4 +64,12 @@ class PurchaseRequestService
             $filters
         );
     }
+
+    public function getListingItems(array $filters): LengthAwarePaginator
+    {
+        return $this->itemRepository->getListings(
+            $filters['per_page'] ?? 25,
+            $filters
+        );
+    }
 }

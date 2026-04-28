@@ -33,7 +33,7 @@ const onRowClick = (event: any) => {
 };
 
 const onListingDummy = () => {
-    alert('Listing dummy action clicked');
+    router.get(route('purchasing.purchase-requests.listingItems'));
 };
 </script>
 
