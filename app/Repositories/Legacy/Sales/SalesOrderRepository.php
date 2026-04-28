@@ -20,6 +20,7 @@ class SalesOrderRepository
         'project_name' => 'mo.KET',
         'delivery_date' => 'mo.TGD',
         'due_date' => 'mo.JTHTMP',
+        'created_at' => 'mo.id'
     ];
 
     public function paginate(int $perPage = 25, array $filters = []): LengthAwarePaginator
@@ -142,7 +143,7 @@ class SalesOrderRepository
         $item->net_price = (float) $item->net_price;
         $item->currency_rate = (float) $item->currency_rate;
         $item->down_payment = (float) $item->down_payment;
-        
+
         $item->customer_name = trim($item->customer_name ?? '');
         $item->project_name = trim($item->project_name ?? '');
 

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'check_password_changed'])->prefix('sales')->name('sales.')->group(function () {
     // Sales Orders
     Route::get('/orders', [SalesOrderController::class, 'paginate'])->name('orders.index');
+    Route::get('/orders/export', [SalesOrderController::class, 'export'])->name('orders.export');
     Route::get('/orders/{id}', [SalesOrderController::class, 'show'])->name('orders.show');
 
     // Proformas

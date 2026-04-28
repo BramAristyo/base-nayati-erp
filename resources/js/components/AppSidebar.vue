@@ -57,6 +57,18 @@ const menus = ref<MenuItem[]>([
         ]
     },
     {
+        label: 'Sales',
+        icon: 'pi pi-chart-line',
+        isOpen: false,
+        items: [
+            { label: 'Sales Order', route: 'sales.orders.index', permission: 'sales.order.view' },
+            { label: 'Proforma', route: 'sales.proformas.index', permission: 'sales.proforma.view' },
+            { label: 'Delivery Order', route: 'sales.delivery-orders.index', permission: 'sales.delivery-order.view' },
+            { label: 'Shipment', route: 'sales.shipments.index', permission: 'sales.shipment.view' },
+            { label: 'Invoice', route: 'sales.invoices.index', permission: 'sales.invoice.view' },
+        ]
+        },
+    {
         label: 'Approval',
         icon: 'pi pi-check-circle',
         isOpen: false,
@@ -243,7 +255,7 @@ onMounted(() => {
                                     :class="[menu.icon, 'text-base text-muted-foreground group-hover:text-foreground']"></i>
                                 <span v-if="!collapsed" class="text-sm font-semibold tracking-wide whitespace-nowrap">{{
                                     menu.label
-                                    }}</span>
+                                }}</span>
                             </div>
                             <i v-if="!collapsed"
                                 class="pi pi-chevron-down text-[10px] text-muted-foreground transition-transform duration-200"
