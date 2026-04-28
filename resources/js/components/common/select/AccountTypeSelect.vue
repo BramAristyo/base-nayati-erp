@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import Select from 'primevue/select';
-import { ref, onMounted } from 'vue';
-import { route } from 'ziggy-js';
-import http from '@/lib/http';
-import type { AccountType, AccountTypeResponse } from '@/types/utility/account-type.types';
+import { onMounted } from 'vue';
+import { useAccountingTypeStore } from '@/stores/accounting/useAccountingType';
+import { storeToRefs } from 'pinia';
 
 const props = defineProps<{
     modelValue: string | null;
@@ -12,25 +11,16 @@ const props = defineProps<{
     invalid?: boolean;
 }>();
 
-const emit = defineEmits(['update:modelValue', 'change']);
+const emit = defineEmits<{
+    (e: 'update:modelValue', value: string | null): void;
+    (e: 'change', value: string | null): void;
+}>();
 
-const accountTypes = ref<AccountType[]>([]);
-const loading = ref(false);
-
-const fetchAccountTypes = async () => {
-    loading.value = true;
-    try {
-        const response = await http.get<AccountTypeResponse>(route('api.utility.account-types.index'));
-        accountTypes.value = response.data;
-    } catch (error) {
-        console.error('Failed to fetch account types', error);
-    } finally {
-        loading.value = false;
-    }
-};
+const store = useAccountingTypeStore();
+const { accountTypes, loading } = storeToRefs(store);
 
 onMounted(() => {
-    fetchAccountTypes();
+    store.fetchAccountTypes();
 });
 </script>
 
@@ -38,7 +28,7 @@ onMounted(() => {
     <Select
         :modelValue="props.modelValue"
         @update:modelValue="emit('update:modelValue', $event)"
-        @change="emit('change', $event)"
+        @change="emit('change', $event.value)"
         :options="accountTypes"
         optionLabel="name"
         optionValue="code"

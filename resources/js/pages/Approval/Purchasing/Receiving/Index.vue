@@ -9,7 +9,9 @@ import ApprovalDataTable from '@/components/common/table/ApprovalDataTable.vue';
 import ApproveAllButton from '@/components/common/buttons/ApproveAllButton.vue';
 import RevokeButton from '@/components/common/buttons/RevokeButton.vue';
 import ApproveBadge from '@/components/common/badges/ApproveBadge.vue';
+import AccountTypeSelect from '@/components/common/select/AccountTypeSelect.vue';
 import { useReceivingApproval } from '@/composables/approval/useReceivingApproval';
+import { useAccountingTypeStore } from '@/stores/accounting/useAccountingType';
 import { formatDate } from '@/utils/date';
 import { useAuthStore } from '@/stores/utility/useAuthStore';
 
@@ -43,6 +45,7 @@ const props = defineProps<{
 
 const toast = useToast();
 const authStore = useAuthStore();
+const accountingTypeStore = useAccountingTypeStore();
 
 const {
     currentStatus,
@@ -93,13 +96,23 @@ const canPerformAction = computed(() => {
 });
 
 const handleApprove = (items: Receiving[]) => {
-    const receiving_ids = items.map((item) => item.id);
-    console.log('Approve Receiving IDs:', receiving_ids);
+    const payload = items.map((item) => ({
+        id: item.id,
+        number: item.receiving_number,
+        account_type_code: item.account_type_code,
+        account_type_name: accountingTypeStore.getNameByCode(item.account_type_code) || item.account_type_name
+    }));
+    console.log('Approve Receiving Payload:', payload);
 };
 
 const handleRevoke = (items: Receiving[]) => {
-    const receiving_ids = items.map((item) => item.id);
-    console.log('Revoke Receiving IDs:', receiving_ids);
+    const payload = items.map((item) => ({
+        id: item.id,
+        number: item.receiving_number,
+        account_type_code: item.account_type_code,
+        account_type_name: accountingTypeStore.getNameByCode(item.account_type_code) || item.account_type_name
+    }));
+    console.log('Revoke Receiving Payload:', payload);
 };
 </script>
 
@@ -145,7 +158,7 @@ const handleRevoke = (items: Receiving[]) => {
                         <IconField class="w-full!">
                             <InputIcon class="pi pi-search text-muted-foreground!" style="font-size: 14px" />
                             <InputText v-model="search" placeholder="Quick Search..." size="small"
-                                class="w-full! bg-background border-border! text-foreground! rounded-md! focus:ring-1! focus:ring-ring! shadow-sm transition-all placeholder:text-muted-foreground!" />
+                                class="w-full! bg-background border-border! text-foreground! rounded-md! focus:ring-1! focus:ring-ring! placeholder:text-muted-foreground!" />
                         </IconField>
                     </div>
 
@@ -202,14 +215,6 @@ const handleRevoke = (items: Receiving[]) => {
                                     </template>
                                 </Column>
 
-                                <Column field="branch_code" header="BRANCH" class="w-24" sortable>
-                                    <template #body="slotProps">
-                                        <span class="text-xs font-semibold text-foreground">
-                                            {{ slotProps.data.branch_code }}
-                                        </span>
-                                    </template>
-                                </Column>
-
                                 <Column field="is_general_purchase" header="GP" class="w-16 text-center">
                                     <template #body="slotProps">
                                         <i v-if="slotProps.data.is_general_purchase"
@@ -261,7 +266,7 @@ const handleRevoke = (items: Receiving[]) => {
 
                         <!-- Detail: Line Items -->
                         <SplitterPanel :size="45" :minSize="20"
-                            class="flex flex-col overflow-hidden bg-card rounded-xl border border-border shadow-xs mt-2">
+                            class="flex flex-col overflow-hidden bg-card rounded-xl border border-border mt-2">
 
                             <div
                                 class="flex items-center justify-between px-4 py-2.5 border-b border-border bg-muted/30 shrink-0">
@@ -305,6 +310,15 @@ const handleRevoke = (items: Receiving[]) => {
                                             <span class="text-[11px] font-medium text-muted-foreground">
                                                 {{ slotProps.data.purchase_order_number || '-' }}
                                             </span>
+                                        </template>
+                                    </Column>
+
+                                    <Column field="account_type_code" header="ACCOUNT TYPE" class="w-56">
+                                        <template #body="slotProps">
+                                            <AccountTypeSelect 
+                                                v-model="slotProps.data.account_type_code"
+                                                placeholder="Assign Type"
+                                            />
                                         </template>
                                     </Column>
 
