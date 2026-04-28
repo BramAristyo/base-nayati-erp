@@ -9,7 +9,6 @@ import { useMasterDatatable } from '@/composables/master/useMasterDatatable';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { Branch } from '@/types/master/master.types';
 import type { PaginatedResponse, PaginateFilter } from '@/types/common/paginate.types';
-import ActiveBadge from '@/components/common/badges/ActiveBadge.vue';
 
 const props = defineProps<{
     data: PaginatedResponse<Branch>;
@@ -47,11 +46,6 @@ const { search, onPage, onSort } = useMasterDatatable({
                     <Column field="address" header="ADDRESS" />
                     <Column field="phone" header="PHONE" class="w-40" />
                     <Column field="email" header="EMAIL" />
-                    <Column field="is_active" header="STATUS" class="w-24 text-center">
-                        <template #body="slotProps">
-                            <ActiveBadge :active="!!slotProps.data.is_active" />
-                        </template>
-                    </Column>
                 </StandardDataTable>
             </div>
         </div>
