@@ -13,6 +13,7 @@ import AccountTypeSelect from '@/components/common/select/AccountTypeSelect.vue'
 import { useReceivingApproval } from '@/composables/approval/useReceivingApproval';
 import { useAccountingTypeStore } from '@/stores/accounting/useAccountingType';
 import { formatDate } from '@/utils/date';
+import { formatCurrency } from '@/utils/money';
 import { useAuthStore } from '@/stores/utility/useAuthStore';
 
 import Badge from 'primevue/badge';
@@ -78,9 +79,6 @@ const handleRowClick = async (event: any) => {
         toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load line items.', life: 3000 });
     }
 };
-
-const formatCurrency = (val: number) =>
-    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val);
 
 const detailTotal = computed(() =>
     detailItems.value.reduce((sum, item) => sum + item.price, 0)

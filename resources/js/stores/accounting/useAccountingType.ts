@@ -9,7 +9,7 @@ export const useAccountingTypeStore = defineStore('accounting-type', () => {
     const loading = ref(false);
 
     const fetchAccountTypes = async (force: boolean = false) => {
-        if (!force && accountTypes.value.length > 0) return;
+        if (!force && (accountTypes.value.length > 0 || loading.value)) return;
 
         loading.value = true;
         try {
