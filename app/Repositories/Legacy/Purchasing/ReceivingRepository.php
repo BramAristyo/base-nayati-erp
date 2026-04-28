@@ -19,6 +19,7 @@ class ReceivingRepository
         'created_by' => 'hbeli.USER',
         'purchase_order_date' => 'po.tgl',
         'supplier_invoice_date' => 'hbeli.tgl1',
+        'created_at' => 'hbeli.idhbeli',
     ];
 
     public function paginate(int $perPage = 25, array $filters = []): LengthAwarePaginator

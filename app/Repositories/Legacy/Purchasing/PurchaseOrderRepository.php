@@ -17,6 +17,7 @@ class PurchaseOrderRepository
         'delivery_date' => 'hpo.TGL_KRM',
         'approved_by' => 'hpo.userapp',
         'approval_date' => 'hpo.tglapp',
+        'created_at' => 'hpo.id',
     ];
 
     public function paginate(int $perPage = 25, array $filters = []): LengthAwarePaginator

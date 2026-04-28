@@ -18,6 +18,7 @@ class PurchaseRequestRepository
         'approved_by' => 'hpr.approveby',
         'approval_date' => 'hpr.tglapp',
         'employee_name' => 'e.ket',
+        'created_at' => 'hpr.idhpr',
     ];
 
     public function paginate(int $perPage = 25, array $filters = []): LengthAwarePaginator

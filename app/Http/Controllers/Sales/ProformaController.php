@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Sales;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\BasicPaginateRequest;
 use App\Services\Sales\ProformaService;
+use App\Exports\Sales\ProformaExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Exception;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
@@ -61,6 +63,26 @@ class ProformaController extends Controller
             ]);
 
             abort(500, 'Internal Server Error');
+        }
+    }
+
+    #[Middleware('can:sales.proforma.export')]
+    public function export(BasicPaginateRequest $request)
+    {
+        try {
+            $data = $this->service->getAllByFilter($request->validated());
+            
+            return Excel::download(
+                new ProformaExport($data),
+                'proformas-' . now()->format('Y-m-d') . '.xlsx'
+            );
+        } catch (Exception $e) {
+            Log::error('Sales Proforma Export Error: ' . $e->getMessage(), [
+                'request' => $request->all(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return back()->with('error', 'Failed to export proformas.');
         }
     }
 }

@@ -17,7 +17,7 @@ class LandedCostRepository
         'landed_cost_date' => 'bimport.TGL',
         'receiving_number' => 'bimport.NOLPB',
         'purchase_order_number' => 'bimport.NOPO',
-        'created_at' => 'bimport.tglentry',
+        'created_at' => 'bimport.ID',
     ];
 
     public function paginate(int $perPage = 25, array $filters = []): LengthAwarePaginator

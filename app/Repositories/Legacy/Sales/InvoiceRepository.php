@@ -18,6 +18,7 @@ class InvoiceRepository
         'branch_code' => 'minv.kdcab',
         'status' => 'minv.APPROVE1',
         'updated_at' => 'minv.TGLUPDATE',
+        'created_at' => 'minv.IDMINV',
     ];
 
     public function paginate(int $perPage = 25, array $filters = []): LengthAwarePaginator
@@ -31,6 +32,15 @@ class InvoiceRepository
         $paginator->getCollection()->transform(fn(object $item) => $this->transform($item));
 
         return $paginator;
+    }
+
+    public function getAllByFilter(array $filters = []): \Illuminate\Support\Collection
+    {
+        $query = $this->baseQuery();
+
+        $this->applyFilters($query, $filters);
+
+        return $query->get()->map(fn(object $item) => $this->transform($item));
     }
 
     public function find(int $id): ?array

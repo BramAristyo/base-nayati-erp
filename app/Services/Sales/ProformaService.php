@@ -19,6 +19,11 @@ class ProformaService
         );
     }
 
+    public function getAllByFilter(array $filters = []): \Illuminate\Support\Collection
+    {
+        return $this->repository->getAllByFilter($filters);
+    }
+
     public function find(int $id): ?array
     {
         return $this->repository->find($id);

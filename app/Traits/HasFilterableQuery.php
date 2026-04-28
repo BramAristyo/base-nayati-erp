@@ -10,7 +10,7 @@ trait HasFilterableQuery
     /**
      * Apply date range filters to the query.
      */
-    public function applyDateFilter(EloquentBuilder|QueryBuilder $query, array $filters, string $column = 'created_at'): EloquentBuilder|QueryBuilder
+    public function applyDateFilter(EloquentBuilder|QueryBuilder $query, array $filters, string $column = 'id'): EloquentBuilder|QueryBuilder
     {
         $start = $filters['start_date'] ?? null;
         $end = $filters['end_date'] ?? null;
@@ -41,7 +41,7 @@ trait HasFilterableQuery
     public function applySortFilter(
         EloquentBuilder|QueryBuilder $query,
         array $filters,
-        string $defaultSort = 'created_at',
+        string $defaultSort = 'id',
         string $defaultOrder = 'desc'
     ): EloquentBuilder|QueryBuilder {
         $sort = $filters['sort_by'] ?? $defaultSort;

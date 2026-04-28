@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Sales;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\BasicPaginateRequest;
 use App\Services\Sales\InvoiceService;
+use App\Exports\Sales\InvoiceExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Exception;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
@@ -61,6 +63,26 @@ class InvoiceController extends Controller
             ]);
 
             abort(500, 'Internal Server Error');
+        }
+    }
+
+    #[Middleware('can:sales.invoice.export')]
+    public function export(BasicPaginateRequest $request)
+    {
+        try {
+            $data = $this->service->getAllByFilter($request->validated());
+            
+            return Excel::download(
+                new InvoiceExport($data),
+                'invoices-' . now()->format('Y-m-d') . '.xlsx'
+            );
+        } catch (Exception $e) {
+            Log::error('Sales Invoice Export Error: ' . $e->getMessage(), [
+                'request' => $request->all(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return back()->with('error', 'Failed to export invoices.');
         }
     }
 }

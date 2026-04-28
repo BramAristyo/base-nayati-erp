@@ -26,6 +26,7 @@ class ShipmentRepository
         'warehouse_code' => 'msj.kdlok',
         'warehouse_name' => 'w.name',
         'updated_at' => 'msj.TGLUPDATE',
+        'created_at' => 'msj.IDMSJ',
     ];
 
     public function paginate(int $perPage = 25, array $filters = []): LengthAwarePaginator
@@ -39,6 +40,15 @@ class ShipmentRepository
         $paginator->getCollection()->transform(fn(object $item) => $this->transform($item));
 
         return $paginator;
+    }
+
+    public function getAllByFilter(array $filters = []): \Illuminate\Support\Collection
+    {
+        $query = $this->baseQuery();
+
+        $this->applyFilters($query, $filters);
+
+        return $query->get()->map(fn(object $item) => $this->transform($item));
     }
 
     public function find(int $id): ?array
@@ -58,6 +68,7 @@ class ShipmentRepository
     {
         return DB::table('msj')
             ->leftJoin('warehouses as w', 'msj.kdlok', '=', 'w.code')
+            ->leftJoin('custom as c', 'msj.KDCUST', '=', 'c.kd_cust')
             ->select([
                 'msj.IDMSJ as id',
                 'msj.NOBUK as shipment_number',
@@ -65,6 +76,7 @@ class ShipmentRepository
                 'msj.TGI as invoice_date',
                 'msj.NOP as delivery_order_number',
                 'msj.KDCUST as customer_code',
+                'c.NAMA as customer_name',
                 'msj.TGL as date',
                 'msj.KDCAB as branch_code',
                 'msj.LE as is_local_purchase',

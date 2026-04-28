@@ -22,6 +22,7 @@ class DeliveryOrderRepository
         'branch_code' => 'hdo.KD_CAB',
         'status' => 'hdo.APPROVE',
         'approval_date' => 'hdo.TGLAPP',
+        'created_at' => 'hdo.ID',
     ];
 
     public function paginate(int $perPage = 25, array $filters = []): LengthAwarePaginator
@@ -35,6 +36,15 @@ class DeliveryOrderRepository
         $paginator->getCollection()->transform(fn(object $item) => $this->transform($item));
 
         return $paginator;
+    }
+
+    public function getAllByFilter(array $filters = []): \Illuminate\Support\Collection
+    {
+        $query = $this->baseQuery();
+
+        $this->applyFilters($query, $filters);
+
+        return $query->get()->map(fn(object $item) => $this->transform($item));
     }
 
     public function find(int $id): ?array

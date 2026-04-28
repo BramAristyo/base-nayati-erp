@@ -28,7 +28,7 @@ class BasicPaginateRequest extends FormRequest
 
         $this->merge([
             'per_page'   => (int) $this->input('per_page', 25),
-            'sort_by'    => $this->input('sortField', $this->input('defaultSort', 'created_at')),
+            'sort_by'    => $this->input('sortField', $this->input('defaultSort', 'id')),
             'sort_order' => $parsedOrder,
             'sortOrder'  => $sortOrder,
             'start_date' => $startDate,

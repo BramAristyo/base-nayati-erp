@@ -15,17 +15,21 @@ Route::middleware(['auth', 'check_password_changed'])->prefix('sales')->name('sa
 
     // Proformas
     Route::get('/proformas', [ProformaController::class, 'paginate'])->name('proformas.index');
+    Route::get('/proformas/export', [ProformaController::class, 'export'])->name('proformas.export');
     Route::get('/proformas/{id}', [ProformaController::class, 'show'])->name('proformas.show');
 
     // Delivery Orders
     Route::get('/delivery-orders', [DeliveryOrderController::class, 'paginate'])->name('delivery-orders.index');
+    Route::get('/delivery-orders/export', [DeliveryOrderController::class, 'export'])->name('delivery-orders.export');
     Route::get('/delivery-orders/{id}', [DeliveryOrderController::class, 'show'])->name('delivery-orders.show');
 
     // Shipments
     Route::get('/shipments', [ShipmentController::class, 'paginate'])->name('shipments.index');
+    Route::get('/shipments/export', [ShipmentController::class, 'export'])->name('shipments.export');
     Route::get('/shipments/{id}', [ShipmentController::class, 'show'])->name('shipments.show');
 
     // Invoices
     Route::get('/invoices', [InvoiceController::class, 'paginate'])->name('invoices.index');
+    Route::get('/invoices/export', [InvoiceController::class, 'export'])->name('invoices.export');
     Route::get('/invoices/{id}', [InvoiceController::class, 'show'])->name('invoices.show');
 });

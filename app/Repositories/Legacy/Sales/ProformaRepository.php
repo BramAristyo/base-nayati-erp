@@ -19,6 +19,7 @@ class ProformaRepository
         'customer_code' => 'mproforma.KDCUST',
         'branch_code' => 'mproforma.KDCAB',
         'status' => 'mproforma.approve1',
+        'created_at' => 'mproforma.ID',
     ];
 
     public function paginate(int $perPage = 25, array $filters = []): LengthAwarePaginator
@@ -32,6 +33,15 @@ class ProformaRepository
         $paginator->getCollection()->transform(fn(object $item) => $this->transform($item));
 
         return $paginator;
+    }
+
+    public function getAllByFilter(array $filters = []): \Illuminate\Support\Collection
+    {
+        $query = $this->baseQuery();
+
+        $this->applyFilters($query, $filters);
+
+        return $query->get()->map(fn(object $item) => $this->transform($item));
     }
 
     public function find(int $id): ?array
