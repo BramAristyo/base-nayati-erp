@@ -13,12 +13,13 @@ import AppPageHeader from '@/components/common/AppPageHeader.vue';
 import StandardDataTable from '@/components/common/table/StandardDataTable.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import type { PaginatedResponse, PaginateFilter } from '@/types/common/paginate.types';
+import type { PurchaseRequestItem } from '@/types/purchasing/purchase-request-item.types';
 import { formatDate, formatToDateString } from '@/utils/date';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { useDataTable } from '@/composables/common/useDataTable';
 
 const props = defineProps<{
-    data: PaginatedResponse<any>;
+    data: PaginatedResponse<PurchaseRequestItem>;
     filters: PaginateFilter & { start_date?: string; end_date?: string };
 }>();
 
@@ -49,10 +50,23 @@ const resetFilters = () => {
 
 // Dialog Logic
 const isDialogVisible = ref(false);
-const selectedItem = ref<any>(null);
+const selectedItem = ref<PurchaseRequestItem | null>(null);
 const editAdjQty = ref<number>(0);
 
-const onEditAdjustedQty = (data: any) => {
+const resultingQty = computed(() => {
+    const currentQty = selectedItem.value?.quantity || 0;
+    return currentQty + (editAdjQty.value || 0);
+});
+
+const minAllowedAdjustment = computed(() => {
+    if (!selectedItem.value) return 0;
+    // Rule: resultingQty >= ordered_quantity
+    // Qty + AdjQty >= OrderedQty
+    // AdjQty >= OrderedQty - Qty
+    return selectedItem.value.ordered_quantity - selectedItem.value.quantity;
+});
+
+const onEditAdjustedQty = (data: PurchaseRequestItem) => {
     selectedItem.value = data;
     editAdjQty.value = data.adjusted_quantity || 0;
     isDialogVisible.value = true;
@@ -196,11 +210,32 @@ const saveAdjustedQty = () => {
 
                 <div class="flex flex-col gap-2">
                     <label for="adj_qty" class="text-sm font-bold text-foreground">Adjusted Quantity</label>
-                    <InputNumber id="adj_qty" v-model="editAdjQty" :min="0" fluid
+                    <InputNumber id="adj_qty" v-model="editAdjQty" :min="minAllowedAdjustment" fluid showButtons
                         class="bg-background border-border! text-foreground!" />
                     <p class="text-[10px] text-muted-foreground italic">
-                        Enter the final adjusted quantity for this item.
+                        Enter the adjustment value (positive to increase, negative to decrease).
                     </p>
+                </div>
+
+                <div class="mt-2 p-3 bg-muted/20 border border-border rounded-md">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-muted-foreground">Current Quantity</span>
+                        <span class="font-medium text-foreground">{{ selectedItem.quantity }}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm mt-1">
+                        <span class="text-muted-foreground">Adjustment</span>
+                        <span class="font-medium" :class="editAdjQty < 0 ? 'text-red-500' : 'text-green-500'">
+                            {{ editAdjQty > 0 ? '+' : '' }}{{ editAdjQty || 0 }}
+                        </span>
+                    </div>
+                    <Divider class="my-2!" />
+                    <div class="flex justify-between items-center text-sm font-bold">
+                        <span class="text-foreground">Resulting Quantity</span>
+                        <span class="text-primary">{{ resultingQty }}</span>
+                    </div>
+                    <div class="mt-2 text-[10px] text-muted-foreground" v-if="selectedItem.ordered_quantity > 0">
+                        * Resulting quantity cannot be lower than the PO Quantity ({{ selectedItem.ordered_quantity }}). Max negative adjustment: {{ minAllowedAdjustment }}.
+                    </div>
                 </div>
             </div>
 
